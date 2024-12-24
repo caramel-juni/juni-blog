@@ -2,7 +2,7 @@
 title: "Home"
 ---
 
-## welcome, weary traveller. stay a while.
+## welcome, weary traveller. we hope you stay a while.
 
 ---
 
