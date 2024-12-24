@@ -7,6 +7,7 @@ languageCode = "en"
 rssLimit = 10
 theme = "hugo-texify3"
 title = "TeXify3"
+enableEmoji = true
 
 [pagination]
 pagerSize = 5
