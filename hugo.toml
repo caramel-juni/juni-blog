@@ -61,3 +61,13 @@ numberedSubtitles = true
   whatsapp = false
   hackernews = true
   telegram = true
+
+  [params.buymeacoffee]
+  code = ""
+
+[[menu.main]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/caramel-juni"
+
+      
