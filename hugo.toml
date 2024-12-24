@@ -1,5 +1,5 @@
 baseURL = "https://blog.juni-mp4.com"
-disqusShortname = ""
+disqusShortname = "juni"
 enableGitInfo = true
 enableRobotsTXT = true
 hasCJKLanguage = true
@@ -24,7 +24,7 @@ footnote = "Powered by coffee, caramel slice and pure indignation"
 contentTypeName = "posts"
 customCSS = []
 customJS = []
-dateFormat = "2 January 2006"
+dateFormat = "2 January, 2006"
 emphasisWithDots = true
 toc = true
 rootFontSize = "105%"
@@ -69,11 +69,11 @@ numberedSubtitles = true
   """
 
   [params.sharingbuttons]
-  facebook = true
+  facebook = false
   twitter = true
   email = true
   linkedin = true
   reddit = true
-  whatsapp = true
+  whatsapp = false
   hackernews = true
   telegram = true

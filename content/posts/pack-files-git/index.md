@@ -1,12 +1,13 @@
 ---
 title: "PACK files in .git - a rabbit hole"
 date: "2024-12-23"
+description: "lite 'n easy: for PACK files"
 toc: true
 math: false
 draft: false
 categories:
-tags: 
   - git
+tags: 
   - PACK file
   - git-filter-repo
 
