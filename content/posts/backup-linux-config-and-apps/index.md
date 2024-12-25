@@ -23,7 +23,7 @@ Basically, most user settings (from my research - some may be hidden in other co
 
 So, for me, this was at `/home/juni/.config/`. So, simply copy that folder to an external drive or over the network, and paste it in the corresponding place on your new system.
 
-## Copying over .config
+## - Copying over .config
 
 1. `cd /home/[user]/`
 	- navigate to the user's directory where the `.config` folder is stored.
@@ -64,7 +64,7 @@ If you opted for `rsync` instead above:
    
    Then reboot, and your settings should be re-applied! :3
 
-## BONUS: Grabbing a list of installed packages to re-install
+## - BONUS: Grabbing a list of installed packages to re-install
 
 Optionally, if you want to grab a list of all packages/apps installed on your current distro to bring over and auto-install on your new one, run the following:
 
@@ -78,10 +78,12 @@ Optionally, if you want to grab a list of all packages/apps installed on your cu
 
 The process is similar for distributions using different package managers like `yum`, `pacman`, or `rpm`, the concept is the same but the commands will differ slightly. A little net/manual searching will fix you up :P.
 
----
-### DISCLAIMER: I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️
----
-
-### Related helpful articles:
+## - Related helpful articles:
 - https://help.ubuntu.com/community/BackupYourSystem/TAR
 - https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---
