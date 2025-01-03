@@ -31,6 +31,8 @@ rootFontSize = "105%"
 math = true
 enableDuckDuckGoSearchBox = true
 numberedSubtitles = true
+since = "2025"
+
 
   [params.sharingbuttons]
   facebook = false
