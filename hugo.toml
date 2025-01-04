@@ -1,5 +1,4 @@
 baseURL = "https://blog.juni-mp4.com"
-disqusShortname = "juni"
 enableGitInfo = true
 enableRobotsTXT = true
 hasCJKLanguage = true
@@ -36,7 +35,6 @@ since = "2025"
 
 [markup.goldmark.renderer]
   unsafe = true
-
 
   [params.sharingbuttons]
   facebook = false
