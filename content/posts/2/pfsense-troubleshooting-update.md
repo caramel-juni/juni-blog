@@ -88,3 +88,9 @@ Thankfully a restore point was (and should, by default on pfSense installations)
     b. OR try and roll back to the previous version (22.05) by assigning the network interfaces randomly and getting to the pfsense options screen, selecting option `15) Restore recent configuration`, and then using the backup config file as the desired settings.
 
     in case of further panic... here is a link to further [troubleshooting](https://agix.com.au/restore-pfsense-from-backup-using-the-cli-command-line/). I wish you well on your journey, and hope it is substantially shorter than mine was 🙃😭.
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---

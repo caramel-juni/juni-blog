@@ -58,3 +58,9 @@ Both of these have been built to **include TPM 2.0 functionality**, but may not 
 4. Once rebooted, SSH into the box and run `vmware -v` to check the version of ESXi and that the update has been successful.
 
 ***💛 Hope this was of some help & best of luck! 💛***
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---

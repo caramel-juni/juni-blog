@@ -127,9 +127,6 @@ To test if it worked, I navigated to its new home with `cd mnt/pve/EXT_SSD/` and
 >>> I learnt this [here](https://www.youtube.com/watch?v=Gl9HS7-H0mI).
 
 
-
-
-
 ---
 
 ### ~ miscellaneous images to be used in future tutorials if i return to this ~
@@ -141,3 +138,10 @@ To test if it worked, I navigated to its new home with `cd mnt/pve/EXT_SSD/` and
 ![](/posts/4/a323178c-9191-4dde-823d-99a3d0bef9e2.png)
 
 ![](/posts/4/84802981-73da-427a-a7ab-1d2ef2e235cd.png)
+
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---

@@ -45,3 +45,9 @@ The GUI way of adding a USB device to a Proxmox VM didn't work for me when using
     ![](/posts/3/649e3f6b-48ca-4f50-a9b8-7189d64a135b.png)
 
 ## Hope this helps a few other fellow lost souls! ^^
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---

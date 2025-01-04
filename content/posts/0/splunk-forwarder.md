@@ -82,4 +82,10 @@ tags:
 
 
 
-    # 💛 *Best of luck, I hope this helps some people and avoids too much keyboard-bashing!* 💛
+💛 ***Best of luck, I hope this helps some people and avoids too much keyboard-bashing!*** 💛
+
+---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---

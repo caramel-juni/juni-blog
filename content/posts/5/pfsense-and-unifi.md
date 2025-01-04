@@ -207,3 +207,7 @@ here is a contextual network diagram for my setup:
 <div class="centre-h2"> <img src="/posts/5/celebrate.gif"> </div>
 
 ---
+
+**DISCLAIMER:** *I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️*
+
+---
