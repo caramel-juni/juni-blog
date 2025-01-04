@@ -16,9 +16,10 @@ enableDuckDuckGoSearchBox = true
 numberedSubtitles = true
 since = "2025"
 
-# set/disable comment engine
-[commentEngine]
-code = ""
+# uncomment to disable comment engine. if commented, site will use default "gisqus" comment engine specified in the theme's params.toml.
+
+    #[commentEngine]
+    #code = ""
 
 # populate with script to enable "buy me a coffee" widget
 [buymeacoffee]

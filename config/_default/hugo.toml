@@ -9,6 +9,13 @@ theme = "hugo-texify3"
 title = "juni's blog ٩(◕‿◕｡)۶"
 enableEmoji = true
 
+# exclude specific content/pages from build process (templates, etc.)
+[module]
+[[module.mounts]]
+  source = 'content'
+  target = 'content'
+  excludeFiles = ['posts/**/template.md']
+
 [pagination]
 pagerSize = 5
 
