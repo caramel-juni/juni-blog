@@ -1,3 +1,4 @@
+# base website-wide config
 baseURL = "https://blog.juni-mp4.com"
 enableGitInfo = true
 enableRobotsTXT = true
@@ -11,47 +12,24 @@ enableEmoji = true
 [pagination]
 pagerSize = 5
 
+# HTML to markdown formatter settings
+[markup]
+defaultMarkdownHandler = "goldmark"
+
+  # renders HTML in markdown files
+  [markup.goldmark.renderer]
+  unsafe = true
+
 [taxonomies]
 tags = "tags"
 categories = "categories"
 
-[params]
-title = "･ﾟ✧ juni's blog ･ﾟ✧"
-author = "juni"
-description = "juni's very empty blog for all of her wandering thoughts n stchuff" 
-footnote = "Powered by coffee, caramel slice and pure indignation" 
-contentTypeName = "posts"
-customCSS = []
-customJS = []
-dateFormat = "2 January, 2006"
-emphasisWithDots = true
-toc = true
-rootFontSize = "105%"
-math = true
-enableDuckDuckGoSearchBox = true
-numberedSubtitles = true
-since = "2025"
-
-
-[markup.goldmark.renderer]
-  unsafe = true
-
-  [params.sharingbuttons]
-  facebook = false
-  twitter = true
-  email = true
-  linkedin = true
-  reddit = true
-  whatsapp = false
-  hackernews = true
-  telegram = true
-
-  [params.buymeacoffee]
-  code = ""
+# top bar menu settings & associated sub-pages
 
 [[menu.main]]
 identifier = "posts"
 name = "Blog"
+# link to sub-page in website dir tree
 url = "/posts/"
 pre = """
 <svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

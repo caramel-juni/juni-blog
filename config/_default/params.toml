@@ -1,0 +1,37 @@
+# file for all website parameters - or put [params.XXX] in hugo.toml
+
+title = "･ﾟ✧ juni's blog ･ﾟ✧"
+author = "juni"
+description = "juni's very empty blog for all of her wandering thoughts n stchuff" 
+footnote = "Powered by coffee, caramel slice and pure indignation" 
+contentTypeName = "posts"
+customCSS = []
+customJS = []
+dateFormat = "2 January, 2006"
+emphasisWithDots = true
+toc = true
+rootFontSize = "105%"
+math = true
+enableDuckDuckGoSearchBox = true
+numberedSubtitles = true
+since = "2025"
+
+# set/disable comment engine
+[commentEngine]
+code = ""
+
+# populate with script to enable "buy me a coffee" widget
+[buymeacoffee]
+code = ""
+
+# sharng buttons visible beneath each post
+[sharingbuttons]
+facebook = false
+twitter = true
+email = true
+linkedin = true
+reddit = true
+whatsapp = false
+hackernews = true
+telegram = true
+
