@@ -30,7 +30,7 @@ for three simple reasons:
 there are endless tutorials for this, and my pipeline is probably most similar to that of NetworkChuck in the [recent video](https://www.youtube.com/watch?v=dnE7c0ELEH8&t=907s) he released (not even a week before I went in on my own build, after sitting on the idea for ages haha - twas kinda spoopy :3). 
 
 #### setting up the hugo site: 
-
+<< to do >>
 
 #### my final note-taking process:
 1. open my Obsidian "blog" vault, and create a new note within a folder in `posts`:
@@ -53,8 +53,8 @@ tags:
 3. once I'm finished writing, I switch to my full website directory tree in VSCode (my Obsidian "blog" vault is just the website's `content` folder, hence the `.obsidian` folder inside it). 
    ![](/posts/10/Screenshot%202025-01-04%20at%2010.33.17%20pm.png)
    i run the build command `hugo server -t [theme-name-here]` in the VScode terminal to start a live server, and visit `http://localhost:1313/` to double check that the changes have been formatted properly.
-   ![](posts/10/Screenshot%202025-01-04%20at%2010.41.47%20pm.png)
-4. then a simple `git push`
+   ![](/posts/10/Screenshot%202025-01-04%20at%2010.41.47%20pm.png)
+4. then a simple `git commit -m "new blog post: hugo site build" -a && git push origin main` pushes the changes to my site (whose architecture... I will save for another time, lol), where it's rebuilt & served as new HTML pages! 
 
 
 ![](/posts/10/ib2.jpg)
