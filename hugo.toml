@@ -33,6 +33,11 @@ enableDuckDuckGoSearchBox = true
 numberedSubtitles = true
 since = "2025"
 
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+
   [params.sharingbuttons]
   facebook = false
   twitter = true
