@@ -57,7 +57,8 @@ Now, it just needs to be pushed to the remote repository with:
 
 well, if all things went well, you should have shaved a few KBs/MBs/GBs off your `PACK` file - well done! grab yourself a cookie, you've well and truly earnt it :3
 
-![saya-congrats](saya-banner.jpeg)
+![saya-congrats](/posts/6/saya-banner.jpeg)
+
 
 ---
 
