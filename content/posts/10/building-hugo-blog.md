@@ -1,14 +1,25 @@
 ---
-title: building new blog with hugo!
+title: building & deploying this blog with hugo!
 date: 2025-01-04
-description: ""
+description: "my process of building this blog with hugo, ft. my cursed website build & deployment pipeline"
 toc: true
 math: true
 draft: false
 categories: 
+   - blog
+   - hugo
+   - website
+   - obsidian
 tags:
+   - cloudflare
+   - github
+   - git
+   - go
+   - github pages
+   - markdown
 ---
-*and now - to the story of how this blog was born!*
+
+# *and now - to the story of how this blog was born!*
 
 > *(it's nothing special, but I thought I'd document it for myself when i inevitably forget how i did it in the future, as well as any other wandering lost souls out there!)*
 
