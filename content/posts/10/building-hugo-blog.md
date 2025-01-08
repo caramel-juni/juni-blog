@@ -131,9 +131,8 @@ for three simple reasons:
 
       This means that when someone visits `myblog.juni-mp4.com`, they will functionally be visiting `juni-blog.pages.dev`.
 
-this combination of github & cloudflare pages allows me to easily host & deploy sites from **different github repos**, each built with **all kinds of different build methods** (from hand-coding raw HTML/CSS/JS to using various SSGs like `jekyll`, `hugo` etc.), as subdomains of my primary domain `juni-mp4.com` and all served securely & quickly from Cloudflare's worldwide array of web servers. *(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)
-	   
-      ***Side note:*** *yes, whilst you could argue that you "pay" in the form of you & your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security & responsiveness that Cloudflare's network of servers provides, at least imho and for my use case.*
+this combination of github & cloudflare pages allows me to easily host & deploy sites from **different github repos**, each built with **all kinds of different build methods** (from hand-coding raw HTML/CSS/JS to using various SSGs like `jekyll`, `hugo` etc.), as subdomains of my primary domain `juni-mp4.com` and all served securely & quickly from Cloudflare's worldwide array of web servers. *(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)*
+   ***Side note:*** *yes, whilst you could argue that you "pay" in the form of you & your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security & responsiveness that Cloudflare's network of servers provides, at least imho and for my use case.*
 
 this very particular workflow & need for flexibility is why i chose to use cloudflare instead of just deploying straight from [Github Pages](https://pages.github.com/). 
    
