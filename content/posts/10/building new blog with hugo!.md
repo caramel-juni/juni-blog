@@ -20,16 +20,16 @@ this way, you can streamline your workflow, embed all sorts of cool features (co
 
 ...and all of this within a [static site](https://www.geeksforgeeks.org/static-vs-dynamic-website/) (all files pre-built on web-server, no databases) that is lightweight, responsive, maintainable and (relatively) quick to spin up.
 
-# - why did i move away from jekyll?
+## - why did i move away from jekyll?
 for three simple reasons:
    1. i'd been meaning to try the SSG [hugo](https://gohugo.io/).
    2. hugo is built in [golang](https://go.dev/), and i'd been wanting to poke around with go for a while now.
    3. i found (and confirmed, after trying hugo) ruby & jekyll to be a bit more onerous to work with & overly-verbose in both site layout & base code. also - i noticed that jekyll had [much slower build times](https://css-tricks.com/comparing-static-site-generator-build-times/).
 
-# - getting up and running with hugo:
+## - getting up and running with hugo:
    there are endless tutorials for this, and my pipeline is probably most similar to that of NetworkChuck in the [recent video](https://www.youtube.com/watch?v=dnE7c0ELEH8&t=907s) he released (not even a week before I went in on my own build, after sitting on the idea for ages haha - twas kinda spoopy :3). 
 
-## - setting up the hugo site: 
+### - setting up the hugo site: 
    1. Hugo has two simple dependencies: `git` (for code version control), and the `go` compiler toolchain. (here are where you can install [`git`](https://git-scm.com/) and [`go`](https://go.dev/), if needed)
    
    2. after installing these, using the package manager of your choice (for me, `homebrew`), [install hugo](https://gohugo.io/installation/) with `brew install hugo`.
@@ -74,7 +74,7 @@ for three simple reasons:
       ![](/posts/10/Screenshot%202025-01-08%20at%206.28.33%20pm.png)
 
 
-## - pushing to remote git repository & deploying via cloudflare pages 
+### - pushing to remote git repository & deploying via cloudflare pages 
 *(aka my weird custom workflow):*
    1. after running `git init`, ensure you are authenticated locally with `gh auth login` (requires use of Github CLI, install with `brew install gh` or similar)
 
@@ -122,11 +122,11 @@ for three simple reasons:
 
 this combination of github & cloudflare pages allows me to easily host & deploy sites from **different github repos**, each built with **all kinds of different build methods** (from hand-coding raw HTML/CSS/JS to using various SSGs like `jekyll`, `hugo` etc.), as subdomains of my primary domain `juni-mp4.com` and all served securely & quickly from Cloudflare's worldwide array of web servers. *(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)
 	   
-      ***Side note:** yes, whilst you could argue that you "pay" in the form of you & your content being **technically** in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security & responsiveness that Cloudflare's network of servers provides, at least imho and for my use case.***
+      ***Side note:*** *yes, whilst you could argue that you "pay" in the form of you & your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security & responsiveness that Cloudflare's network of servers provides, at least imho and for my use case.*
 
 this very particular workflow & need for flexibility is why i chose to use cloudflare instead of just deploying straight from [Github Pages](https://pages.github.com/). 
    
-# - my final note-taking process: an overview
+## - my final note-taking process: an overview
    1. open my Obsidian "blog" vault, and create a new note within a folder in `posts`:
 
       ![](/posts/10/Screenshot%202025-01-04%20at%2010.27.21%20pm.png)
