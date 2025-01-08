@@ -85,9 +85,7 @@ for three simple reasons:
       - add dedicated website pages in `/pages`
       - use `/posts` to hold my site post, with each in its own **folder** alongside any assets (images, media, etc.). this was done due to my particular workflow (writing in obsidian, see below). 
       - split site configuration into two files for readability in `/config`: one for parameters (enabling/disabling certain features like social links, metadata etc.), and one for overall config & layout.
-
-      ![](/posts/10/Screenshot%202025-01-08%20at%206.28.33%20pm.png)
-
+        ![](/posts/10/heya.png)
 
 ### - pushing to remote git repository & deploying via cloudflare pages 
 *(aka my weird custom workflow):*
