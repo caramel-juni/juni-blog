@@ -4,6 +4,7 @@
   "description": "personal (&amp; tech) blog, attached to my home site --> https://blog.juni-mp4.com",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npx sass --version || true",
     "build": "hugo"
   },
   "repository": {
