@@ -1,0 +1,27 @@
+{
+  "name": "juni-blog",
+  "version": "1.0.0",
+  "description": "personal (&amp; tech) blog, attached to my home site --> https://blog.juni-mp4.com",
+  "main": "index.js",
+  "scripts": {
+    "build": "hugo"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caramel-juni/juni-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caramel-juni/juni-blog/issues"
+  },
+  "homepage": "https://github.com/caramel-juni/juni-blog#readme",
+  
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
+    "sass": "^1.89.2"
+  }
+}
