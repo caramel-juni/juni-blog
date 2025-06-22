@@ -1,5 +1,6 @@
 # Ignore everything
 *
-archetypes
+/content/tempate.md
 
 # But not this folder (keep public and its contents)
+!/public/*
