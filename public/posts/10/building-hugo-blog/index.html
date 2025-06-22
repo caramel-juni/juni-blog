@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" style="font-size: 105%">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <meta name="author" content="">
+
+  
+  
+  <meta name="description" content="my process of building this blog with hugo, ft. my cursed website build &amp; deployment pipeline">
+  
+
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/public//images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public//images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public//images/favicon-16x16.png">
+
+  
+  
+  <meta name="keywords" content='hugo latex theme blog texify texify2 texify3 michael neuper'>
+  
+
+  
+  
+  <link rel="stylesheet" href='/public/katex/katex.min.css'>
+<script defer defer src='/public/katex/katex.min.js'></script>
+<script defer src='/public/katex/contrib/auto-render.min.js'></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+  
+
+  
+  
+
+  
+  <meta property="og:url" content="/public/posts/10/building-hugo-blog/">
+  <meta property="og:site_name" content="juni&#39;s blog ٩(◕‿◕｡)۶">
+  <meta property="og:title" content="building & deploying this blog with hugo!">
+  <meta property="og:description" content="my process of building this blog with hugo, ft. my cursed website build &amp; deployment pipeline">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-01-08T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-01-08T20:25:25+10:30">
+    <meta property="article:tag" content="Cloudflare">
+    <meta property="article:tag" content="Github">
+    <meta property="article:tag" content="Git">
+    <meta property="article:tag" content="Go">
+    <meta property="article:tag" content="Github Pages">
+    <meta property="article:tag" content="Markdown">
+
+
+  
+  <link rel="canonical" href="/public/posts/10/building-hugo-blog/">
+
+  
+  
+  
+  <meta itemprop="name" content="building & deploying this blog with hugo!">
+  <meta itemprop="description" content="my process of building this blog with hugo, ft. my cursed website build &amp; deployment pipeline">
+  <meta itemprop="datePublished" content="2025-01-08T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-01-08T20:25:25+10:30">
+  <meta itemprop="wordCount" content="1755">
+  <meta itemprop="keywords" content="Cloudflare,Github,Git,Go,Github Pages,Markdown">
+
+  
+  
+  
+    <link rel="stylesheet" href="/public/css/common.min.e562d763c6d0825495eb17de8b2c1d9800cf7c08db1c36accedf77a5fccfc4b9.css" integrity="sha256-5WLXY8bQglSV6xfeiywdmADPfAjbHDaszt93pfzPxLk=" crossorigin="anonymous">
+  
+
+  
+  
+    <link rel="stylesheet" href="/public/css/content.min.ba38eba94cb47fef9936258c42d11ff19fa9686a30b38e783773fe3f15eb44dc.css" integrity="sha256-ujjrqUy0f&#43;&#43;ZNiWMQtEf8Z&#43;paGows454N3P&#43;PxXrRNw=" crossorigin="anonymous">
+  
+
+  
+  
+  <title>building &amp; deploying this blog with hugo! - juni&#39;s blog ٩(◕‿◕｡)۶</title>
+  
+
+  
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="building & deploying this blog with hugo!">
+  <meta name="twitter:description" content="my process of building this blog with hugo, ft. my cursed website build &amp; deployment pipeline">
+
+
+  
+
+
+  <link rel="stylesheet" href="/public/css/single.min.be779f459ad7e3aaf8afd0f80c6a61ca6c50993f5f18512532100ac6d93f0fa9.css" integrity="sha256-vnefRZrX46r4r9D4DGphymxQmT9fGFElMhAKxtk/D6k=" crossorigin="anonymous">
+
+
+  <link rel="stylesheet" href="/public/css/single.min.78a121b7d7a160420f9daab0ea13add66c37b9c44f27bba07b27207e2b0975d2.css" integrity="sha256-eKEht9ehYEIPnaqw6hOt1mw3ucRPJ7ugeycgfisJddI=" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+  <div id="wrapper">
+    
+
+
+<header id="header">
+  <h1>
+    <a href="/public/">･ﾟ✧ juni&#39;s blog ･ﾟ✧</a>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle theme">
+        <svg width="2rem" height="2rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 496">
+        <path fill="currentColor" d="M8,256C8,393,119,504,256,504S504,393,504,256,393,8,256,8,8,119,8,256ZM256,440V72a184,184,0,0,1,0,368Z" transform="translate(-8 -8)"/>
+        </svg>
+    </button>
+  </h1>
+
+  <nav>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17,11H16a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm0,4H16a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2ZM11,9h6a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2ZM21,3H7A1,1,0,0,0,6,4V7H3A1,1,0,0,0,2,8V18a3,3,0,0,0,3,3H18a4,4,0,0,0,4-4V4A1,1,0,0,0,21,3ZM6,18a1,1,0,0,1-2,0V9H6Zm14-1a2,2,0,0,1-2,2H7.82A3,3,0,0,0,8,18V5H20Zm-9-4h1a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2Zm0,4h1a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2Z"/></svg>
+</span>
+      
+      <a class="link" href="/public/posts/">Blog</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.88,16.88a3,3,0,0,0,0,4.24,3,3,0,0,0,4.24,0,3,3,0,0,0-4.24-4.24Zm2.83,2.83a1,1,0,0,1-1.42-1.42,1,1,0,0,1,1.42,0A1,1,0,0,1,5.71,19.71ZM5,12a1,1,0,0,0,0,2,5,5,0,0,1,5,5,1,1,0,0,0,2,0,7,7,0,0,0-7-7ZM5,8a1,1,0,0,0,0,2,9,9,0,0,1,9,9,1,1,0,0,0,2,0,11.08,11.08,0,0,0-3.22-7.78A11.08,11.08,0,0,0,5,8Zm10.61.39A15.11,15.11,0,0,0,5,4,1,1,0,0,0,5,6,13,13,0,0,1,18,19a1,1,0,0,0,2,0A15.11,15.11,0,0,0,15.61,8.39Z"/></svg>
+</span>
+      
+      <a class="link" href="/public/index.xml">RSS</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
+<path d="M10.07031,20.50291a1.00008,1.00008,0,0,0-1.18115-.9834c-1.30908.24024-2.96191.27637-3.40137-.958a5.70754,5.70754,0,0,0-1.83691-2.415,1.20073,1.20073,0,0,1-.1665-.10938,1,1,0,0,0-.93067-.64551H2.54883a.99965.99965,0,0,0-1,.99512c-.00391.81543.811,1.33789,1.1416,1.51465a4.4408,4.4408,0,0,1,.92383,1.35937c.36426,1.02344,1.42285,2.57617,4.46582,2.376.001.03516.00195.06836.00244.09863l.00439.26758a1,1,0,0,0,2,0l-.00488-.31836C10.07715,21.4951,10.07031,21.22068,10.07031,20.50291Zm10.667-15.126c.03174-.125.063-.26367.09034-.41992a6.27792,6.27792,0,0,0-.40821-3.293,1.002,1.002,0,0,0-.61572-.58007c-.356-.12012-1.67041-.35645-4.18408,1.25a13.86918,13.86918,0,0,0-6.354,0C6.76221.751,5.45459.9658,5.10205,1.07908a.99744.99744,0,0,0-.63135.584,6.3003,6.3003,0,0,0-.40332,3.35644c.02442.12793.05078.2461.07813.35449A6.26928,6.26928,0,0,0,2.89014,9.20311a8.42168,8.42168,0,0,0,.04248.92187c.334,4.60254,3.334,5.98438,5.42431,6.459-.04345.125-.083.25878-.11816.40039a1.00023,1.00023,0,0,0,1.94238.47851,1.6784,1.6784,0,0,1,.46778-.87793.99947.99947,0,0,0-.5459-1.74512c-3.4541-.39453-4.95362-1.80175-5.1792-4.89843a6.61076,6.61076,0,0,1-.03369-.73828,4.25769,4.25769,0,0,1,.91943-2.71289,3.022,3.022,0,0,1,.1958-.23145.99988.99988,0,0,0,.188-1.02441,3.3876,3.3876,0,0,1-.15527-.55567A4.09356,4.09356,0,0,1,6.1167,3.06346a7.54263,7.54263,0,0,1,2.415,1.17968,1.00877,1.00877,0,0,0,.82764.13282,11.77716,11.77716,0,0,1,6.17285.001,1.00549,1.00549,0,0,0,.83056-.13769,7.572,7.572,0,0,1,2.40528-1.19043,4.03977,4.03977,0,0,1,.0874,1.57812,3.205,3.205,0,0,1-.16895.60743.9999.9999,0,0,0,.188,1.02441c.07715.08691.1543.18066.22363.26855A4.12186,4.12186,0,0,1,20,9.20311a7.03888,7.03888,0,0,1-.0376.77734c-.22021,3.05566-1.72558,4.46387-5.1958,4.85937a1,1,0,0,0-.54541,1.7461,1.63079,1.63079,0,0,1,.46631.9082,3.06079,3.06079,0,0,1,.09229.81934v2.334C14.77,21.2949,14.77,21.78025,14.77,22.00291a1,1,0,1,0,2,0c0-.2168,0-.69238.00977-1.33984V18.31346a4.8815,4.8815,0,0,0-.15479-1.31153,4.25638,4.25638,0,0,0-.11621-.416,6.51258,6.51258,0,0,0,5.44531-6.42383A8.69677,8.69677,0,0,0,22,9.20311,6.13062,6.13062,0,0,0,20.7373,5.37693Z"/></svg>
+</span>
+      
+      <a class="link" href="https://github.com/caramel-juni">GitHub</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon">  <svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
+  <path d="M17,21.63H5a3,3,0,0,1-3-3v-8a1,1,0,0,0-2,0v8a5,5,0,0,0,5,5H17a1,1,0,0,0,0-2Zm4-18H7a3,3,0,0,0-3,3v10a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3v-10A3,3,0,0,0,21,3.63Zm-.41,2-5.88,5.88a1,1,0,0,1-1.42,0L7.41,5.63Zm1.41,11a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V7l5.88,5.88a3,3,0,0,0,4.24,0L22,7Z"/></svg>
+  </span>
+      
+      <a class="link" href="/public/pages/whoami/">whoami?</a>
+    </span>
+    
+  </nav>
+</header>
+<hr class="head-rule"></hr>
+    
+<main id="main" class="post">
+  
+  <div class="post-heading">
+    <h1 class="post-title">building &amp; deploying this blog with hugo!</h1>
+    <div class="publish-metadata">
+      
+      <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      8 January, 2025
+      
+      
+        &nbsp;
+        <span>
+          <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.4998 5.49994L18.3282 8.32837M3 20.9997L3.04745 20.6675C3.21536 19.4922 3.29932 18.9045 3.49029 18.3558C3.65975 17.8689 3.89124 17.4059 4.17906 16.9783C4.50341 16.4963 4.92319 16.0765 5.76274 15.237L17.4107 3.58896C18.1918 2.80791 19.4581 2.80791 20.2392 3.58896C21.0202 4.37001 21.0202 5.63634 20.2392 6.41739L8.37744 18.2791C7.61579 19.0408 7.23497 19.4216 6.8012 19.7244C6.41618 19.9932 6.00093 20.2159 5.56398 20.3879C5.07171 20.5817 4.54375 20.6882 3.48793 20.9012L3 20.9997Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          1755 words
+        </span>
+      
+      
+      
+        
+      
+      
+        &nbsp;
+        <span>
+          <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 7V12L14.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ~9 mins
+        </span>
+      
+    </div>
+  </div>
+
+  
+  <div>
+    
+    <a class="link tag" href='/public/tags/cloudflare'>#cloudflare</a>
+    
+    <a class="link tag" href='/public/tags/github'>#github</a>
+    
+    <a class="link tag" href='/public/tags/git'>#git</a>
+    
+    <a class="link tag" href='/public/tags/go'>#go</a>
+    
+    <a class="link tag" href='/public/tags/github-pages'>#github pages</a>
+    
+    <a class="link tag" href='/public/tags/markdown'>#markdown</a>
+    
+    <br></br>
+  </div>
+  
+  
+  
+  <details>
+    <summary>
+      <b>Table of Contents</b>
+    </summary>
+    <div class="toc numbered-subtitles"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#--why-did-i-move-away-from-jekyll">- why did i move away from jekyll?</a></li>
+    <li><a href="#--getting-up-and-running-with-hugo">- getting up and running with hugo:</a>
+      <ul>
+        <li><a href="#--setting-up-the-hugo-site">- setting up the hugo site:</a></li>
+        <li><a href="#--pushing-to-remote-git-repository--deploying-via-cloudflare-pages">- pushing to remote git repository &amp; deploying via cloudflare pages</a></li>
+      </ul>
+    </li>
+    <li><a href="#--my-final-note-taking-process-an-overview">- my final note-taking process: an overview</a></li>
+  </ul>
+</nav></div>
+  </details>
+  
+  
+  <article class="content numbered-subtitles">
+    
+    <h1 id="and-now---to-the-story-of-how-this-blog-was-born"><em>and now - to the story of how this blog was born!</em></h1>
+<blockquote>
+<p><em>(it&rsquo;s nothing special, but I thought I&rsquo;d document it for myself when i inevitably forget how i did it in the future, as well as any other wandering lost souls out there!)</em></p></blockquote>
+<p>i&rsquo;ve been meaning to re-jig my tech blog for a while now. for the last year and a bit, I experimented with the static site generator (SSG) <a href="https://jekyllrb.com/">jekyll</a>. jekyll is essentially a tool built in <a href="https://jekyllrb.com/docs/ruby-101/">ruby</a> that combines <strong>blog posts</strong> (typically written in markdown, <code>.md</code> files) with <strong>themes/config files</strong> to generate browser-renderable code (<code>HTML</code>, <code>CSS</code> and <code>JS</code>).</p>
+<p>this way, you can streamline your workflow, embed all sorts of cool features (comments, reactions, reading times, table of contents, automatic <a href="https://en.wikipedia.org/wiki/RSS">rss feeds</a>, post dating etc.), and most importantly <strong>avoid the horror of writing blog posts in raw HTML</strong>&hellip; but still being able to dabble in it when you please (providing your markdown-to-html renderer permits that).</p>
+<p><img src="/posts/10/Pasted%20image%2020250104220631.png" alt="markdown vs html"></p>
+<p>&hellip;and all of this within a <a href="https://www.geeksforgeeks.org/static-vs-dynamic-website/">static site</a> (all files pre-built on web-server, no databases) that is lightweight, responsive, maintainable and (relatively) quick to spin up.</p>
+<hr>
+<h2 id="--why-did-i-move-away-from-jekyll">- why did i move away from jekyll?</h2>
+<p>for three simple reasons:</p>
+<ol>
+<li>i&rsquo;d been meaning to try the SSG <a href="https://gohugo.io/">hugo</a>.</li>
+<li>hugo is built in <a href="https://go.dev/">golang</a>, and i&rsquo;d been wanting to poke around with go for a while now.</li>
+<li>i found (and confirmed, after trying hugo) ruby &amp; jekyll to be a bit more onerous to work with &amp; overly-verbose in both site layout &amp; base code. also - i noticed that jekyll had <a href="https://css-tricks.com/comparing-static-site-generator-build-times/">much slower build times</a>.</li>
+</ol>
+<hr>
+<h2 id="--getting-up-and-running-with-hugo">- getting up and running with hugo:</h2>
+<p>there are endless tutorials for this, and my pipeline is probably most similar to that of NetworkChuck in the <a href="https://www.youtube.com/watch?v=dnE7c0ELEH8&amp;t=907s">recent video</a> he released (not even a week before I went in on my own build, after sitting on the idea for ages haha - twas kinda spoopy :3).</p>
+<h3 id="--setting-up-the-hugo-site">- setting up the hugo site:</h3>
+<ol>
+<li>
+<p>Hugo has two simple dependencies: <code>git</code> (for code version control), and the <code>go</code> compiler toolchain. (here are where you can install <a href="https://git-scm.com/"><code>git</code></a> and <a href="https://go.dev/"><code>go</code></a>, if needed)</p>
+</li>
+<li>
+<p>after installing these, using the package manager of your choice (for me, <code>homebrew</code>), <a href="https://gohugo.io/installation/">install hugo</a> with <code>brew install hugo</code>.</p>
+</li>
+<li>
+<p>choose a directory for your site, and open it in your code editor. ensure hugo is in your system PATH so you can access it via the command line, and run <code>hugo -v</code> to ensure you&rsquo;re on the latest.</p>
+</li>
+<li>
+<p>then simply run <code>hugo new site [SITENAME]</code>, replacing <code>[SITENAME]</code> with whatever you&rsquo;d like to call the site (&amp; folder it lives in). hugo will then spinup the basic bones of your site, and navigate into the folder it creates with <code>cd</code>.</p>
+</li>
+<li>
+<p>initialise an empty git repository in this new folder with <code>git init</code>.</p>
+</li>
+<li>
+<p>to install a theme, browse them <a href="https://themes.gohugo.io/">here</a>, and follow the instructions in the theme&rsquo;s description (as some methods vary).
+however, the most common is installation is via a <strong>git submodule</strong> - which essentially will just pull down an existing git repo containing a pre-built hugo theme, and populate your site&rsquo;s <code>themes</code> folder with it. this way, when building your site, hugo will use it as a base layout, and add any changes made to your site on top of it.
+for me, i ran: <code>git submodule add https://github.com/michaelneuper/hugo-texify3.git themes/hugo-texify3</code></p>
+</li>
+<li>
+<p>now, your site&rsquo;s directory tree should look something like the following:</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%206.35.22%20pm.png" alt=""></p>
+<p>Folders &amp; files are fairly self-explanatory, with the main ones being:</p>
+<ul>
+<li><strong><code>hugo.toml</code></strong> - your site&rsquo;s configuration variables.</li>
+<li><strong><code>/content</code></strong> - where you create folders to store blog posts (<code>.md</code>) &amp; site pages</li>
+<li><strong><code>/assets</code></strong> - ideally where media is stored &amp; linked (although you can place them anywhere, theoretically, providing you link back to it correctly)</li>
+<li><strong><code>/public</code> (only created when website is built, see step 8.)</strong> - where your <strong>raw website</strong> (raw HTML, CSS, JS) will be built to and live. <strong>you shouldn&rsquo;t need to touch this folder.</strong></li>
+<li><strong><code>/themes</code></strong> - where all of your sites themes are installed (and specified/switched between in <code>hugo.toml</code>)</li>
+</ul>
+</li>
+<li>
+<p>sometimes, themes require installing <strong>other tools</strong> as part of their custom build process. this <em>should</em> be specified in the theme&rsquo;s documentation.
+for me, that required needing to install the following with <code>npm</code>:
+<code>npm install postcss-cli autoprefixer postcss-import</code></p>
+</li>
+<li>
+<p>to build your site locally, ensure you&rsquo;re in your site&rsquo;s base directory and run <code>hugo server -t [THEME-NAME]</code> (if using a theme).
+for me: <code>hugo server -t hugo-texify3</code></p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%206.33.44%20pm.png" alt=""></p>
+</li>
+<li>
+<p>now, navigate to the local address to see your site in action! it should live-reload as you make changes in your code editor.</p>
+</li>
+<li>
+<p><strong>[EXTRA]</strong> after analysing my specific theme&rsquo;s layout &amp; directory structure, I mirrored elements of it (thus overwriting what was contained in the <code>/themes</code> folder) to create the below folder structure, allowing me to:
+- add dedicated website pages in <code>/pages</code>
+- use <code>/posts</code> to hold my site post, with each in its own <strong>folder</strong> alongside any assets (images, media, etc.). this was done due to my particular workflow (writing in obsidian, see below).
+- split site configuration into two files for readability in <code>/config</code>: one for parameters (enabling/disabling certain features like social links, metadata etc.), and one for overall config &amp; layout.
+<img src="/posts/10/heya.png" alt=""></p>
+</li>
+</ol>
+<h3 id="--pushing-to-remote-git-repository--deploying-via-cloudflare-pages">- pushing to remote git repository &amp; deploying via cloudflare pages</h3>
+<p><em>(aka my weird custom workflow):</em></p>
+<ol>
+<li>
+<p>after running <code>git init</code>, ensure you are authenticated locally with <code>gh auth login</code> (requires use of Github CLI, install with <code>brew install gh</code> or similar)</p>
+</li>
+<li>
+<p>create a new repository on GitHub with:
+<code>gh repo create juni-blog --public --source=. --remote=origin</code></p>
+<ul>
+<li><code>--public</code>: sets repo as public, as cloudflare will need to monitor it for changes</li>
+<li><code>--source=.</code>: initialises the remote repository with your current local directory&rsquo;s contents</li>
+<li><code>--remote=origin</code>: sets up the remote URL for the repository</li>
+</ul>
+</li>
+<li>
+<p>now, just push the local branch to the remote with <code>git push -u origin main</code>.</p>
+<blockquote>
+<p>The <code>-u</code> (or <code>--set-upstream</code>) option in <code>git push</code> links your <strong>local branch</strong> (<code>main</code>) to the <strong>remote branch</strong> (<code>origin</code>) by default, allowing you to run <code>git push</code> and <code>git pull</code> commands in the future without adding <code>origin main</code> at the end (AKA specifying which remote branch to interact with by default).</p></blockquote>
+</li>
+<li>
+<p>navigate to your remote repository on github to check whether the changes have been propagated!</p>
+</li>
+<li>
+<p>setup, login to and open <a href="https://dash.cloudflare.com/">cloudflare pages</a> and navigate to your <strong><code>Workers &amp; Pages</code></strong> section, then <strong><code>Create</code></strong> to deploy a new &ldquo;site&rdquo;. The click <strong><code>Connect to Git</code></strong> and follow the prompts to authenticate, and link to the repository that you just pushed to.</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%206.56.36%20pm.png" alt=""></p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%206.58.49%20pm.png" alt=""></p>
+<p>After that, you can specify which branch Cloudflare should look for changes on, as any frameworks that you&rsquo;re using to build &amp; deploy the site, and where the built assets &amp; HTML files are stored. I selected <code>Hugo</code> (for obvious reasons), and it populated the build command with a simple <code>hugo</code>.</p>
+<p><em><strong>However</strong></em>, if your site requires other tools as part of the build process like mine (specified in step 8 in the previous section), be sure to <strong>install them on the remote server this site is running off</strong> with the relevant commands. for me, these are:
+<code>npm install postcss-cli autoprefixer postcss-import &amp;&amp; hugo</code>
+Cloudflare should provide logs from the remote server should your build fail, making troubleshooting fairly simple.</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%207.01.36%20pm.png" alt=""></p>
+</li>
+<li>
+<p>then you&rsquo;re all set! cloudflare will now watch for any changes made to the specified branch of this repo (for me, <code>main</code>), and if detected, it will automatically run <code>npm install postcss-cli autoprefixer postcss-import &amp;&amp; hugo</code> on its remote server(s) to build the updated version of my site, and then serve <strong>only</strong> the created HTML, CSS &amp; JS files in the specified output directory (for me, <code>public</code>).
+you should be able to access your site from the default URL created and provided to you, like <a href="https://b3ce9f44.juni-blog.pages.dev/">https://b3ce9f44.juni-blog.pages.dev/</a>.</p>
+</li>
+<li>
+<p><strong>[extra]</strong> to change this URL to a custom domain that you own, go to the <strong><code>Custom Domain</code></strong> section of the page you just created, click <strong>Set up a custom domain</strong>.</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%207.16.58%20pm.png" alt=""></p>
+<p>Then, follow the prompts. In my case, I associated the <code>myblog</code> CNAME with this &ldquo;Page&rdquo; (<code>juni-blog.pages.dev</code>).</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%207.13.22%20pm.png" alt=""></p>
+<p>Then, simply navigate to your domain&rsquo;s (<code>juni-mp4.com</code>) DNS records (for me, also managed via Cloudflare) and add a record for the CNAME you just specified.</p>
+<p><img src="/posts/10/Screenshot%202025-01-08%20at%207.16.02%20pm.png" alt=""></p>
+<p>This means that when someone visits <code>myblog.juni-mp4.com</code>, they will functionally be visiting <code>juni-blog.pages.dev</code>.</p>
+</li>
+</ol>
+<p>this combination of github &amp; cloudflare pages allows me to easily host &amp; deploy sites from <strong>different github repos</strong>, each built with <strong>all kinds of different build methods</strong> (from hand-coding raw HTML/CSS/JS to using various SSGs like <code>jekyll</code>, <code>hugo</code> etc.), as subdomains of my primary domain <code>juni-mp4.com</code> and all served securely &amp; quickly from Cloudflare&rsquo;s worldwide array of web servers. <em>(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)</em></p>
+<p><em><strong>Side note:</strong></em> <em>yes, whilst you could argue that you &ldquo;pay&rdquo; in the form of you &amp; your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security &amp; responsiveness that Cloudflare&rsquo;s network of servers provides, at least imho and for my use case.</em></p>
+<p>this very particular workflow &amp; need for flexibility is why i chose to use cloudflare instead of just deploying straight from <a href="https://pages.github.com/">Github Pages</a>.</p>
+<hr>
+<h2 id="--my-final-note-taking-process-an-overview">- my final note-taking process: an overview</h2>
+<ol>
+<li>
+<p>open my Obsidian &ldquo;blog&rdquo; vault, and create a new note within a folder in <code>posts</code>:</p>
+<p><img src="/posts/10/Screenshot%202025-01-04%20at%2010.27.21%20pm.png" alt=""></p>
+<p>the <a href="https://silentvoid13.github.io/Templater/introduction.html">Templater</a> plugin auto-generates the hugo-formatted frontmatter you see above in every new note, using the code block below inside the <code>template</code> file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">title</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">date</span>: <span style="color:#ae81ff">&lt;% tp.file.creation_date(&#34;YYYY-MM-DD&#34;) %&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">description</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">toc</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">math</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">draft</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">categories</span>: 
+</span></span><span style="display:flex;"><span><span style="color:#f92672">tags</span>:
+</span></span><span style="display:flex;"><span>---
+</span></span></code></pre></div></li>
+<li>
+<p>write the post :3. drag &amp; drop / copy-paste images as needed, after making sure the <code>Absolute path in vault</code> option is selected in your vault&rsquo;s <strong>Files and links</strong> settings. This may need to be tweaked depending on your site&rsquo;s layout later, but it worked for me, and is easily changed in bulk in VSCode or a similar editor via <strong>find &amp; replace</strong>.</p>
+<p><img src="/posts/10/Screenshot%202025-01-04%20at%2010.28.55%20pm.png" alt=""></p>
+</li>
+<li>
+<p>once I&rsquo;m finished writing, I switch to my full website directory tree in VSCode (my Obsidian &ldquo;blog&rdquo; vault is just the website&rsquo;s <code>content</code> folder, hence the <code>.obsidian</code> folder inside it).</p>
+<p><img src="/posts/10/Screenshot%202025-01-04%20at%2010.33.17%20pm.png" alt=""></p>
+<p>i run the build command <code>hugo server -t [theme-name-here]</code> in the VScode terminal to start a live server, and visit <code>http://localhost:1313/</code> to double check that the changes have been formatted properly.</p>
+<p><img src="/posts/10/Screenshot%202025-01-04%20at%2010.41.47%20pm.png" alt=""></p>
+</li>
+<li>
+<p>then a simple <code>git commit -m &quot;new blog post: hugo site build&quot; -a &amp;&amp; git push origin main</code> pushes the changes to my site where it&rsquo;s rebuilt &amp; served as new HTML pages!</p>
+</li>
+</ol>
+<hr>
+
+    
+  </article>
+
+  <button onclick="topFunction()" id="back-to-top" title="Go to top">Back to Top</button>
+
+  
+
+<div id="sharingbuttons">
+    
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=building%20%26%20deploying%20this%20blog%20with%20hugo%21&amp;url=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="mailto:?subject=building%20%26%20deploying%20this%20blog%20with%20hugo%21&amp;body=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f" target="_self" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 4H2C.9 4 0 4.9 0 6v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7.25 14.43l-3.5 2c-.08.05-.17.07-.25.07-.17 0-.34-.1-.43-.25-.14-.24-.06-.55.18-.68l3.5-2c.24-.14.55-.06.68.18.14.24.06.55-.18.68zm4.75.07c-.1 0-.2-.03-.27-.08l-8.5-5.5c-.23-.15-.3-.46-.15-.7.15-.22.46-.3.7-.14L12 13.4l8.23-5.32c.23-.15.54-.08.7.15.14.23.07.54-.16.7l-8.5 5.5c-.08.04-.17.07-.27.07zm8.93 1.75c-.1.16-.26.25-.43.25-.08 0-.17-.02-.25-.07l-3.5-2c-.24-.13-.32-.44-.18-.68s.44-.32.68-.18l3.5 2c.24.13.32.44.18.68z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://www.linkedin.com/sharing/share-offsite/?url=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 21.5h-5v-13h5v13zM4 6.5C2.5 6.5 1.5 5.3 1.5 4s1-2.4 2.5-2.4c1.6 0 2.5 1 2.6 2.5 0 1.4-1 2.5-2.6 2.5zm11.5 6c-1 0-2 1-2 2v7h-5v-13h5V10s1.6-1.5 4-1.5c3 0 5 2.2 5 6.3v6.7h-5v-7c0-1-1-2-2-2z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f&amp;resubmit=true&amp;title=building%20%26%20deploying%20this%20blog%20with%20hugo%21" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.75-1.64-6.07-1.72.08-1.1.4-3.05 1.52-3.7.72-.4 1.73-.24 3 .5C17.2 6.3 18.46 7.5 20 7.5c1.65 0 3-1.35 3-3s-1.35-3-3-3c-1.38 0-2.54.94-2.88 2.22-1.43-.72-2.64-.8-3.6-.25-1.64.94-1.95 3.47-2 4.55-2.33.08-4.45.7-6.1 1.72C4.86 8.98 3.96 8.5 3 8.5c-1.65 0-3 1.35-3 3 0 1.32.84 2.44 2.05 2.84-.03.22-.05.44-.05.66 0 3.86 4.5 7 10 7s10-3.14 10-7c0-.22-.02-.44-.05-.66 1.2-.4 2.05-1.54 2.05-2.84zM2.3 13.37C1.5 13.07 1 12.35 1 11.5c0-1.1.9-2 2-2 .64 0 1.22.32 1.6.82-1.1.85-1.92 1.9-2.3 3.05zm3.7.13c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9.8 4.8c-1.08.63-2.42.96-3.8.96-1.4 0-2.74-.34-3.8-.95-.24-.13-.32-.44-.2-.68.15-.24.46-.32.7-.18 1.83 1.06 4.76 1.06 6.6 0 .23-.13.53-.05.67.2.14.23.06.54-.18.67zm.2-2.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5.7-2.13c-.38-1.16-1.2-2.2-2.3-3.05.38-.5.97-.82 1.6-.82 1.1 0 2 .9 2 2 0 .84-.53 1.57-1.3 1.87z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f&amp;t=building%20%26%20deploying%20this%20blog%20with%20hugo%21" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path fill-rule="evenodd" d="M60.94 82.314L17 0h20.08l25.85 52.093c.397.927.86 1.888 1.39 2.883.53.994.995 2.02 1.393 3.08.265.4.463.764.596 1.095.13.334.262.63.395.898.662 1.325 1.26 2.618 1.79 3.877.53 1.26.993 2.42 1.39 3.48 1.06-2.254 2.22-4.673 3.48-7.258 1.26-2.585 2.552-5.27 3.877-8.052L103.49 0h18.69L77.84 83.308v53.087h-16.9v-54.08z"></path></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=building%20%26%20deploying%20this%20blog%20with%20hugo%21&amp;url=%2fpublic%2fposts%2f10%2fbuilding-hugo-blog%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.707 8.475C.275 8.64 0 9.508 0 9.508s.284.867.718 1.03l5.09 1.897 1.986 6.38a1.102 1.102 0 0 0 1.75.527l2.96-2.41a.405.405 0 0 1 .494-.013l5.34 3.87a1.1 1.1 0 0 0 1.046.135 1.1 1.1 0 0 0 .682-.803l3.91-18.795A1.102 1.102 0 0 0 22.5.075L.706 8.475z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+</div>
+  <div class="paginator">
+    
+    <a class="link" href="/public/posts/9/securely-self-hosting-site-npm/" title="&#39;securely&#39; setting up web server with nginx @ home &amp; self hosting">← prev</a>
+    
+    
+    <a class="link" href="/public/posts/12/reverting-to-an-older-version-of-a-github-project/" title="Branching out with a previous commit in a GitHub project">next →</a>
+    
+  </div>
+  <div class="comment">
+    
+    
+    
+    <script src="https://giscus.app/client.js"
+    data-repo="michaelneuper/website"
+    data-repo-id="R_kgDOIjPNaQ"
+    data-category="General"
+    data-category-id="DIC_kwDOIjPNac4CaklA"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme=""
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async>
+</script>
+
+  </div>
+  
+  
+</main>
+
+    <footer id="footer">
+  <div>
+    <span>Powered by coffee, caramel slice and pure indignation</span>
+  </div>
+  <div>
+    <span>Copyright © 2025 </span>
+  </div>
+</footer>
+
+  </div>
+
+  
+  <script src='/public/js/script.js' defer></script>
+
+  
+  
+
+  
+  
+
+  
+  
+
+</body>
+
+</html>

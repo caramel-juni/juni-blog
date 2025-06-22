@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Chezmoi on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/tags/chezmoi/</link>
+    <description>Recent content in Chezmoi on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/chezmoi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tracking &amp; Syncing my dotfiles!</title>
+      <link>/public/posts/16/managing-my-dotfiles/</link>
+      <pubDate>Sun, 22 Jun 2025 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/16/managing-my-dotfiles/</guid>
+      <description>&lt;p&gt;&lt;em&gt;.dotfiles or&amp;hellip; (.)²files?&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;--using-git--github--tracking-dotfiles-with-an-alias&#34;&gt;- Using Git + Github, &amp;amp; tracking dotfiles with an alias.&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;hellip; as mentioned on the &lt;a href=&#34;https://wiki.archlinux.org/title/Dotfiles#Tracking_dotfiles_directly_with_Git&#34;&gt;ever-wise &lt;em&gt;Arch Wiki&lt;/em&gt;.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 1. Create a bare Git repo to track dotfiles&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;git init --bare ~/.dotfiles
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 2. Create an alias to simplify dotfiles management.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Tells (/usr/bin/git) to link the git alias directory you just created to your real .config/&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;alias dotfiles&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 3. Hide untracked files in ~/ from cluttering &amp;#34;git status&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;dotfiles config status.showUntrackedFiles no
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Setup &amp;amp; communicate with this repo via &lt;code&gt;ssh&lt;/code&gt;, &lt;a href=&#34;https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux&#34;&gt;authenticating with a local private key&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 4. Generate SSH key for GitHub auth (if you haven&amp;#39;t got one already)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh-keygen -t ed25519 -C &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;you@example.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh-add ~/.ssh/id_ed25519
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Add the value of ~/.ssh/id_ed25519.pub as an entry in your Github --&amp;gt; Settings --&amp;gt; SSH &amp;amp; GPG Keys, via cat + copy-pasting, or however you&amp;#39;d like.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 5. Force git on your machine to always push to github with SSH instead of HTTPS&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;git config --global url.&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;git@github.com:&amp;#34;&lt;/span&gt;.insteadOf &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://github.com/&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 6. Set upstream branch as origin main &amp;amp; push via ssh!&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;dotfiles push --set-upstream origin main
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;then, upon changing my &lt;code&gt;dotfiles&lt;/code&gt;, can push to github with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;dotfiles status&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dotfiles add XXXXX&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dotfiles commit -m &amp;quot;Update shell and Hyprland config&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dotfiles push&lt;/code&gt; (to remote, via SSH)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;--or-using-a-dotfiles-manager-comme&#34;&gt;- or&amp;hellip; using a dotfiles manager, &lt;em&gt;comme &lt;a href=&#34;https://www.chezmoi.io/quick-start/#concepts&#34;&gt;&lt;code&gt;chezmoi&lt;/code&gt;&lt;/a&gt;.&lt;/em&gt;&lt;/h2&gt;
+&lt;p&gt;&amp;hellip; which is a tool that essentially creates a copy of your &lt;code&gt;dotfiles&lt;/code&gt; folder &lt;em&gt;&lt;strong&gt;outside&lt;/strong&gt;&lt;/em&gt; of your &lt;code&gt;/home&lt;/code&gt; directory (e.g. in &lt;code&gt;~/.local/share/chezmoi/private_dot_config/&lt;/code&gt;) to act as a place to &lt;strong&gt;stage&lt;/strong&gt;, &lt;strong&gt;synchronise&lt;/strong&gt; (with &lt;code&gt;git&lt;/code&gt;) &amp;amp; &lt;strong&gt;manage&lt;/strong&gt; changes to your local &lt;code&gt;dotfiles.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;I think of it as a &lt;strong&gt;remotely-connected playground for your &lt;code&gt;dotfiles&lt;/code&gt;&lt;/strong&gt;, to mess with them, pull them from remote repos etc., &lt;strong&gt;before applying the changes&lt;/strong&gt; (via symlinks, copying, or templating) into your &lt;strong&gt;local&lt;/strong&gt; home directory (e.g. &lt;code&gt;~/.config&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;--to-install&#34;&gt;- To install:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sudo pacman -S chezmoi&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chezmoi init&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Check what is &amp;amp; isn&amp;rsquo;t managed by &lt;code&gt;chezmoi&lt;/code&gt; with &lt;code&gt;chezmoi managed&lt;/code&gt;/&lt;code&gt;chezmoi unmanaged&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&amp;hellip; then follow steps on &lt;a href=&#34;https://www.chezmoi.io/quick-start/#start-using-chezmoi-on-your-current-machine&#34;&gt;this tutorial&lt;/a&gt; to connect to your repository &amp;amp; get your first commit. I&amp;rsquo;m using &lt;code&gt;chezmoi&lt;/code&gt; to push to the same remote &lt;code&gt;dotfiles&lt;/code&gt; repo created above, and so just &lt;code&gt;rebased&lt;/code&gt; my changes (overwriting the old, &lt;code&gt;chezmoi&lt;/code&gt;-less &lt;code&gt;dotfiles&lt;/code&gt; from above) to keep it nice and clean.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;--editing-your-dotfiles--using-chezmoi&#34;&gt;- Editing your dotfiles &amp;amp; using &lt;code&gt;chezmoi&lt;/code&gt;:&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;You can edit your &lt;code&gt;dotfiles&lt;/code&gt; in &lt;a href=&#34;https://www.chezmoi.io/user-guide/frequently-asked-questions/usage/#how-do-i-edit-my-dotfiles-with-chezmoi&#34;&gt;multiple ways&lt;/a&gt; with &lt;code&gt;chezmoi&lt;/code&gt;.&lt;/strong&gt;&lt;/p&gt;
+&lt;h4 id=&#34;-you-can-work-and-make-changes-within-the-locally-created-chezmoi-copy-of-your-dotfiles-apply-them-locally-and-push-them-to-remote-repo-once-done&#34;&gt;&lt;strong&gt;(&lt;code&gt;RECOMMENDED&lt;/code&gt;)&lt;/strong&gt; You can work and make changes within the locally-created &lt;code&gt;chezmoi&lt;/code&gt; copy of your &lt;code&gt;dotfiles&lt;/code&gt;, apply them locally, and push them to remote repo once done.&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to your &lt;code&gt;chezmoi&lt;/code&gt; dotfiles copy with &lt;code&gt;chezmoi cd&lt;/code&gt; (you should be able to tell that it&amp;rsquo;s the &lt;code&gt;chezmoi&lt;/code&gt;-managed copy - e.g. it&amp;rsquo;s called &lt;code&gt;private_dot_config&lt;/code&gt; for me).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Then, once you&amp;rsquo;ve made changes and are ready to see them/apply them to your &lt;strong&gt;real&lt;/strong&gt; &lt;code&gt;dotfiles&lt;/code&gt; (e.g to see changes live made to your desktop GUI), use &lt;code&gt;chezmoi status&lt;/code&gt; to list all changed files, &lt;code&gt;chezmoi diff&lt;/code&gt; to check any changes, and &lt;code&gt;chezmoi apply&lt;/code&gt; to copy the &lt;code&gt;chezmoi&lt;/code&gt;-managed files over to your &lt;em&gt;&lt;strong&gt;local&lt;/strong&gt;&lt;/em&gt; &lt;code&gt;dotfiles.&lt;/code&gt; Now, you should see any changes made &lt;strong&gt;reflected on your live system&lt;/strong&gt; (after reloading the given services, if applicable)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Then²&lt;/em&gt;, once you&amp;rsquo;re ready to update your remote repo with your changes, go through the usual &lt;code&gt;git commit&lt;/code&gt; process within the &lt;code&gt;chezmoi&lt;/code&gt;-managed directory.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;git status&lt;/code&gt; to see all changed files (within the &lt;code&gt;chezmoi&lt;/code&gt;-managed copy)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;git add .&lt;/code&gt; (or whatever files you want to add)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;git commit -m &amp;quot;cool changes&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;git push origin main&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;However&lt;/strong&gt;&lt;/em&gt;, you also have the option of&amp;hellip;&lt;/p&gt;
+&lt;h3 id=&#34;-ie-not-within-the-chezmoi-managed-copy-of-your-dotfiles&#34;&gt;&lt;strong&gt;&amp;hellip;making changes to your dotfiles normally&lt;/strong&gt; (i.e. not within the &lt;code&gt;chezmoi&lt;/code&gt;-managed copy of your &lt;code&gt;dotfiles&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;So, after you&amp;rsquo;re finished a &lt;a href=&#34;https://i.ytimg.com/vi/GlSa_gh8xaQ/maxresdefault.jpg&#34;&gt;particularly spicy ricing session&lt;/a&gt;, you can run:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;chezmoi status&lt;/code&gt; - to see what&amp;rsquo;s changed between your local &lt;code&gt;dotfiles&lt;/code&gt; and &lt;code&gt;chezmoi&lt;/code&gt;&amp;rsquo;s copy.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chezmoi add ~/.config/path/to/file.config&lt;/code&gt; - to add any &lt;strong&gt;locally-changed files&lt;/strong&gt; to &lt;code&gt;chezmoi&lt;/code&gt;&amp;rsquo;s tracked &amp;amp; &lt;code&gt;git&lt;/code&gt;-managed copy.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chezmoi apply -v&lt;/code&gt; to write these local changes to &lt;code&gt;chezmoi&#39;s&lt;/code&gt; working copy of your &lt;code&gt;dotfiles&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Then switch to the &lt;code&gt;chezmoi&lt;/code&gt;-managed copy with &lt;code&gt;cd chezmoi&lt;/code&gt;, and go through the usual &lt;code&gt;git commit&lt;/code&gt; process to &lt;strong&gt;update your remote repo if desired.&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;&lt;code&gt;chezmoi&lt;/code&gt;, importantly, allows you to do some of the following cool things:&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set up your &lt;code&gt;dotfiles&lt;/code&gt; on a new machine with a single command:
+&lt;code&gt;chezmoi init --apply https://github.com/$GITHUB_USERNAME/dotfiles.git&lt;/code&gt; (public repo - private requires &lt;a href=&#34;https://docs.github.com/en/get-started/git-basics/about-remote-repositories#cloning-with-https-urls&#34;&gt;other methods&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Using &lt;strong&gt;&lt;a href=&#34;https://www.chezmoi.io/reference/templates/&#34;&gt;templates&lt;/a&gt;&lt;/strong&gt; to manage &lt;code&gt;dotfiles&lt;/code&gt; between different machines/distros.&lt;/li&gt;
+&lt;li&gt;Encrypting your &lt;code&gt;dotfiles&lt;/code&gt; using &lt;strong&gt;&lt;a href=&#34;https://www.chezmoi.io/user-guide/password-managers/&#34;&gt;secrets from your password manager&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

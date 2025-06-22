@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Distro Hopping on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/tags/distro-hopping/</link>
+    <description>Recent content in Distro Hopping on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 25 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/distro-hopping/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Backing up linux .config &amp; apps to move to a new device/distro</title>
+      <link>/public/posts/8/backup-linux-config-and-apps/</link>
+      <pubDate>Wed, 25 Dec 2024 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/8/backup-linux-config-and-apps/</guid>
+      <description>&lt;h1 id=&#34;burn-it-all-down-or&#34;&gt;burn it all down&amp;hellip; or?&lt;/h1&gt;
+&lt;p&gt;Ahh, a tale born from the first time that I dipped my toes into the weird, wide and wonderful world of distro-hopping. Because sometimes, instead of building it all from scratch again (like so many of us are fond of doing), bringing your old config, notes of a previous home, with you is desirable. Because don&amp;rsquo;t lie - we won&amp;rsquo;t get those hours spent tweaking shell configs to look &lt;em&gt;just&lt;/em&gt; how we like it back.&lt;/p&gt;
+&lt;p&gt;In any case - the following (somewhat high-level) overview should get you up and running on a new system/distro fairly quickly, in an environment&lt;/p&gt;
+&lt;p&gt;Basically, most user settings (from my research - some may be hidden in other corners, but this got me back to a similar place) are stored in `/home/[user-name]/.config/.&lt;/p&gt;
+&lt;p&gt;So, for me, this was at &lt;code&gt;/home/juni/.config/&lt;/code&gt;. So, simply copy that folder to an external drive or over the network, and paste it in the corresponding place on your new system.&lt;/p&gt;
+&lt;h2 id=&#34;--copying-over-config&#34;&gt;- Copying over .config&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;cd /home/[user]/&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;navigate to the user&amp;rsquo;s directory where the &lt;code&gt;.config&lt;/code&gt; folder is stored.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;`sudo tar cvzf configs-backup.tgz .config/&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;creates a compressed archive (&lt;code&gt;configs-backup.tgz&lt;/code&gt;) of the &lt;code&gt;.config&lt;/code&gt; folder with &lt;code&gt;tar&lt;/code&gt;, and passing &lt;code&gt;cvzf&lt;/code&gt; as parameters:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;c&lt;/code&gt; - &lt;code&gt;c&lt;/code&gt;reate a new archive&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;v&lt;/code&gt; - enable &lt;code&gt;v&lt;/code&gt;erbose output, to monitor the progress&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;z&lt;/code&gt; - compress with the g&lt;code&gt;z&lt;/code&gt;ip algorithm&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;f&lt;/code&gt; - specifies the name of the created archive &lt;code&gt;f&lt;/code&gt;ile (in this case, &lt;code&gt;configs-backup.tgz&lt;/code&gt;)
+Alternatively, you could use a tool like &lt;code&gt;rsync&lt;/code&gt; to copy the &lt;strong&gt;entire&lt;/strong&gt; &lt;code&gt;/home/&lt;/code&gt; folder to an external ssd, although this can take a &lt;strong&gt;long time&lt;/strong&gt; depending on its size. I&amp;rsquo;d recommend &lt;code&gt;rsync&lt;/code&gt; over just copying with &lt;code&gt;cp&lt;/code&gt;, as &lt;code&gt;rsync&lt;/code&gt; copies all files &lt;strong&gt;whilst&lt;/strong&gt; retaining &lt;code&gt;owner/group/other&lt;/code&gt; file permissions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If connecting an external SSD to copy to:
+`sudo fdisk -l&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;lists the connected disk drives and their corresponding filesystem location - like `/dev/sda1)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;`sudo mkdir -p /mnt/externalssd&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;creates a folder on your computer&amp;rsquo;s filesystem to act as a &lt;strong&gt;mount point:&lt;/strong&gt; i.e. a place where you can access files stored on a mounted external SSD.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;`sudo mount -t exfat /dev/sda1 /mnt/externalssd&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Mounting the SSD (the device we found at &lt;code&gt;/dev/sda1&lt;/code&gt;) &amp;lsquo;in&amp;rsquo; this new folder created in the previous step, allowing all the files on it to appear in &lt;code&gt;/mnt/externalssd&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You should now be able to navigate there with &lt;code&gt;cd /mnt/externalssd&lt;/code&gt; and run a &lt;code&gt;ls&lt;/code&gt; to show the SSD&amp;rsquo;s existing contents. Then, copy the compressed .config file with &lt;code&gt;cp /home/[user]/configs-backup.tgz /mnt/externalssd&lt;/code&gt; (may require prepending &lt;code&gt;sudo&lt;/code&gt; depending on user permissions) - and you&amp;rsquo;re done!.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you opted for &lt;code&gt;rsync&lt;/code&gt; instead above:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo rsync -avh --progress /home/[user]/ /mnt/externalssd/home-backup&lt;/code&gt;
+- &lt;code&gt;a&lt;/code&gt; - preserves file &lt;code&gt;a&lt;/code&gt;ttributes &amp;amp; ensures a &lt;strong&gt;mirror copy&lt;/strong&gt; is created, including permissions, symlinks, etc.
+- &lt;code&gt;v&lt;/code&gt; - enable &lt;code&gt;v&lt;/code&gt;erbose output, to monitor the progress
+- &lt;code&gt;h&lt;/code&gt; - ensures output is &lt;code&gt;h&lt;/code&gt;uman-readable
+- &lt;code&gt;--progress&lt;/code&gt; - displays real-time progress for troubleshooting purposes.&lt;/p&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Now just unmount the drive with &lt;code&gt;sudo umount /mnt/externalssd&lt;/code&gt; (or don&amp;rsquo;t - live on the edge ;), plug it into new machine/distro, and copy the file you created over into &lt;code&gt;/home/[new-user]/&lt;/code&gt; with &lt;code&gt;cp&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Make sure to de-compress the file (if you used &lt;code&gt;tar&lt;/code&gt;) with &lt;code&gt;tar xvzf configs-backup.tgz&lt;/code&gt;, so it can be read by the system!&lt;/p&gt;
+&lt;p&gt;Then reboot, and your settings should be re-applied! :3&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;--bonus-grabbing-a-list-of-installed-packages-to-re-install&#34;&gt;- BONUS: Grabbing a list of installed packages to re-install&lt;/h2&gt;
+&lt;p&gt;Optionally, if you want to grab a list of all packages/apps installed on your current distro to bring over and auto-install on your new one, run the following:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Debian-based distros (e.g. Ubuntu, Kali, etc.):&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;dpkg --get-selections &amp;gt; installed-packages.txt&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;saves a list of all packages to &lt;code&gt;installed-packages.txt&lt;/code&gt;. Save this on an external SSD or transfer to the new machine via the network.
+&lt;strong&gt;On the New Machine/Distro:&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sudo apt update&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Navigate to where &lt;code&gt;installed-packages.txt&lt;/code&gt; is stored (on the local machine), and run &lt;code&gt;sudo dpkg --set-selections &amp;lt; installed-packages.txt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;sudo apt-get dselect-upgrade&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The process is similar for distributions using different package managers like &lt;code&gt;yum&lt;/code&gt;, &lt;code&gt;pacman&lt;/code&gt;, or &lt;code&gt;rpm&lt;/code&gt;, the concept is the same but the commands will differ slightly. A little net/manual searching will fix you up :P.&lt;/p&gt;
+&lt;h2 id=&#34;--related-helpful-articles&#34;&gt;- Related helpful articles:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://help.ubuntu.com/community/BackupYourSystem/TAR&#34;&gt;https://help.ubuntu.com/community/BackupYourSystem/TAR&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system&#34;&gt;https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

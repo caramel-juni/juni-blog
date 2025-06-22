@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VLAN on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/tags/vlan/</link>
+    <description>Recent content in VLAN on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/vlan/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>pfSense, UniFi, &amp; VLANS: a tale of three toddlers</title>
+      <link>/public/posts/5/pfsense-and-unifi/</link>
+      <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/5/pfsense-and-unifi/</guid>
+      <description>&lt;p&gt;Hi all! After a long and troublesome battle against the gods of networking and the intricacies of pfSense, I have
+finally developed a process (that I understand, at least) for &lt;strong&gt;initialising an &lt;code&gt;ETHX&lt;/code&gt; port to pass VLAN traffic that is
+tagged externally by a switching device&lt;/strong&gt; (in my case, a &lt;a href=&#34;https://ubiquitistore.com.au/product/ubiquiti-unifi-48-port-managed-gigabit-layer2-and-layer3-switch-with-auto-sensing-802-3at-poe-and-802-3bt-poe-touch-display-660w-gen2-usw-pro-48-poe-au/&#34;&gt;&lt;em&gt;USW-PRO 48PoE UniFi managed
+switch&lt;/em&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;In the hope that this can be of use to others out there, I have written up my process for doing so below. But first,
+here is a contextual network diagram for my setup:&lt;/p&gt;
+&lt;img src=&#34;/public/posts/5/netdia.png&#34; width=&#34;&#34; height=&#34;&#34;&gt;
+&lt;h2 id=&#34;--steps-taken&#34;&gt;- Steps taken:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Plug in an ethernet cable to an unused port on the pfSense box. In my case, this is &lt;strong&gt;ETH3&lt;/strong&gt; (gray cable).
+&lt;img src=&#34;/public/posts/5/eth3.jpg&#34; width=&#34;50%&#34; height=&#34;50%&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Login to the pfSense router GUI via the browser (default address is &lt;code&gt;192.168.0.1&lt;/code&gt;, or &lt;code&gt;XXX.XXX.XXX.1&lt;/code&gt; depending on how you&amp;rsquo;ve setup the management LAN it&amp;rsquo;s on), and navigate to &lt;strong&gt;Interfaces / Switches / Ports&lt;/strong&gt;.&lt;/p&gt;
+ &lt;img src=&#34;/public/posts/5/image.png&#34; width=&#34;50%&#34; height=&#34;50%&#34;&gt;
+ &lt;br&gt;&lt;/br&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check the targeted port ETH3 is &lt;strong&gt;ACTIVE&lt;/strong&gt;, and then edit the &lt;strong&gt;Port VID&lt;/strong&gt; to be &lt;strong&gt;whatever VLAN tag you want to be applied to passing UNTAGGED traffic by DEFAULT.&lt;/strong&gt; For ex, &lt;code&gt;Port VID = 80&lt;/code&gt; will mean any &lt;strong&gt;untagged passing traffic&lt;/strong&gt; through ETH3 gets a VLAN tag of &lt;code&gt;80&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image0.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Interfaces / Switches / VLANs&lt;/strong&gt;: Click &lt;code&gt;+ Add Tag&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add whatever VLAN tag you wish to target (in this case &lt;code&gt;80&lt;/code&gt;), give it a description, and add the &lt;strong&gt;Members&lt;/strong&gt;, AKA &lt;mark style=&#34;color:rgb(199, 255, 252)&#34;&gt;&lt;span style=&#34;color: rgb(255, 209, 4); font-weight: bold; font-style: italic;&#34;&gt;the numbered ETH ports on the pfSense (ETH1 to ETH10) that will allow this VLAN through.&lt;/span&gt;&lt;/mark&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;I have added ETH3 as a member&lt;/strong&gt;, and told pfSense to expect the traffic passing through to be &lt;strong&gt;untagged&lt;/strong&gt;.
+This means that any &lt;strong&gt;untagged traffic through ETH3 will be assigned a VLAN tag of 80&lt;/strong&gt; (ETH3’s Port VID, as specified
+in Step 1).
+Don&amp;rsquo;t forget to click &lt;code&gt;Save&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;mark class=&#34;simple-highlight&#34;&gt;NOTE:&lt;/mark&gt;
+&lt;em&gt;&lt;strong&gt;ALWAYS ADD 9 &amp;amp; 10 as tagged members by default&lt;/strong&gt;&lt;/em&gt; &lt;em&gt;(&lt;strong&gt;WHY&lt;/strong&gt; this must be done is beyond the scope of this tutorial
+but perhaps write an article about it soon as it explains a lot about how the internals of pfSense actually functions.
+alternatively, for the curious, read the docs
+&lt;a href=&#34;https://docs.netgate.com/pfsense/en/latest/solutions/xg-7100-1u/switch-overview.html&#34;&gt;here&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Key:&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;9t&lt;/code&gt; = Port 9, expecting &amp;amp; passing &lt;strong&gt;VLAN-tagged&lt;/strong&gt; traffic ONLY.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;3&lt;/code&gt; = Port 3, expecting &amp;amp; passing &lt;strong&gt;untagged&lt;/strong&gt; traffic ONLY.
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Interfaces / Assignments / VLANs.&lt;/strong&gt; Click &lt;code&gt;+ Add&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image5.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;For &lt;strong&gt;Parent Interface&lt;/strong&gt;, select whatever interface corresponds to &lt;code&gt;ETH3&lt;/code&gt;, or a &lt;code&gt;lagg&lt;/code&gt; group it’s part of (if any have
+been created by default/you). In my case, I have &lt;code&gt;lagg0&lt;/code&gt; bundling connections from ETH1-8 for load balancing purposes,
+so it&amp;rsquo;s my parent interface.&lt;/p&gt;
+&lt;p&gt;Assign it the desired VLAN tag (&lt;code&gt;80&lt;/code&gt; in my case) and give it a description before pressing &lt;code&gt;Save&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-6.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Interfaces / Interface Assignments&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;You should now be able to select the VLAN you created from the dropdown next to &lt;strong&gt;Available Network Ports&lt;/strong&gt;, and click &lt;code&gt;+ Add&lt;/code&gt; to assign it to an Interface.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-7.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You can then set up the interface by clicking on the blue link, assigning an ip type, range, and other cool stuff. I set
+this interface (&amp;amp; thus &lt;code&gt;VLAN 80&lt;/code&gt;) to have an ip range of &lt;code&gt;192.168.80.X/24&lt;/code&gt;. This can be any ip address as long as it
+doesn’t encroach on any other existing interface ranges, but I recommend sticking within the conventional ranges for
+unrouted private networking to avoid confusing things (192.168.0.0, 172.16.0.0 and 10.0.0.0).&lt;/p&gt;
+&lt;p&gt;Then tick &lt;code&gt;Enable Iterface&lt;/code&gt; and press &lt;code&gt;Save&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-8.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t forget to &lt;code&gt;Apply Changes&lt;/code&gt; before navigating away!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-9.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to &lt;strong&gt;Services / DHCP Server&lt;/strong&gt; and select the interface name you just created (&lt;code&gt;ADLSWITCH&lt;/code&gt; for me).&lt;/p&gt;
+&lt;p&gt;Here, we can set the pool of IP addresses this interface will assign to connected devices on &lt;code&gt;VLAN 80&lt;/code&gt;, as well as any
+other custom settings. The only one I set was &lt;strong&gt;Domain Name&lt;/strong&gt; to &lt;code&gt;switch.adl&lt;/code&gt;, to make it nice and easy to see which
+network I am on if I do an &lt;code&gt;ipconfig&lt;/code&gt;/&lt;code&gt;ifconfig&lt;/code&gt; from a connected device.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-10.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-11.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Then scroll down to the bottom and click &lt;code&gt;Save&lt;/code&gt;.
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to &lt;strong&gt;Firewall / Rules&lt;/strong&gt;, and select the interface name you just created (&lt;code&gt;ADLSWITCH&lt;/code&gt; for me). Click on &lt;code&gt;Add&lt;/code&gt; to create a temporary &amp;ldquo;allow all&amp;rdquo; rule to test the configuration works.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-12.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Use the following settings:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-13.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;🔥 Don&amp;rsquo;t forget to harden your firewall later, based on your use case and security purposes! 🔥&lt;/strong&gt;&lt;/em&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;strong&gt;Services / DNS Resolver&lt;/strong&gt; and check that &lt;strong&gt;Network Interfaces has “All” selected.&lt;/strong&gt; This is &lt;mark class=&#34;simple-highlight&#34;&gt;very important&lt;/mark&gt; - and will ensure the DNS Resolver will know to look for and operate on your new network interface.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-14.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Scroll down and press &lt;code&gt;Save&lt;/code&gt;, &lt;em&gt;THEN&lt;/em&gt; scroll back up and press &lt;code&gt;Apply Changes&lt;/code&gt; at the top of the page.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-15.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-16.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;From here, you should now have a functioning VLAN setup, managed by pfSense. Give yourself a pat on the back and have a cookie, you&amp;rsquo;ve earned it ~ 🍪!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Now, referring back to my network diagram, I want to also setup a UniFi USW switch to assign VLANs to devices based on the port they&amp;rsquo;re plugged into.&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;--assigning-vlans-based-on-port-in-unifi&#34;&gt;- Assigning VLANs based on port in UniFi:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Connect a &lt;strong&gt;factory-reset USW switch&lt;/strong&gt; to the end of the ethernet cable plugged into &lt;code&gt;ETH3&lt;/code&gt;, and the switch SHOULD receive an IP on the IP range you specified for &lt;code&gt;VLAN 80&lt;/code&gt; above (for me, &lt;code&gt;192.168.80.X/24&lt;/code&gt;), if you&amp;rsquo;ve followed the above steps correctly &lt;em&gt;(and you sacrificed at least two goats to the networking gods earlier that day)&lt;/em&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;From there you can follow the normal process of adopting the switch to a UniFi controller like here, but my use case was a little more compex.&lt;/p&gt;
+&lt;p&gt;If you want to adopt the switch to a &lt;strong&gt;remote UniFi controller&lt;/strong&gt; like I did (i.e. one that is hosted on &lt;strong&gt;another
+LAN/remote network&lt;/strong&gt;, for example &lt;code&gt;172.16.66.X/24&lt;/code&gt;), &lt;strong&gt;connect a laptop to the USW switch&lt;/strong&gt;, make sure it receives an IP
+&lt;strong&gt;on the same network as the switch&lt;/strong&gt; (in my case, the one using &lt;code&gt;VLAN 80&lt;/code&gt; - &lt;code&gt;192.168.80.X/24&lt;/code&gt;), and then ssh into the
+switch with default creds &lt;code&gt;ubnt/ubnt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;e.g &lt;code&gt;ssh ubnt@[ip-of-switch]&lt;/code&gt; &amp;amp; then enter &lt;code&gt;ubnt&lt;/code&gt; when prompted for the password.
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Issue the command: &lt;code&gt;set-inform http://ip-of-host:8080/inform&lt;/code&gt; to direct the switch to the IP of your unifi cloud controller. (e.g. the command I ran was &lt;code&gt;set-inform http://172.16.66.35:8080/inform&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Make sure this address is reachable from VLAN 80’s network by adjusting pfSense firewall rules !!&lt;/strong&gt;&lt;/em&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;On your unifi controller, go to &lt;strong&gt;System / Networks&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Create a &lt;code&gt;VLAN-only&lt;/code&gt; UniFi ‘Network’, specifying &lt;strong&gt;the same VLAN ID as set in pfSense&lt;/strong&gt; (in my case, &lt;code&gt;80&lt;/code&gt; - these MUST
+MATCH between UniFi &amp;amp; pfSense!).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-17.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-18.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;strong&gt;System / Profiles&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Here, create a port profile with the &lt;strong&gt;native network&lt;/strong&gt; being set as &lt;em&gt;&lt;strong&gt;whatever VLAN-ONLY network you want all passing
+traffic tagged as.&lt;/strong&gt;&lt;/em&gt;
+E.g. by setting the &lt;strong&gt;native network&lt;/strong&gt; to the UniFi network we just created will &lt;strong&gt;add the &lt;code&gt;VLAN 80&lt;/code&gt; to passing
+traffic&lt;/strong&gt;, &lt;strong&gt;BEFORE it reaches the pfSense.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-19.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-20.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Recall from Step 3 that we configured ETH3 to &lt;strong&gt;add a VLAN tag of &lt;code&gt;80&lt;/code&gt;&lt;/strong&gt; (matching its &lt;code&gt;Port VID&lt;/code&gt;) to &lt;strong&gt;all UNTAGGED traffic&lt;/strong&gt; passing through it by default.&lt;/p&gt;
+&lt;p&gt;Thus, to allow a device hooked up to the switch to be assigned &amp;amp; routed to a &lt;strong&gt;different VLAN&lt;/strong&gt; (VLAN 75, per say) you
+MUST remember to go to &lt;strong&gt;Interfaces / Switches / VLANs&lt;/strong&gt; and &lt;strong&gt;ADD whatever pfsense port the switch is connected to&lt;/strong&gt;
+(ETH3 in our case) to the ‘members’ section of the &lt;strong&gt;corresponding VLAN&lt;/strong&gt; (e.g. &lt;code&gt;VLAN 75&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;If the traffic is arriving pre-tagged by the switch, make sure to add the member as &lt;strong&gt;tagged&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;See below: now BOTH ports &lt;code&gt;ETH3&lt;/code&gt; &amp;amp; &lt;code&gt;ETH7&lt;/code&gt; are configured to let through traffic tagged with &lt;strong&gt;VLAN 75&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-21.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/5/image-4.png&#34; alt=&#34;&#34;&gt;
+&lt;br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;--and-now-youre-done&#34;&gt;- And now&amp;hellip; you&amp;rsquo;re done!&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Now you should be able to use a UniFi switch to tag traffic coming through particular ports with specified VLAN tags, &amp;amp; have it routed to the corresponding VLAN network on the pfsense!&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;centre-h2&#34;&gt; &lt;img src=&#34;/public/posts/5/celebrate.gif&#34;&gt; &lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

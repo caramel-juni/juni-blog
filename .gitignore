@@ -1,10 +1,6 @@
-.DS_Store
-themes/hugo-texify3
-public/*
-public/.DS_Store
-resources/*
-content/.DS_Store
-content/.obsidian
-content/.trash
-content/posts/template.md
-content/posts/future-posts
+# Ignore everything
+/*
+
+# But not this folder (keep public and its contents)
+!/public/
+!/public/**

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/categories/git/</link>
+    <description>Recent content in Git on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 12 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/categories/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Branching out with a previous commit in a GitHub project</title>
+      <link>/public/posts/12/reverting-to-an-older-version-of-a-github-project/</link>
+      <pubDate>Sun, 12 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/12/reverting-to-an-older-version-of-a-github-project/</guid>
+      <description>&lt;p&gt;&lt;em&gt;just a lil guide for my future self when i inevitably forget this again (and it&amp;rsquo;s probably still wrong oops-)&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;--steps&#34;&gt;- Steps:&lt;/h2&gt;
+&lt;h3 id=&#34;--find-the-commit-you-want-to-revert-to--copy-its-hash&#34;&gt;- Find the commit you want to revert to &amp;amp; copy its hash:&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/12/Screenshot%202025-01-12%20at%2011.23.40%20am.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;--return-to-your-open-project&#34;&gt;- Return to your open project:&lt;/h3&gt;
+&lt;p&gt;for me, i was working with a locally-cloned copy in VScode, connected to the remote repo&amp;rsquo;s &lt;code&gt;main&lt;/code&gt; branch, and was up to date with all of the changes made.&lt;/p&gt;
+&lt;h3 id=&#34;--create-new-remote-branch&#34;&gt;- Create new remote branch:&lt;/h3&gt;
+&lt;p&gt;open the terminal and run &lt;code&gt;git checkout -b &amp;lt;new-remote-branch&amp;gt; &amp;lt;old-commit-hash&amp;gt;&lt;/code&gt;. This will create a new remote branch &lt;strong&gt;populated with the project at the time of the commit hash you specified&lt;/strong&gt;, and switch you to it.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;E.g., &lt;code&gt;git checkout -b names-update 4853ecf5765b7174465e604e8fd8bdd5430ea84f&lt;/code&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;--push-this-new-remote-branch&#34;&gt;- Push this new remote branch:&lt;/h3&gt;
+&lt;p&gt;then, simply push this new remote branch with &lt;code&gt;git push origin &amp;lt;new-remote-branch&amp;gt;&lt;/code&gt;, and check that it appears on github!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/12/Screenshot%202025-01-12%20at%2011.28.11%20am.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Now you can operate off this new branch, containing the project in a previous commit&amp;rsquo;s state.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;yes&amp;hellip; i know this is a very simple thing to do that i only just kinda grasped &amp;gt;.&amp;lt;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PACK files in .git - a rabbit hole</title>
+      <link>/public/posts/6/pack-files-git/</link>
+      <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/6/pack-files-git/</guid>
+      <description>&lt;h2 id=&#34;--so-how-did-we-get-here-see_no_evil&#34;&gt;- so, how did we get here? &amp;#x1f648;&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;git stores all historical changes to a repo in a PACK file inside the hidden .git folder. This allows restoration of previous repo states in the future.&lt;/p&gt;
+&lt;p&gt;However, if you upload files like binaries, photos or videos, this file gets VERY large, even if you delete them in a future commit.&lt;/p&gt;
+&lt;h3 id=&#34;--enter-git-filter-repo&#34;&gt;- enter: &lt;code&gt;git-filter-repo&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Luckily a tool exists called git-filter-repo that you can download and use (python script) to analyse your PACK file, and filter out any unwanted bits (e.g. file extensions, paths, etc.). This can dramatically reduce the size of the PACK file.&lt;/p&gt;
+&lt;p&gt;It works in a single command (with the option to point the command to a file defining what to keep/exclude, if preferred). Just download the python script, move it to your working directory (MUST have .git folder, as it will analyze this), and run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --analyze&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;(the use of &amp;ldquo;python&amp;rdquo; or similar, and giving the script a .py extension, is necessary sometimes on windows, depending on what shell you&amp;rsquo;re running the above command in, your PATH configuration etc. - but just think of it as running a script file and passing the &amp;ldquo;analyze&amp;rdquo; argument to it)&lt;/p&gt;
+&lt;p&gt;It then produces a folder with text files showing files/repo paths (historical) and their relative sizes. From here, you can search through and figure out how to filter what you&amp;rsquo;d like to remove.&lt;/p&gt;
+&lt;p&gt;When you&amp;rsquo;ve decided what you&amp;rsquo;re going to remove and how (path/extension/date etc.), I recommend doing a &amp;ndash;dry-run, which will produce two files (the original version and the modified version) and comparing what elements were removed with your filter. For me, using the following command, I went from 6473 lines of committed files to 1428.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --path &#39;old-site/audio/&#39; --path &#39;old-site/photos/&#39; --invert-paths --dry-run --force&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(I used &amp;ndash;force as I had one untracked change - being moving the git-filter-repo script file itself into the directory - that I didn&amp;rsquo;t want to push to git)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;And to make &lt;em&gt;&amp;ldquo;the changes&amp;rdquo;&lt;/em&gt; &lt;em&gt;&lt;strong&gt;[PERMANENTLY!! CAUTION!!!]&lt;/strong&gt;&lt;/em&gt; remove the &lt;code&gt;--dry-run&lt;/code&gt; component of the above command, resulting the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --path &#39;old-site/audio/&#39; --path &#39;old-site/photos/&#39; --invert-paths&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Run that, and then there you go - it should make the changes to the .git folder in your repo, stripping out the components of the file you filtered and producing a new, (hopefully) smaller &lt;code&gt;PACK&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;Now, it just needs to be pushed to the remote repository with:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push --all [remote-repo-URL]&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;--and-then&#34;&gt;- and then&amp;hellip;&lt;/h3&gt;
+&lt;p&gt;well, if all things went well, you should have shaved a few KBs/MBs/GBs off your &lt;code&gt;PACK&lt;/code&gt; file - well done! grab yourself a cookie, you&amp;rsquo;ve well and truly earnt it :3&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/6/saya-banner.jpeg&#34; alt=&#34;saya-congrats&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;--other-helpful-links&#34;&gt;- other helpful links:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=eoF2p3ZDiAc&#34;&gt;https://www.youtube.com/watch?v=eoF2p3ZDiAc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&#34;&gt;https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

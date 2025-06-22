@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Esxi on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/categories/esxi/</link>
+    <description>Recent content in Esxi on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 15 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="/public/categories/esxi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ESXi, TPMs, fTPMs, &amp; Intel PTT: A love story</title>
+      <link>/public/posts/1/esxi-upgrade-and-tpm/</link>
+      <pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/1/esxi-upgrade-and-tpm/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Here&amp;rsquo;s a quick little rabbit-hole of upgrading ESXi clients, and a crash course on TPMs and their equivalents! 💛&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;--tpmftpmintel-ptt-rundown&#34;&gt;- TPM/fTPM/Intel PTT Rundown&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Trusted Platform Module&lt;/strong&gt; - &lt;em&gt;a secure crypto-processor that generates, stores, and limits the use of cryptographic keys required to access system files!!!!!&lt;/em&gt; &lt;a href=&#34;https://www.onlogic.com/company/io-hub/tpm-for-windows-11-what-is-it-and-what-about-intel-ptt-and-amd-ftpm/&#34;&gt;(reference)&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The traditional &lt;strong&gt;TPM&lt;/strong&gt; is a physical security &amp;amp; encryption-focused chip on the motherboard, but can also be built into the firmware of the computer&amp;rsquo;s CPU, which are notably &lt;strong&gt;AMD Firmware TPM (fTPM) and Intel Platform Trust Technology (PTT).&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Both of these have been built to &lt;strong&gt;include TPM 2.0 functionality&lt;/strong&gt;, but may not be enabled by default in the machine&amp;rsquo;s BIOS, so be sure to check. It&amp;rsquo;s typically found under the &lt;code&gt;Security&lt;/code&gt; tab/option in BIOS, which are all different in design, so Google is your bestie when discovering how to access a feature on your specific model 🤪.&lt;/p&gt;
+&lt;h2 id=&#34;--upgrading-esxi-client&#34;&gt;- Upgrading ESXi client:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Enable TSM-SSH via ESXi GUI to enable SSH into your machine&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Via &lt;code&gt;Manage&lt;/code&gt; &amp;ndash;&amp;gt; &lt;code&gt;Services&lt;/code&gt; &amp;ndash;&amp;gt; &lt;code&gt;TSM-SSH&lt;/code&gt;, then right click and &lt;code&gt;Run&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/1/img1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.tomshardware.com/how-to/use-ssh-connect-to-remote-computer&#34;&gt;SSH&lt;/a&gt; into your ESXi box, then check &lt;a href=&#34;https://esxi-patches.v-front.de/&#34;&gt;https://esxi-patches.v-front.de/&lt;/a&gt; for the latest ESXi patches. Patches are cumulative, so download the latest one (at the top, highlighted).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/1/img3.png&#34; alt=&#34;Alt text&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Copy the text from the pop-up generated after clicking the link, and paste it into the shell of the system via SSH. The code is provided below for convenience (lines separated), but DO NOT just copy the second code block, as it will download the version for &lt;code&gt;build 8.0b-21203435&lt;/code&gt;, which will change over time.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;esxcli network firewall ruleset set -e true -r httpClient&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;esxcli software profile update -p [YOUR-VER-HERE] \ -d https://hostupdate.vmware.com/software/VUM/PRODUCTION/main/vmw-depot-index.xml&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Systems with an Intel PTT may throw an error of not having a supported TPM 2.0, and if so, check that Intel PTT is enabled in BIOS before attaching &lt;code&gt;--no-hardware-warning&lt;/code&gt; to the second code block:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Revised Code for Intel PTT (and potentially AMD fTPMs):&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;esxcli software profile update -p [YOUR-VER-HERE] \ -d https://hostupdate.vmware.com/software/VUM/PRODUCTION/main/vmw-depot-index.xml --no-hardware-warning&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When running the second code block, the update is downloaded, which can take 5-10minutes depending on your internet connection. Cross your fingers, pray to the networking gods, and just wait 🙏.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/1/img2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Finally, run the final code block to adjust the firewall rules now you&amp;rsquo;re done:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;esxcli network firewall ruleset set -e false -r httpClient&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then reboot to apply changes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once rebooted, SSH into the box and run &lt;code&gt;vmware -v&lt;/code&gt; to check the version of ESXi and that the update has been successful.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;💛 Hope this was of some help &amp;amp; best of luck! 💛&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

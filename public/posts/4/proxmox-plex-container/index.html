@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" style="font-size: 105%">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <meta name="author" content="">
+
+  
+  
+  <meta name="description" content="Plex Setup on CentOS Container (Proxmox)">
+  
+
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/public//images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/public//images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public//images/favicon-16x16.png">
+
+  
+  
+  <meta name="keywords" content='hugo latex theme blog texify texify2 texify3 michael neuper'>
+  
+
+  
+  
+  <link rel="stylesheet" href='/public/katex/katex.min.css'>
+<script defer defer src='/public/katex/katex.min.js'></script>
+<script defer src='/public/katex/contrib/auto-render.min.js'></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+  
+
+  
+  
+
+  
+  <meta property="og:url" content="/public/posts/4/proxmox-plex-container/">
+  <meta property="og:site_name" content="juni&#39;s blog ٩(◕‿◕｡)۶">
+  <meta property="og:title" content="Plex & Proxmox">
+  <meta property="og:description" content="Plex Setup on CentOS Container (Proxmox)">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-08-04T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-01-04T16:35:46+10:30">
+    <meta property="article:tag" content="Containers">
+    <meta property="article:tag" content="CentOS">
+    <meta property="article:tag" content="Plex">
+
+
+  
+  <link rel="canonical" href="/public/posts/4/proxmox-plex-container/">
+
+  
+  
+  
+  <meta itemprop="name" content="Plex & Proxmox">
+  <meta itemprop="description" content="Plex Setup on CentOS Container (Proxmox)">
+  <meta itemprop="datePublished" content="2023-08-04T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-01-04T16:35:46+10:30">
+  <meta itemprop="wordCount" content="1310">
+  <meta itemprop="keywords" content="Containers,CentOS,Plex">
+
+  
+  
+  
+    <link rel="stylesheet" href="/public/css/common.min.e562d763c6d0825495eb17de8b2c1d9800cf7c08db1c36accedf77a5fccfc4b9.css" integrity="sha256-5WLXY8bQglSV6xfeiywdmADPfAjbHDaszt93pfzPxLk=" crossorigin="anonymous">
+  
+
+  
+  
+    <link rel="stylesheet" href="/public/css/content.min.ba38eba94cb47fef9936258c42d11ff19fa9686a30b38e783773fe3f15eb44dc.css" integrity="sha256-ujjrqUy0f&#43;&#43;ZNiWMQtEf8Z&#43;paGows454N3P&#43;PxXrRNw=" crossorigin="anonymous">
+  
+
+  
+  
+  <title>Plex &amp; Proxmox - juni&#39;s blog ٩(◕‿◕｡)۶</title>
+  
+
+  
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Plex & Proxmox">
+  <meta name="twitter:description" content="Plex Setup on CentOS Container (Proxmox)">
+
+
+  
+
+
+  <link rel="stylesheet" href="/public/css/single.min.be779f459ad7e3aaf8afd0f80c6a61ca6c50993f5f18512532100ac6d93f0fa9.css" integrity="sha256-vnefRZrX46r4r9D4DGphymxQmT9fGFElMhAKxtk/D6k=" crossorigin="anonymous">
+
+
+  <link rel="stylesheet" href="/public/css/single.min.78a121b7d7a160420f9daab0ea13add66c37b9c44f27bba07b27207e2b0975d2.css" integrity="sha256-eKEht9ehYEIPnaqw6hOt1mw3ucRPJ7ugeycgfisJddI=" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+  <div id="wrapper">
+    
+
+
+<header id="header">
+  <h1>
+    <a href="/public/">･ﾟ✧ juni&#39;s blog ･ﾟ✧</a>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle theme">
+        <svg width="2rem" height="2rem" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 496">
+        <path fill="currentColor" d="M8,256C8,393,119,504,256,504S504,393,504,256,393,8,256,8,8,119,8,256ZM256,440V72a184,184,0,0,1,0,368Z" transform="translate(-8 -8)"/>
+        </svg>
+    </button>
+  </h1>
+
+  <nav>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M17,11H16a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm0,4H16a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2ZM11,9h6a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2ZM21,3H7A1,1,0,0,0,6,4V7H3A1,1,0,0,0,2,8V18a3,3,0,0,0,3,3H18a4,4,0,0,0,4-4V4A1,1,0,0,0,21,3ZM6,18a1,1,0,0,1-2,0V9H6Zm14-1a2,2,0,0,1-2,2H7.82A3,3,0,0,0,8,18V5H20Zm-9-4h1a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2Zm0,4h1a1,1,0,0,0,0-2H11a1,1,0,0,0,0,2Z"/></svg>
+</span>
+      
+      <a class="link" href="/public/posts/">Blog</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M2.88,16.88a3,3,0,0,0,0,4.24,3,3,0,0,0,4.24,0,3,3,0,0,0-4.24-4.24Zm2.83,2.83a1,1,0,0,1-1.42-1.42,1,1,0,0,1,1.42,0A1,1,0,0,1,5.71,19.71ZM5,12a1,1,0,0,0,0,2,5,5,0,0,1,5,5,1,1,0,0,0,2,0,7,7,0,0,0-7-7ZM5,8a1,1,0,0,0,0,2,9,9,0,0,1,9,9,1,1,0,0,0,2,0,11.08,11.08,0,0,0-3.22-7.78A11.08,11.08,0,0,0,5,8Zm10.61.39A15.11,15.11,0,0,0,5,4,1,1,0,0,0,5,6,13,13,0,0,1,18,19a1,1,0,0,0,2,0A15.11,15.11,0,0,0,15.61,8.39Z"/></svg>
+</span>
+      
+      <a class="link" href="/public/index.xml">RSS</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon"><svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
+<path d="M10.07031,20.50291a1.00008,1.00008,0,0,0-1.18115-.9834c-1.30908.24024-2.96191.27637-3.40137-.958a5.70754,5.70754,0,0,0-1.83691-2.415,1.20073,1.20073,0,0,1-.1665-.10938,1,1,0,0,0-.93067-.64551H2.54883a.99965.99965,0,0,0-1,.99512c-.00391.81543.811,1.33789,1.1416,1.51465a4.4408,4.4408,0,0,1,.92383,1.35937c.36426,1.02344,1.42285,2.57617,4.46582,2.376.001.03516.00195.06836.00244.09863l.00439.26758a1,1,0,0,0,2,0l-.00488-.31836C10.07715,21.4951,10.07031,21.22068,10.07031,20.50291Zm10.667-15.126c.03174-.125.063-.26367.09034-.41992a6.27792,6.27792,0,0,0-.40821-3.293,1.002,1.002,0,0,0-.61572-.58007c-.356-.12012-1.67041-.35645-4.18408,1.25a13.86918,13.86918,0,0,0-6.354,0C6.76221.751,5.45459.9658,5.10205,1.07908a.99744.99744,0,0,0-.63135.584,6.3003,6.3003,0,0,0-.40332,3.35644c.02442.12793.05078.2461.07813.35449A6.26928,6.26928,0,0,0,2.89014,9.20311a8.42168,8.42168,0,0,0,.04248.92187c.334,4.60254,3.334,5.98438,5.42431,6.459-.04345.125-.083.25878-.11816.40039a1.00023,1.00023,0,0,0,1.94238.47851,1.6784,1.6784,0,0,1,.46778-.87793.99947.99947,0,0,0-.5459-1.74512c-3.4541-.39453-4.95362-1.80175-5.1792-4.89843a6.61076,6.61076,0,0,1-.03369-.73828,4.25769,4.25769,0,0,1,.91943-2.71289,3.022,3.022,0,0,1,.1958-.23145.99988.99988,0,0,0,.188-1.02441,3.3876,3.3876,0,0,1-.15527-.55567A4.09356,4.09356,0,0,1,6.1167,3.06346a7.54263,7.54263,0,0,1,2.415,1.17968,1.00877,1.00877,0,0,0,.82764.13282,11.77716,11.77716,0,0,1,6.17285.001,1.00549,1.00549,0,0,0,.83056-.13769,7.572,7.572,0,0,1,2.40528-1.19043,4.03977,4.03977,0,0,1,.0874,1.57812,3.205,3.205,0,0,1-.16895.60743.9999.9999,0,0,0,.188,1.02441c.07715.08691.1543.18066.22363.26855A4.12186,4.12186,0,0,1,20,9.20311a7.03888,7.03888,0,0,1-.0376.77734c-.22021,3.05566-1.72558,4.46387-5.1958,4.85937a1,1,0,0,0-.54541,1.7461,1.63079,1.63079,0,0,1,.46631.9082,3.06079,3.06079,0,0,1,.09229.81934v2.334C14.77,21.2949,14.77,21.78025,14.77,22.00291a1,1,0,1,0,2,0c0-.2168,0-.69238.00977-1.33984V18.31346a4.8815,4.8815,0,0,0-.15479-1.31153,4.25638,4.25638,0,0,0-.11621-.416,6.51258,6.51258,0,0,0,5.44531-6.42383A8.69677,8.69677,0,0,0,22,9.20311,6.13062,6.13062,0,0,0,20.7373,5.37693Z"/></svg>
+</span>
+      
+      <a class="link" href="https://github.com/caramel-juni">GitHub</a>
+    </span>
+    
+    <span class="nav-bar-item">
+      
+        <span class="icon">  <svg width="1em" height="1em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
+  <path d="M17,21.63H5a3,3,0,0,1-3-3v-8a1,1,0,0,0-2,0v8a5,5,0,0,0,5,5H17a1,1,0,0,0,0-2Zm4-18H7a3,3,0,0,0-3,3v10a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3v-10A3,3,0,0,0,21,3.63Zm-.41,2-5.88,5.88a1,1,0,0,1-1.42,0L7.41,5.63Zm1.41,11a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V7l5.88,5.88a3,3,0,0,0,4.24,0L22,7Z"/></svg>
+  </span>
+      
+      <a class="link" href="/public/pages/whoami/">whoami?</a>
+    </span>
+    
+  </nav>
+</header>
+<hr class="head-rule"></hr>
+    
+<main id="main" class="post">
+  
+  <div class="post-heading">
+    <h1 class="post-title">Plex &amp; Proxmox</h1>
+    <div class="publish-metadata">
+      
+      <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      4 August, 2023
+      
+      
+        &nbsp;
+        <span>
+          <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.4998 5.49994L18.3282 8.32837M3 20.9997L3.04745 20.6675C3.21536 19.4922 3.29932 18.9045 3.49029 18.3558C3.65975 17.8689 3.89124 17.4059 4.17906 16.9783C4.50341 16.4963 4.92319 16.0765 5.76274 15.237L17.4107 3.58896C18.1918 2.80791 19.4581 2.80791 20.2392 3.58896C21.0202 4.37001 21.0202 5.63634 20.2392 6.41739L8.37744 18.2791C7.61579 19.0408 7.23497 19.4216 6.8012 19.7244C6.41618 19.9932 6.00093 20.2159 5.56398 20.3879C5.07171 20.5817 4.54375 20.6882 3.48793 20.9012L3 20.9997Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          1310 words
+        </span>
+      
+      
+      
+        
+      
+      
+        &nbsp;
+        <span>
+          <svg width="0.75em" height="0.75em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 7V12L14.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ~7 mins
+        </span>
+      
+    </div>
+  </div>
+
+  
+  <div>
+    
+    <a class="link tag" href='/public/tags/containers'>#containers</a>
+    
+    <a class="link tag" href='/public/tags/centos'>#centOS</a>
+    
+    <a class="link tag" href='/public/tags/plex'>#plex</a>
+    
+    <br></br>
+  </div>
+  
+  
+  
+  <details>
+    <summary>
+      <b>Table of Contents</b>
+    </summary>
+    <div class="toc numbered-subtitles"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#--so-why-did-i-write-this">- So&hellip; why did I write this?</a></li>
+    <li><a href="#--prerequisites">- Prerequisites:</a></li>
+    <li><a href="#--setting-up-a-container">- Setting up a container</a>
+      <ul>
+        <li><a href="#testing-the-waters-1-lxc-vs-vms"><strong>Testing the waters #1: LXC vs VMs.</strong></a></li>
+      </ul>
+    </li>
+    <li><a href="#--installing-plex-media-server">- Installing Plex Media Server:</a></li>
+    <li><a href="#--passing-usbexternal-devices-to-lxc">- Passing USB/External Devices to LXC:</a></li>
+    <li><a href="#--formatting-drive-to-use-gpt---guid-partitioning-table">- Formatting drive to use GPT - GUID Partitioning Table.</a>
+      <ul>
+        <li><a href="#-miscellaneous-images-to-be-used-in-future-tutorials-if-i-return-to-this-">~ miscellaneous images to be used in future tutorials if i return to this ~</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+  </details>
+  
+  
+  <article class="content numbered-subtitles">
+    
+    <blockquote>
+<p>&hellip; &amp; pulling files from an external SSD &amp;/or an internal HDD. <strong>Yes, this was&hellip; interesting.</strong></p></blockquote>
+<h2 id="--so-why-did-i-write-this">- So&hellip; why did I write this?</h2>
+<p>My primary objective was to setup a home lab, which could do the following things:</p>
+<ul>
+<li>
+<p>run LXCs of various linux distros (Kali via external install, and CentOS via Proxmox template) <strong>[done]</strong></p>
+</li>
+<li>
+<p>run a Plex Media server, accessing both external SSD and internal HDD data <strong>[done]</strong></p>
+</li>
+<li>
+<p>Setup a VPN for use in the server <strong>[done]</strong></p>
+</li>
+<li>
+<p>Setup VPNs for containers <strong>[yet to do]</strong></p>
+</li>
+<li>
+<p>Automatically pull files from various torrents safely and securely with Deluge (?), Sonarr, Radarr, and Prowlarr <strong>[yet to do]</strong></p>
+</li>
+<li>
+<p>Run my previously self-hosted Minecraft server <strong>[yet to do]</strong></p>
+</li>
+<li>
+<p>act as a NAS to store and backup family photos <strong>[for the future, if I upgrade hardware]</strong></p>
+</li>
+</ul>
+<p>I know that my use case is incredibly specific, but after scouring the web for guides on the various problems I had along the way, I was exhausted enough to pull together a guide of how I accomplished each of the above.</p>
+<blockquote>
+<p><strong>This guide will focus on setting up a Plex Media server in a Proxmox container, which can access data from both an external SSD and an internal HDD.</strong></p></blockquote>
+<h2 id="--prerequisites">- Prerequisites:</h2>
+<ul>
+<li><strong>Installing Proxmox on a server</strong></li>
+</ul>
+<h2 id="--setting-up-a-container">- Setting up a container</h2>
+<ol>
+<li>
+<p><strong>Download a template for the distribution of Linux you want to use.</strong></p>
+<p>Simple? Should be. Pick your desired flavour of Linux and it should be available via accessing your local volume [<code>local (juniproxmox)</code> for me] and selecting <code>CT Templates</code> &gt; <code>Templates</code>. However, <em>make sure what you&rsquo;re selecting is <strong>actually a LXC</strong>, and not another version of Ubuntu/Debian (otherwise it will run like a VM inside of a container. And yes, that means it&rsquo;s s l o w)</em>. The difference is somewhat explored in the folllowing &lsquo;shallow dive&rsquo; of sorts, and practically illustrated within Proxmox in Figure 2.</p>
+<blockquote>
+<h3 id="testing-the-waters-1-lxc-vs-vms"><strong>Testing the waters #1: LXC vs VMs.</strong></h3>
+<p>From what I understand, LXCs are essentially lightweight VMs, which share the kernel (lowest-level software interfacing with computer hardware) with the host OS. In my case, Proxmox (based on Debian Linux) will share its kernel with an installed LXC (in this case, CentOS 9 Stream), allowing the LXC to run significantly faster than a VM by having access to the same kernel. However, I am unsure if you can run a LXC of Debian/Ubuntu on top of existing Debian/Ubuntu infrastructure, as I haven&rsquo;t been able to easily find LXC images for these online. However, I am most likely very much misunderstanding the nature of LXCs in general and am missing something obvious, so if anyone knows, please feel free to enlighten me by contacting me ~</p></blockquote>
+<p><strong>Figure 1: Finding CT Templates</strong></p>
+<p><img src="/posts/4/e50f054c-0ace-44ed-bb6e-96fe76c6619b.png" alt=""></p>
+<p><strong>Figure 2: LXC Images vs Standard Image</strong></p>
+<p><img src="/posts/4/069bb70d-9876-4d23-bcd9-f770b78adedc.png" alt=""></p>
+</li>
+<li>
+<p><strong>After the CT template has been downloaded, installing is fairly straightforward.</strong>
+I followed the following video to get up to speed on what was recommended for a container install.</p>
+<p>Here are the specs for my installation of CentOS 9 Stream, running a Plex Server which would have 2-3 users MAX (these are only testing values, take them with a grain of salt!):</p>
+<p><img src="/posts/4/2434eda3-0247-48df-947b-9614ee44e17d.png" alt=""></p>
+<p><img src="/posts/4/5d7670d4-5dc4-40d8-8de1-a02feb276966.png" alt=""></p>
+</li>
+<li>
+<p>Once the container has been setup and you can access the console (visuals included in above video, it&rsquo;s pretty straightforward), login using root (and preferably setup a lower privilege user if you&rsquo;re using the system for important things) and your container is ready to use!.</p>
+</li>
+</ol>
+<hr>
+<h2 id="--installing-plex-media-server">- Installing Plex Media Server:</h2>
+<p><em>~ to be written ~</em></p>
+<hr>
+<h2 id="--passing-usbexternal-devices-to-lxc">- Passing USB/External Devices to LXC:</h2>
+<p>Now, for my use case, I wanted to use an external SSD containing media files as a sort of &lsquo;attached storage device&rsquo; and have my Plex media server access and make the files streamable. However, doing so is a little complicated. It&rsquo;s covered rather well in <a href="https://www.youtube.com/@virtualizeeverything">Virtualize Everything&rsquo;s</a> series of videos, but it can be confusing as there are quite a few ways of doing it, depending on one&rsquo;s use case.</p>
+<p><em><strong>My use case: Pass an External Device to a LXC WITHOUT ERASING DATA FROM IT, to transfer/access files on the External Device.</strong></em></p>
+<p>Based on the following video: <a href="https://www.youtube.com/watch?v=6oripI7F8tw">Add USB storage to Proxmox (CLI)</a></p>
+<blockquote>
+<p>Note: The term &lsquo;SSD&rsquo; can be used interchangeably with &lsquo;External HDD/USB&rsquo; &ndash;&gt; this should work for all removable storage solutions.</p></blockquote>
+<p>Plug in your USB to the server (in my case, my brother&rsquo;s old laptop). Nagivate to <code>'your home node' (juniproxmox)</code> -&gt; <code>disks</code>. Here is a display of all of the functioning devices connected to your machine. My laptop has an internal HDD (listed as <code>sda</code>), and an internal SSD (used as the boot drive, <code>sdb</code>). I also have a USB plugged in to the device, occupying <code>sdc</code>.</p>
+<p>Thus, my SSD is <code>sdd</code>, which checks out given it&rsquo;s been identified as <code>SSD</code> with <code>1.00TB</code> of storage. It is best practice to have the drive using GPT, although I will be attempting to use one still using MBR, as it has worked before for me.</p>
+<p><img src="/posts/4/212d77a6-88cd-47d8-9c21-d186f24e2da4.png" alt=""></p>
+<h2 id="--formatting-drive-to-use-gpt---guid-partitioning-table">- Formatting drive to use GPT - GUID Partitioning Table.</h2>
+<ol>
+<li>
+<p>On your main node, open the shell and use <code>fdisk -l</code> to list all available disks on the system in the CLI.</p>
+<p>After the text has been printed, look near the bottom for your chosen device, in my case <code>sdd</code>. It&rsquo;s product name and actual usable size (smaller than but close to its advertised size) should be listed too. Take note of the device&rsquo;s identifier, which includes its location on the system. For me, it&rsquo;s listed under &lsquo;Device&rsquo; at the bottom, as <code>/dev/sdd1</code>.</p>
+<p><img src="/posts/4/d7352649-ef16-4aeb-b109-5d164023e67e.png" alt=""></p>
+</li>
+<li>
+<p>Now we know the path to the device, we need to make a folder on our home system for it to be accessed from. I think of this as creating its new address - the SSD has gone from floating around in the ether, homeless, and we&rsquo;re now making a directory on our system for it to call home. I poked around a bit using the <code>cd</code> (<code>cd</code> = <strong>change directory</strong> - essentially how you traverse your Linux system in the CLI) and <code>ls</code> (<code>ls</code> = <strong>list contents in current directory</strong>) commands, before deciding to make a new directory in <code>/mnt/pve/</code>, called <code>EXT_SSD</code>. I suggest navigating to where you&rsquo;d like the directory to be and <strong>then</strong> making it, as not all system&rsquo;s file structures are the same.</p>
+<p>Once I found the desired folder, create the directory using:</p>
+<p><code>mkdir YOUR_DIRECTORY_NAME_HERE</code></p>
+<p><img src="/posts/4/f1562673-1712-4dab-8f58-dfbc0106998a.png" alt=""></p>
+</li>
+<li>
+<p>Now, we need to mount the device so that the system can access its contents. This command takes the following form:</p>
+</li>
+</ol>
+<p><code>mount [physical device identifier] [new folder 'home']</code></p>
+<p>This is essentially telling the system to point my SSD (which has the identifier <code>/dev/sdd1</code>, as we identified in step 1) to live in the directory <code>/mnt/pve/EXT_SSD/</code> so its contents can be accessed by my home user.</p>
+<p>To test if it worked, I navigated to its new home with <code>cd mnt/pve/EXT_SSD/</code> and then listed its contents and&hellip; success! I can now access my files on an external SSD within Linux.</p>
+<p><img src="/posts/4/4a1ee575-6f6a-4ca2-a52f-045261e4163b.png" alt=""></p>
+<blockquote>
+<p><strong>Important Note:</strong> Every time my system reboots, the device needs to be manually re-mounted (aka repeating step 3) in order to access the files on the SSD. To avoid having to do this, I modified the crontabs file (specifies tasks to be run ahead of time/periodically) using <code>sudo crontabs -e</code> . I added <code>@reboot</code> to specify the task to run upon reboot, added <code>sudo</code> at the start just to ensure it runs even if logging in with a lower privilege user, and ended it with &amp; to tell the system to keep going &amp; setting up after running this command:</p>
+<blockquote>
+<p><img src="/posts/4/924eddd8-ffd1-47a6-93eb-8c324bde0a91.png" alt="">.</p>
+<blockquote>
+<p>I learnt this <a href="https://www.youtube.com/watch?v=Gl9HS7-H0mI">here</a>.</p></blockquote></blockquote></blockquote>
+<hr>
+<h3 id="-miscellaneous-images-to-be-used-in-future-tutorials-if-i-return-to-this-">~ miscellaneous images to be used in future tutorials if i return to this ~</h3>
+<p><img src="/posts/4/1327d5e1-354e-4fb3-a104-a1144c537db4.png" alt=""></p>
+<p><img src="/posts/4/435c87ee-a2ff-41e3-831b-8b6b19ea58dd.png" alt=""></p>
+<p><img src="/posts/4/a323178c-9191-4dde-823d-99a3d0bef9e2.png" alt=""></p>
+<p><img src="/posts/4/84802981-73da-427a-a7ab-1d2ef2e235cd.png" alt=""></p>
+<hr>
+<p><strong>DISCLAIMER:</strong> <em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️</em></p>
+<hr>
+
+    
+  </article>
+
+  <button onclick="topFunction()" id="back-to-top" title="Go to top">Back to Top</button>
+
+  
+
+<div id="sharingbuttons">
+    
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=Plex%20%26%20Proxmox&amp;url=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="mailto:?subject=Plex%20%26%20Proxmox&amp;body=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f" target="_self" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 4H2C.9 4 0 4.9 0 6v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7.25 14.43l-3.5 2c-.08.05-.17.07-.25.07-.17 0-.34-.1-.43-.25-.14-.24-.06-.55.18-.68l3.5-2c.24-.14.55-.06.68.18.14.24.06.55-.18.68zm4.75.07c-.1 0-.2-.03-.27-.08l-8.5-5.5c-.23-.15-.3-.46-.15-.7.15-.22.46-.3.7-.14L12 13.4l8.23-5.32c.23-.15.54-.08.7.15.14.23.07.54-.16.7l-8.5 5.5c-.08.04-.17.07-.27.07zm8.93 1.75c-.1.16-.26.25-.43.25-.08 0-.17-.02-.25-.07l-3.5-2c-.24-.13-.32-.44-.18-.68s.44-.32.68-.18l3.5 2c.24.13.32.44.18.68z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://www.linkedin.com/sharing/share-offsite/?url=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 21.5h-5v-13h5v13zM4 6.5C2.5 6.5 1.5 5.3 1.5 4s1-2.4 2.5-2.4c1.6 0 2.5 1 2.6 2.5 0 1.4-1 2.5-2.6 2.5zm11.5 6c-1 0-2 1-2 2v7h-5v-13h5V10s1.6-1.5 4-1.5c3 0 5 2.2 5 6.3v6.7h-5v-7c0-1-1-2-2-2z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f&amp;resubmit=true&amp;title=Plex%20%26%20Proxmox" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.75-1.64-6.07-1.72.08-1.1.4-3.05 1.52-3.7.72-.4 1.73-.24 3 .5C17.2 6.3 18.46 7.5 20 7.5c1.65 0 3-1.35 3-3s-1.35-3-3-3c-1.38 0-2.54.94-2.88 2.22-1.43-.72-2.64-.8-3.6-.25-1.64.94-1.95 3.47-2 4.55-2.33.08-4.45.7-6.1 1.72C4.86 8.98 3.96 8.5 3 8.5c-1.65 0-3 1.35-3 3 0 1.32.84 2.44 2.05 2.84-.03.22-.05.44-.05.66 0 3.86 4.5 7 10 7s10-3.14 10-7c0-.22-.02-.44-.05-.66 1.2-.4 2.05-1.54 2.05-2.84zM2.3 13.37C1.5 13.07 1 12.35 1 11.5c0-1.1.9-2 2-2 .64 0 1.22.32 1.6.82-1.1.85-1.92 1.9-2.3 3.05zm3.7.13c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9.8 4.8c-1.08.63-2.42.96-3.8.96-1.4 0-2.74-.34-3.8-.95-.24-.13-.32-.44-.2-.68.15-.24.46-.32.7-.18 1.83 1.06 4.76 1.06 6.6 0 .23-.13.53-.05.67.2.14.23.06.54-.18.67zm.2-2.8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5.7-2.13c-.38-1.16-1.2-2.2-2.3-3.05.38-.5.97-.82 1.6-.82 1.1 0 2 .9 2 2 0 .84-.53 1.57-1.3 1.87z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f&amp;t=Plex%20%26%20Proxmox" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140"><path fill-rule="evenodd" d="M60.94 82.314L17 0h20.08l25.85 52.093c.397.927.86 1.888 1.39 2.883.53.994.995 2.02 1.393 3.08.265.4.463.764.596 1.095.13.334.262.63.395.898.662 1.325 1.26 2.618 1.79 3.877.53 1.26.993 2.42 1.39 3.48 1.06-2.254 2.22-4.673 3.48-7.258 1.26-2.585 2.552-5.27 3.877-8.052L103.49 0h18.69L77.84 83.308v53.087h-16.9v-54.08z"></path></svg>
+        </div>
+      </div>
+    </a>
+    
+
+    
+    
+    <a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Plex%20%26%20Proxmox&amp;url=%2fpublic%2fposts%2f4%2fproxmox-plex-container%2f" target="_blank" rel="noopener" aria-label="">
+      <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.707 8.475C.275 8.64 0 9.508 0 9.508s.284.867.718 1.03l5.09 1.897 1.986 6.38a1.102 1.102 0 0 0 1.75.527l2.96-2.41a.405.405 0 0 1 .494-.013l5.34 3.87a1.1 1.1 0 0 0 1.046.135 1.1 1.1 0 0 0 .682-.803l3.91-18.795A1.102 1.102 0 0 0 22.5.075L.706 8.475z"/></svg>
+        </div>
+      </div>
+    </a>
+    
+</div>
+  <div class="paginator">
+    
+    <a class="link" href="/public/posts/3/usb-passthru-proxmox/" title="Passing USB Devices into Proxmox VMs">← prev</a>
+    
+    
+    <a class="link" href="/public/posts/5/pfsense-and-unifi/" title="pfSense, UniFi, &amp; VLANS: a tale of three toddlers">next →</a>
+    
+  </div>
+  <div class="comment">
+    
+    
+    
+    <script src="https://giscus.app/client.js"
+    data-repo="michaelneuper/website"
+    data-repo-id="R_kgDOIjPNaQ"
+    data-category="General"
+    data-category-id="DIC_kwDOIjPNac4CaklA"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme=""
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async>
+</script>
+
+  </div>
+  
+  
+</main>
+
+    <footer id="footer">
+  <div>
+    <span>Powered by coffee, caramel slice and pure indignation</span>
+  </div>
+  <div>
+    <span>Copyright © 2025 </span>
+  </div>
+</footer>
+
+  </div>
+
+  
+  <script src='/public/js/script.js' defer></script>
+
+  
+  
+
+  
+  
+
+  
+  
+
+</body>
+
+</html>

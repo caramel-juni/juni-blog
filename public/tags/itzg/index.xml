@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Itzg on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/tags/itzg/</link>
+    <description>Recent content in Itzg on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 13 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/itzg/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Minecraft Server From Scratch (Proxmox LXC, Docker Compose &#43; itzg)</title>
+      <link>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</link>
+      <pubDate>Sun, 13 Apr 2025 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</guid>
+      <description>&lt;p&gt;Just a smol lil guide for myself to set up a minecraft server from scratch, &lt;em&gt;as I cannot count the number of times I&amp;rsquo;ve had to re-learn this when I migrate from server to server&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve opted for services that &lt;em&gt;should&lt;/em&gt; (for the most part) be supported long-term and are relatively secure &amp;amp; lightweight. However, as any good netizen should do, &lt;em&gt;&lt;strong&gt;please take my advice with a granule of sugar&lt;/strong&gt;&lt;/em&gt;&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;--set-up-lxc-container-in-proxmox&#34;&gt;- Set up &lt;code&gt;LXC&lt;/code&gt; Container in Proxmox&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create new container in &lt;code&gt;proxmox&lt;/code&gt; using the &lt;code&gt;Ubuntu 24.04&lt;/code&gt; &lt;code&gt;LXC&lt;/code&gt; image (or your desired flavour, noting commands may differ slightly depending on package managers) - allocating at least &lt;code&gt;4GB RAM&lt;/code&gt; &amp;amp; &lt;code&gt;2-4 CPU&lt;/code&gt; cores to the machine.&lt;/li&gt;
+&lt;li&gt;Once logged in, create a &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu&#34;&gt;sudo-enabled user&lt;/a&gt; with:
+&lt;code&gt;adduser myuser&lt;/code&gt;
+Set the password, then:
+&lt;code&gt;usermod -aG sudo myuser&lt;/code&gt;
+&lt;code&gt;su myuser&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Harden SSH&lt;/strong&gt; - ensuring the following values are changed &amp;amp; set within &lt;code&gt;/etc/sshd_config&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Port &lt;span style=&#34;color:#ae81ff&#34;&gt;22&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitRootLogin no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxAuthTries &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxSessions &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PubkeyAuthentication yes
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PasswordAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitEmptyPasswords no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;KbdInteractiveAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;UsePAM no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;X11Forwarding no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PrintMotd no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveInterval &lt;span style=&#34;color:#ae81ff&#34;&gt;600&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveCountMax &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Add your local machine&amp;rsquo;s &lt;code&gt;ed25519_pub&lt;/code&gt; key to the &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt; file (creating it, if it doesn&amp;rsquo;t exist). This will allow key-based login for user &lt;code&gt;myuser&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Be careful not to lock yourself out here, test with password based login first! For example, by setting &lt;code&gt;PasswordAuthentication yes&lt;/code&gt; and logging in, before changing it to &lt;code&gt;PasswordAuthentication no&lt;/code&gt;&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure &lt;code&gt;DNS&lt;/code&gt; is setup properly - check &lt;code&gt;/etc/resolv.conf&lt;/code&gt;.
+Basic internet functionality can be tested &amp;amp; achieved by having the line &lt;code&gt;nameserver 8.8.8.8&lt;/code&gt;, but configure to your use case.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Login from local machine with &lt;code&gt;ssh myuser@XXX.XXX.XXX.XXX&lt;/code&gt;. Test your sudo privileges with &lt;code&gt;sudo ls /root&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Lock root account with &lt;code&gt;sudo passwd root -l&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Find the current &lt;code&gt;IP&lt;/code&gt; with &lt;code&gt;ip -a&lt;/code&gt; (typically on the &lt;code&gt;eth&lt;/code&gt; interface) and set it as static (in &lt;code&gt;proxmox&lt;/code&gt; and/or on your router).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;--install-docker-compose--itzg-minecraft-server&#34;&gt;- Install Docker (Compose) &amp;amp; itzg Minecraft Server&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Engine&lt;/strong&gt; - follow steps (distro-specific) &lt;a href=&#34;https://docs.docker.com/engine/install/&#34;&gt;here&lt;/a&gt;, as you will need to configure your package repository properly.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Compose&lt;/strong&gt; - following steps &lt;a href=&#34;https://docs.docker.com/compose/install/linux/#install-using-the-repository&#34;&gt;here&lt;/a&gt;. &lt;code&gt;sudo apt install docker-compose&lt;/code&gt; worked for me.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Make a new directory for the Minecraft server&lt;/strong&gt; to sit in: &lt;code&gt;~/minecraft&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Inside, &lt;strong&gt;create a &lt;code&gt;docker-compose.yml&lt;/code&gt;&lt;/strong&gt;, generated with something like &lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;setupmc.com&lt;/a&gt; to specify server version, plugins, etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;My example &lt;code&gt;docker-compose.yml&lt;/code&gt; file is below &lt;em&gt;(for a &lt;code&gt;1.18&lt;/code&gt; server, replacing Timezone (&lt;code&gt;TZ&lt;/code&gt;) accordingly)&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;services&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;mc&lt;/span&gt;:    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;itzg/minecraft-server:java17    &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;tty&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;stdin_open&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;25565:25565&amp;#34;&lt;/span&gt;     
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;EULA&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TRUE&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;TYPE&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PAPER&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;VERSION&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.18&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;PAPER_CHANNEL&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;experimental&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MEMORY&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4096M&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MOTD&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;welcome, traveller, to an older time...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			USE_AIKAR_FLAGS: &amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;       
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			TZ: &amp;#34;&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;YOUR-TIMEZONE]&amp;#34;     &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;./data:/data&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Start the container&lt;/strong&gt; from within the same directory as &lt;code&gt;docker-compose.yml&lt;/code&gt; with &lt;code&gt;sudo docker compose up -d&lt;/code&gt;. After the image is finished being pulled from the &lt;a href=&#34;https://github.com/itzg/docker-minecraft-server/tree/master&#34;&gt;itzg minecraft server repo&lt;/a&gt;, &lt;strong&gt;watch the logs&lt;/strong&gt; as the server starts with &lt;code&gt;sudo docker compose logs -f&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;If you get an error message about the “class file version” after starting the server, check &lt;a href=&#34;https://setupmc.com/guides/determining-correct-java-version-for-operating-minecraft-server/&#34;&gt;this table to see which Java version corresponds to the respective class file version&lt;/a&gt;. Then adjust the Docker image tag in the setupmc.com](&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;https://setupmc.com/java-server/&lt;/a&gt;) configurator accordingly.&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To stop the server&lt;/strong&gt;, run &lt;code&gt;sudo docker compose down&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To migrate a world save file over&lt;/strong&gt; (if applicable), copy the following files (at minimum) over from your old server (using something like &lt;code&gt;scp&lt;/code&gt;, or via a GUI if you install something like &lt;a href=&#34;https://webmin.com/download/&#34;&gt;webmin&lt;/a&gt;):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;server.properties&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_nether&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_end&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;whitelist.json&lt;/code&gt; (if applicable)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Ensure to tweak server-specific configurations within &lt;code&gt;server.properties&lt;/code&gt; if needed!&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&#34;9&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;As you&amp;rsquo;re running through &lt;code&gt;docker&lt;/code&gt;, it should handle the local network ports on the &lt;code&gt;lxc&lt;/code&gt; for you nicely (if on a fresh &lt;code&gt;linux&lt;/code&gt; install). Also, before I continue, it would be remiss of me to exclude the obligatory ***do this so at your own risk, and please consider the below server hardening methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/root-minecraft-server/&#34;&gt;not running the server as root! &lt;em&gt;(not a problem if you followed the guide above)&lt;/em&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/ultimate-guide-running-minecraft-server/#security&#34;&gt;general server tips&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://www.spigotmc.org/threads/minecraft-security-part-1-awareness.414081/&#34;&gt;links to hardening methodology&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With that out of the way, now time to &lt;strong&gt;open up a port on your local&lt;/strong&gt; router/modem. For me, I&amp;rsquo;ve opted for a little &amp;ldquo;security through obscurity&amp;rdquo; (a contentious topic, but given my threat model) by mapping my &lt;strong&gt;router&amp;rsquo;s external port&lt;/strong&gt;, &lt;code&gt;43456&lt;/code&gt; to the default minecraft listening port (&lt;code&gt;25565&lt;/code&gt; - specified in &lt;code&gt;server.properties&lt;/code&gt;) on my &lt;code&gt;lxc&lt;/code&gt; machine:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png&#34; alt=&#34;&#34;&gt;
+Additionally, I&amp;rsquo;ve set up a &lt;code&gt;DNS A record&lt;/code&gt; for the domain I own to point at my router&amp;rsquo;s &lt;code&gt;public IP&lt;/code&gt;, so I can access my server (and share it) with &lt;code&gt;my-domain:43456&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Now, you should be all up and running! :3&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align: center&#34;&gt;
+   &lt;img src=&#34;https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTY3OTM0YTI1dzBtb2htNHRzbzdtaTA1Yzh4ZHQ2aXdmZmZqb2xscCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/a6pzK009rlCak/giphy.gif&#34; style=&#34;max-width: 400px; max-height: 300px&#34;&gt;&lt;/img&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;--for-any-further-troubleshooting&#34;&gt;- For any further troubleshooting&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docker-minecraft-server.readthedocs.io/en/latest/#using-docker-compose&#34;&gt;itzg Docker Minecraft Server Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;&lt;code&gt;docker-compose.yaml&lt;/code&gt; configuration generator (SetupMC)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

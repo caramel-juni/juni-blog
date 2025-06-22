@@ -1,5 +1,5 @@
 # base website-wide config
-baseURL = "https://blog.juni-mp4.com"
+baseURL = "/public"
 enableGitInfo = true
 enableRobotsTXT = true
 hasCJKLanguage = true

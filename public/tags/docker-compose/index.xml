@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker-Compose on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/tags/docker-compose/</link>
+    <description>Recent content in Docker-Compose on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 13 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/docker-compose/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Minecraft Server From Scratch (Proxmox LXC, Docker Compose &#43; itzg)</title>
+      <link>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</link>
+      <pubDate>Sun, 13 Apr 2025 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</guid>
+      <description>&lt;p&gt;Just a smol lil guide for myself to set up a minecraft server from scratch, &lt;em&gt;as I cannot count the number of times I&amp;rsquo;ve had to re-learn this when I migrate from server to server&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve opted for services that &lt;em&gt;should&lt;/em&gt; (for the most part) be supported long-term and are relatively secure &amp;amp; lightweight. However, as any good netizen should do, &lt;em&gt;&lt;strong&gt;please take my advice with a granule of sugar&lt;/strong&gt;&lt;/em&gt;&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;--set-up-lxc-container-in-proxmox&#34;&gt;- Set up &lt;code&gt;LXC&lt;/code&gt; Container in Proxmox&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create new container in &lt;code&gt;proxmox&lt;/code&gt; using the &lt;code&gt;Ubuntu 24.04&lt;/code&gt; &lt;code&gt;LXC&lt;/code&gt; image (or your desired flavour, noting commands may differ slightly depending on package managers) - allocating at least &lt;code&gt;4GB RAM&lt;/code&gt; &amp;amp; &lt;code&gt;2-4 CPU&lt;/code&gt; cores to the machine.&lt;/li&gt;
+&lt;li&gt;Once logged in, create a &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu&#34;&gt;sudo-enabled user&lt;/a&gt; with:
+&lt;code&gt;adduser myuser&lt;/code&gt;
+Set the password, then:
+&lt;code&gt;usermod -aG sudo myuser&lt;/code&gt;
+&lt;code&gt;su myuser&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Harden SSH&lt;/strong&gt; - ensuring the following values are changed &amp;amp; set within &lt;code&gt;/etc/sshd_config&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Port &lt;span style=&#34;color:#ae81ff&#34;&gt;22&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitRootLogin no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxAuthTries &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxSessions &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PubkeyAuthentication yes
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PasswordAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitEmptyPasswords no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;KbdInteractiveAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;UsePAM no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;X11Forwarding no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PrintMotd no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveInterval &lt;span style=&#34;color:#ae81ff&#34;&gt;600&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveCountMax &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Add your local machine&amp;rsquo;s &lt;code&gt;ed25519_pub&lt;/code&gt; key to the &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt; file (creating it, if it doesn&amp;rsquo;t exist). This will allow key-based login for user &lt;code&gt;myuser&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Be careful not to lock yourself out here, test with password based login first! For example, by setting &lt;code&gt;PasswordAuthentication yes&lt;/code&gt; and logging in, before changing it to &lt;code&gt;PasswordAuthentication no&lt;/code&gt;&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure &lt;code&gt;DNS&lt;/code&gt; is setup properly - check &lt;code&gt;/etc/resolv.conf&lt;/code&gt;.
+Basic internet functionality can be tested &amp;amp; achieved by having the line &lt;code&gt;nameserver 8.8.8.8&lt;/code&gt;, but configure to your use case.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Login from local machine with &lt;code&gt;ssh myuser@XXX.XXX.XXX.XXX&lt;/code&gt;. Test your sudo privileges with &lt;code&gt;sudo ls /root&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Lock root account with &lt;code&gt;sudo passwd root -l&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Find the current &lt;code&gt;IP&lt;/code&gt; with &lt;code&gt;ip -a&lt;/code&gt; (typically on the &lt;code&gt;eth&lt;/code&gt; interface) and set it as static (in &lt;code&gt;proxmox&lt;/code&gt; and/or on your router).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;--install-docker-compose--itzg-minecraft-server&#34;&gt;- Install Docker (Compose) &amp;amp; itzg Minecraft Server&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Engine&lt;/strong&gt; - follow steps (distro-specific) &lt;a href=&#34;https://docs.docker.com/engine/install/&#34;&gt;here&lt;/a&gt;, as you will need to configure your package repository properly.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Compose&lt;/strong&gt; - following steps &lt;a href=&#34;https://docs.docker.com/compose/install/linux/#install-using-the-repository&#34;&gt;here&lt;/a&gt;. &lt;code&gt;sudo apt install docker-compose&lt;/code&gt; worked for me.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Make a new directory for the Minecraft server&lt;/strong&gt; to sit in: &lt;code&gt;~/minecraft&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Inside, &lt;strong&gt;create a &lt;code&gt;docker-compose.yml&lt;/code&gt;&lt;/strong&gt;, generated with something like &lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;setupmc.com&lt;/a&gt; to specify server version, plugins, etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;My example &lt;code&gt;docker-compose.yml&lt;/code&gt; file is below &lt;em&gt;(for a &lt;code&gt;1.18&lt;/code&gt; server, replacing Timezone (&lt;code&gt;TZ&lt;/code&gt;) accordingly)&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;services&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;mc&lt;/span&gt;:    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;itzg/minecraft-server:java17    &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;tty&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;stdin_open&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;25565:25565&amp;#34;&lt;/span&gt;     
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;EULA&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TRUE&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;TYPE&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PAPER&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;VERSION&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.18&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;PAPER_CHANNEL&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;experimental&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MEMORY&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4096M&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MOTD&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;welcome, traveller, to an older time...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			USE_AIKAR_FLAGS: &amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;       
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			TZ: &amp;#34;&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;YOUR-TIMEZONE]&amp;#34;     &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;./data:/data&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Start the container&lt;/strong&gt; from within the same directory as &lt;code&gt;docker-compose.yml&lt;/code&gt; with &lt;code&gt;sudo docker compose up -d&lt;/code&gt;. After the image is finished being pulled from the &lt;a href=&#34;https://github.com/itzg/docker-minecraft-server/tree/master&#34;&gt;itzg minecraft server repo&lt;/a&gt;, &lt;strong&gt;watch the logs&lt;/strong&gt; as the server starts with &lt;code&gt;sudo docker compose logs -f&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;If you get an error message about the “class file version” after starting the server, check &lt;a href=&#34;https://setupmc.com/guides/determining-correct-java-version-for-operating-minecraft-server/&#34;&gt;this table to see which Java version corresponds to the respective class file version&lt;/a&gt;. Then adjust the Docker image tag in the setupmc.com](&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;https://setupmc.com/java-server/&lt;/a&gt;) configurator accordingly.&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To stop the server&lt;/strong&gt;, run &lt;code&gt;sudo docker compose down&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To migrate a world save file over&lt;/strong&gt; (if applicable), copy the following files (at minimum) over from your old server (using something like &lt;code&gt;scp&lt;/code&gt;, or via a GUI if you install something like &lt;a href=&#34;https://webmin.com/download/&#34;&gt;webmin&lt;/a&gt;):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;server.properties&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_nether&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_end&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;whitelist.json&lt;/code&gt; (if applicable)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Ensure to tweak server-specific configurations within &lt;code&gt;server.properties&lt;/code&gt; if needed!&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&#34;9&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;As you&amp;rsquo;re running through &lt;code&gt;docker&lt;/code&gt;, it should handle the local network ports on the &lt;code&gt;lxc&lt;/code&gt; for you nicely (if on a fresh &lt;code&gt;linux&lt;/code&gt; install). Also, before I continue, it would be remiss of me to exclude the obligatory ***do this so at your own risk, and please consider the below server hardening methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/root-minecraft-server/&#34;&gt;not running the server as root! &lt;em&gt;(not a problem if you followed the guide above)&lt;/em&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/ultimate-guide-running-minecraft-server/#security&#34;&gt;general server tips&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://www.spigotmc.org/threads/minecraft-security-part-1-awareness.414081/&#34;&gt;links to hardening methodology&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With that out of the way, now time to &lt;strong&gt;open up a port on your local&lt;/strong&gt; router/modem. For me, I&amp;rsquo;ve opted for a little &amp;ldquo;security through obscurity&amp;rdquo; (a contentious topic, but given my threat model) by mapping my &lt;strong&gt;router&amp;rsquo;s external port&lt;/strong&gt;, &lt;code&gt;43456&lt;/code&gt; to the default minecraft listening port (&lt;code&gt;25565&lt;/code&gt; - specified in &lt;code&gt;server.properties&lt;/code&gt;) on my &lt;code&gt;lxc&lt;/code&gt; machine:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png&#34; alt=&#34;&#34;&gt;
+Additionally, I&amp;rsquo;ve set up a &lt;code&gt;DNS A record&lt;/code&gt; for the domain I own to point at my router&amp;rsquo;s &lt;code&gt;public IP&lt;/code&gt;, so I can access my server (and share it) with &lt;code&gt;my-domain:43456&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Now, you should be all up and running! :3&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align: center&#34;&gt;
+   &lt;img src=&#34;https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTY3OTM0YTI1dzBtb2htNHRzbzdtaTA1Yzh4ZHQ2aXdmZmZqb2xscCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/a6pzK009rlCak/giphy.gif&#34; style=&#34;max-width: 400px; max-height: 300px&#34;&gt;&lt;/img&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;--for-any-further-troubleshooting&#34;&gt;- For any further troubleshooting&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docker-minecraft-server.readthedocs.io/en/latest/#using-docker-compose&#34;&gt;itzg Docker Minecraft Server Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;&lt;code&gt;docker-compose.yaml&lt;/code&gt; configuration generator (SetupMC)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>&#39;securely&#39; setting up web server with nginx @ home &amp; self hosting</title>
+      <link>/public/posts/9/securely-self-hosting-site-npm/</link>
+      <pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/9/securely-self-hosting-site-npm/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;debian 12 container install inside proxmox&lt;/li&gt;
+&lt;li&gt;`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li&gt;
+&lt;li&gt;network settings: If your router supports subnets/VLANs, connect this to the isolated VLAN. within proxmox, assign static IP not in use and point to your router&amp;rsquo;s gateway.![[Screenshot 2024-07-08 at 8.40.32 PM.png]]&lt;/li&gt;
+&lt;li&gt;install nginx on debian - &lt;code&gt;sudo apt install nginx -y&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;create a file for website settings: `nano /etc/nginx/sites-available/mywebsite&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;server&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;listen&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt; ; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;listen&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;[::]:80&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;server_name&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;juni-mp4.org&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;/var/www/juni-web&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;index.html&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;index.htm&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;index.nginx-debian.html&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;location&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;/&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#f92672&#34;&gt;try_files&lt;/span&gt; $uri $uri/ =&lt;span style=&#34;color:#ae81ff&#34;&gt;404&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;listen&lt;/code&gt; lines tell &lt;code&gt;nginx&lt;/code&gt; to listen for connections on both IPv4 and IPv6.
+The &lt;code&gt;server_name&lt;/code&gt; is the website that we are looking for. By putting &lt;code&gt;landchad.net&lt;/code&gt; here, that means whenever someone connects to this server and is looking for that address, they will be directed to the content in this block. &lt;code&gt;root&lt;/code&gt; specifies the directory we&amp;rsquo;re going to put our website files in.&lt;/p&gt;
+&lt;p&gt;This can theoretically be wherever, but it is conventional to have them in &lt;code&gt;/var/www/&lt;/code&gt;. Name the directory in that whatever you want. &lt;code&gt;index&lt;/code&gt; determine what the &amp;ldquo;default&amp;rdquo; file is; normally when you go to a website, say &lt;code&gt;landchad.net&lt;/code&gt;, you are actually going to a file at &lt;code&gt;landchad.net/index.html&lt;/code&gt;. That&amp;rsquo;s all that is. Note that that this in concert with the line above mean that &lt;code&gt;/var/www/landchad/index.html&lt;/code&gt;, a file on our computer that we&amp;rsquo;ll create, will be the main page of our website.&lt;/p&gt;
+&lt;p&gt;Lastly, the &lt;code&gt;location&lt;/code&gt; block is really just telling the server how to look up files, otherwise throw a 404 error. Location settings are very powerful, but this is all we need them for now.
+7. create directory for your website&amp;rsquo;s contents/files using: &lt;code&gt;mkdir /var/www/juni-web&lt;/code&gt; (can be located wherever but standard to store in &lt;code&gt;/var/www/[X]&lt;/code&gt; ) where you can place website files like &lt;code&gt;index.html&lt;/code&gt; etc.)
+8. enable the site by making a link between the config file in you just created in &lt;code&gt;sites-available&lt;/code&gt; and the &lt;code&gt;sites-enabled&lt;/code&gt; directory:
+&lt;code&gt;ln -s /etc/nginx/sites-available/juni-web /etc/nginx/sites-enabled/ 9. restart nginx &lt;/code&gt;systemctl restart nginx`&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;make sure the &amp;ldquo;default&amp;rdquo; file doesn&amp;rsquo;t remain in &lt;code&gt;/etc/nginx/sites-enabled/&lt;/code&gt; otherwise will serve the default config page for nginx!!&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;main-nginx-files--explanation&#34;&gt;Main Nginx Files &amp;amp; Explanation:&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;The idea is that you can make a site configuration file in &lt;code&gt;sites-available&lt;/code&gt; (that links to where your website is stored locally, e.g. &lt;code&gt;/var/www/sitestorage&lt;/code&gt;), then make a link to this configuration file in &lt;code&gt;sites-enabled&lt;/code&gt;, which will activate it.&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;config-files&#34;&gt;Config Files:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/etc/nginx/sites-available/&lt;/code&gt; - directory containing any site configuration files. Points to directory containing main website content, e.g. &lt;code&gt;/var/www/juni-web&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-nginx&#34; data-lang=&#34;nginx&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;server&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;listen&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;listen&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;[::]:80&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;server_name&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;juni-mp4.org&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;root&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;/var/www/juni-web&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;index.html&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;index.htm&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;index.nginx-debian.html&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;location&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;/&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                &lt;span style=&#34;color:#f92672&#34;&gt;try_files&lt;/span&gt; $uri $uri/ =&lt;span style=&#34;color:#ae81ff&#34;&gt;404&lt;/span&gt; ;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;/etc/nginx/sites-enabled/&lt;/code&gt; - directory containing &lt;strong&gt;links&lt;/strong&gt; to site configuration files
+make links via: `ln -s [link-source-path] [link-destination-path]&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;main-website-location&#34;&gt;Main website location:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/var/www/[site-name]&lt;/code&gt;&#39;
+e.g. &lt;code&gt;/var/www/juni-web&lt;/code&gt;
+contains files like index.html, etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;securing-it&#34;&gt;Securing it:&lt;/h1&gt;
+&lt;h3 id=&#34;ufw&#34;&gt;UFW:&lt;/h3&gt;
+&lt;p&gt;sudo apt install ufw&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Limit SSH access to port 22 
+sudo ufw limit 22/tcp 
+
+# Allow HTT![[Screenshot 2024-07-19 at 9.04.25 PM.png]]P traffic on port 80 
+sudo ufw allow 80 
+
+# Allow HTTPS traffic on port 443 
+sudo ufw allow 443 
+
+# Limit SSH access to port 22 for IPv6 
+sudo ufw limit 22/tcp6 
+
+# Allow HTTP traffic on port 80 for IPv6 
+sudo ufw allow 80/tcp6 
+
+# Allow HTTPS traffic on port 443 for IPv6 
+sudo ufw allow 443/tcp6
+
+ufw enable
+
+ufw logging on
+
+ufw status
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;![[Screenshot 2024-07-09 at 11.51.31 PM.png]]
+&lt;a href=&#34;https://www.linode.com/docs/guides/configure-firewall-with-ufw/&#34;&gt;https://www.linode.com/docs/guides/configure-firewall-with-ufw/&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;docker-install-debian&#34;&gt;docker install (&lt;a href=&#34;https://docs.docker.com/engine/install/debian/&#34;&gt;debian&lt;/a&gt;):&lt;/h1&gt;
+&lt;p&gt;Run the following command to uninstall all conflicting packages:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; pkg in docker.io docker-doc docker-compose podman-docker containerd runc; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; sudo apt-get remove $pkg; &lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;install dependencies:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Set up Docker&amp;rsquo;s &lt;code&gt;apt&lt;/code&gt; repository.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Add Docker&amp;#39;s official GPG key:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get install ca-certificates curl
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo install -m &lt;span style=&#34;color:#ae81ff&#34;&gt;0755&lt;/span&gt; -d /etc/apt/keyrings
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo chmod a+r /etc/apt/keyrings/docker.asc
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Add the repository to Apt sources:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;echo &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;deb [arch=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;dpkg --print-architecture&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;. /etc/os-release &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$VERSION_CODENAME&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; stable&amp;#34;&lt;/span&gt; | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  sudo tee /etc/apt/sources.list.d/docker.list &amp;gt; /dev/null
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;install latest docker version&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Verify that the installation is successful by running the &lt;code&gt;hello-world&lt;/code&gt; image:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; sudo docker run hello-world
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;docker-compose-install&#34;&gt;docker compose install&lt;/h2&gt;
+&lt;p&gt;why install it? manage all containers &amp;amp; deployments from a &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;single yaml file&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get update
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get install docker-compose-plugin
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;docker compose version
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;![[Screenshot 2024-07-10 at 12.12.09 AM.png]]&lt;/p&gt;
+&lt;p&gt;create compose file near website data for ease of management&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;## if website located in mkdir /var/www/juni-web&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir /var/www/docker-compose
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;nano docker-compose.yml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;we can use this to install&amp;hellip;&lt;/p&gt;
+&lt;h3 id=&#34;nginx-proxy-manager-npm-install&#34;&gt;nginx proxy manager (NPM) install&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;(not to be confused with node package manager npm lol)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;note: make sure to set ports for managing nginx proxy manager (NPM) to 8080 &amp;amp; 4443 (or whatever custom ones you&amp;rsquo;d like) and NOT 80 &amp;amp; 443, as the latter will likely be in use by nginx to serve &amp;amp; access your website at.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;in the docker-compose.yml&amp;hellip;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cd /var/www/docker-compose
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;nano docker-compose.yml
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;## then add into file:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;services:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  app:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    image: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;jc21/nginx-proxy-manager:latest&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    restart: unless-stopped
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    ports:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# These ports are in format &amp;lt;host-port&amp;gt;:&amp;lt;container-port&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;8080:80&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Port for HTTP access to NPM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;4443:443&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Port for HTTS access to NPM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;81:81&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Admin Web Port&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# Add any other Stream port you want to expose&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# - &amp;#39;21:21&amp;#39; # FTP&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Uncomment the next line if you uncomment anything in the section&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# environment:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# Uncomment this if you want to change the location of&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# the SQLite DB file within the container&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# DB_SQLITE_FILE: &amp;#34;/data/database.sqlite&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# Uncomment this if IPv6 is not enabled on your host&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#75715e&#34;&gt;# DISABLE_IPV6: &amp;#39;true&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    volumes:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - ./data:/data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - ./letsencrypt:/etc/letsencrypt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;## then run&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;docker compose up -d
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;access nginx via &lt;code&gt;http://[server-ip]:81&lt;/code&gt; &amp;amp; login with &lt;code&gt;admin@example.com&lt;/code&gt; and &lt;code&gt;changeme&lt;/code&gt;  (changed upon entry)&lt;/p&gt;
+&lt;h2 id=&#34;cloudflare-setup&#34;&gt;cloudflare setup&lt;/h2&gt;
+&lt;p&gt;sign up for free cloudflare account
+follow signup steps to point existing domain at cloudflare&lt;/p&gt;
+&lt;p&gt;autoscan for any DNS records you changed with your registrar (* domains, subdomains etc.) so cloudflare is aware of them&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 9.05.00 PM.png]]
+![[Screenshot 2024-07-19 at 9.09.40 PM.png]]&lt;/p&gt;
+&lt;p&gt;navigate to your domain registrar and set the custom DNS servers to the ones provided to you by cloudflare.&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 9.08.37 PM.png]]&lt;/p&gt;
+&lt;p&gt;cloudflare setup guide here - &lt;a href=&#34;https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/&#34;&gt;https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/&lt;/a&gt;
+![[Screenshot 2024-07-19 at 9.17.23 PM.png]]
+![[Screenshot 2024-07-19 at 9.17.34 PM.png]]
+![[Screenshot 2024-07-19 at 9.18.03 PM.png]]&lt;/p&gt;
+&lt;p&gt;API token:  HRWvk067sLPv_RMGDPhS1y0lj5XDcLErat5nY18m
+verify with cul command:
+&lt;code&gt;   curl -X GET &amp;quot;https://api.cloudflare.com/client/v4/user/tokens/verify&amp;quot; \        -H &amp;quot;Authorization: Bearer [YOUR TOKEN]&amp;quot; \ -H &amp;quot;Content-Type:application/json&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;cloudflare--ssl-issues-certbot&#34;&gt;Cloudflare &amp;amp; SSL issues (certbot)&lt;/h3&gt;
+&lt;p&gt;if you&amp;rsquo;ve setup certbot or something similar to manage ssl certificates on your nginx server, MAKE SURE to go to cloudflare and select Full (strict) SSL/TLS encryption mode so it doesn&amp;rsquo;t have an SSL mismatch and make your site inaccessible via the browser - ![[Screenshot 2024-07-19 at 10.00.00 PM.png]]&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Why:&lt;/strong&gt; as with &lt;strong&gt;&amp;lsquo;flexible&amp;rsquo;&lt;/strong&gt; ticked, cloudflare will (by default) try and make requests to your server via HTTP and the server will throw an error if it&amp;rsquo;s using SSL due to a cipher mismatch, then browsers interpret this as a potential MiTM attack. see below: ![[Screenshot 2024-07-19 at 10.03.20 PM.png]]
+![[Screenshot 2024-07-19 at 10.03.46 PM.png]]&lt;/p&gt;
+&lt;p&gt;you can also check your site&amp;rsquo;s nginx config file to see that certs are set up properly:&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 10.07.33 PM.png]]&lt;/p&gt;
+&lt;h2 id=&#34;opening-the-ports&#34;&gt;OPENING the ports&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;External port&lt;/strong&gt;: what port is used by external users to access, like:
+&lt;code&gt;pu.bl.ic.ip:[external-port]&lt;/code&gt;
+e.g. &lt;code&gt;182.46.382.83:443&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Internal port&lt;/strong&gt;: what port on the specified &lt;strong&gt;Device&lt;/strong&gt; (the one identified by the &lt;code&gt;Device IP Address&lt;/code&gt; field) that the traffic will be forwarded to.&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 10.24.08 PM.png]]&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 10.23.53 PM.png]]&lt;/p&gt;
+&lt;h2 id=&#34;set-up-static-ip-for-container-in-proxmox-on-router&#34;&gt;set up static IP for container in proxmox on router&lt;/h2&gt;
+&lt;p&gt;OR just change the DHCP pool to not include the IP address you want statically added on the proxmox&lt;/p&gt;
+&lt;p&gt;(e.g. setting DNS pool to &lt;code&gt;192.168.0.20&lt;/code&gt; -&amp;gt;  &lt;code&gt;192.168.0.200&lt;/code&gt; and then assigning static IP for your container in proxmox outside of the pool range but on the same subnet, e.g. &lt;code&gt;192.168.0.5&lt;/code&gt; )
+![[Screenshot 2024-07-19 at 10.19.57 PM.png]]&lt;/p&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 10.19.45 PM.png]]&lt;/p&gt;
+&lt;h2 id=&#34;adding-ssl-cert-to-nginx-proxy-manager&#34;&gt;adding SSL cert to nginx proxy manager&lt;/h2&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 10.40.02 PM.png]]&lt;/p&gt;
+&lt;p&gt;certs on web server:
+![[Screenshot 2024-07-19 at 10.43.38 PM.png]]&lt;/p&gt;
+&lt;h2 id=&#34;setup-proxy-host-on-npm&#34;&gt;setup proxy host on NPM&lt;/h2&gt;
+&lt;p&gt;![[Screenshot 2024-07-19 at 11.37.22 PM.png]]
+![[Screenshot 2024-07-19 at 11.38.09 PM.png]]&lt;/p&gt;
+&lt;h2 id=&#34;setup-npm--dynamic-dns&#34;&gt;setup NPM &amp;amp; dynamic DNS&lt;/h2&gt;
+&lt;p&gt;to do:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;a href=&#34;https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/&#34;&gt;https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;a href=&#34;https://www.youtube.com/watch?v=GarMdDTAZJo&#34;&gt;https://www.youtube.com/watch?v=GarMdDTAZJo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;a href=&#34;https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/&#34;&gt;https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; set up nginx reverse proxy, cloudflare etc. &lt;a href=&#34;https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/&#34;&gt;https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; install certbot &amp;amp; auto renewal &amp;amp; setup https&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; setup firewall around docker - &lt;a href=&#34;https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw&#34;&gt;https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; ssh harden copy config files &amp;amp; replace keys&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; install auto updates for all respective software (docker, docker compose, nginx, nginx proxy manager, ufw, anything else used)&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; port forward website to internet to make accessible&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; update domain registrar to point to local public IP&lt;/li&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; write scp command that writes locally-edited files to website remotely
+&lt;code&gt;scp -r user@[remoteTargetComputerIP]: [RemoteFilesPath] [localDestinationPath] e.g. &lt;/code&gt;scp -r &lt;a href=&#34;mailto:root@45.77.26.67&#34;&gt;root@45.77.26.67&lt;/a&gt;:/var/www/mysite ~&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

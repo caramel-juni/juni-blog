@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Proxmox on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>/public/categories/proxmox/</link>
+    <description>Recent content in Proxmox on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 13 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/categories/proxmox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Minecraft Server From Scratch (Proxmox LXC, Docker Compose &#43; itzg)</title>
+      <link>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</link>
+      <pubDate>Sun, 13 Apr 2025 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</guid>
+      <description>&lt;p&gt;Just a smol lil guide for myself to set up a minecraft server from scratch, &lt;em&gt;as I cannot count the number of times I&amp;rsquo;ve had to re-learn this when I migrate from server to server&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve opted for services that &lt;em&gt;should&lt;/em&gt; (for the most part) be supported long-term and are relatively secure &amp;amp; lightweight. However, as any good netizen should do, &lt;em&gt;&lt;strong&gt;please take my advice with a granule of sugar&lt;/strong&gt;&lt;/em&gt;&amp;hellip;&lt;/p&gt;
+&lt;h2 id=&#34;--set-up-lxc-container-in-proxmox&#34;&gt;- Set up &lt;code&gt;LXC&lt;/code&gt; Container in Proxmox&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create new container in &lt;code&gt;proxmox&lt;/code&gt; using the &lt;code&gt;Ubuntu 24.04&lt;/code&gt; &lt;code&gt;LXC&lt;/code&gt; image (or your desired flavour, noting commands may differ slightly depending on package managers) - allocating at least &lt;code&gt;4GB RAM&lt;/code&gt; &amp;amp; &lt;code&gt;2-4 CPU&lt;/code&gt; cores to the machine.&lt;/li&gt;
+&lt;li&gt;Once logged in, create a &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu&#34;&gt;sudo-enabled user&lt;/a&gt; with:
+&lt;code&gt;adduser myuser&lt;/code&gt;
+Set the password, then:
+&lt;code&gt;usermod -aG sudo myuser&lt;/code&gt;
+&lt;code&gt;su myuser&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Harden SSH&lt;/strong&gt; - ensuring the following values are changed &amp;amp; set within &lt;code&gt;/etc/sshd_config&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Port &lt;span style=&#34;color:#ae81ff&#34;&gt;22&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitRootLogin no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxAuthTries &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MaxSessions &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PubkeyAuthentication yes
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PasswordAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PermitEmptyPasswords no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;KbdInteractiveAuthentication no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;UsePAM no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;X11Forwarding no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PrintMotd no
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveInterval &lt;span style=&#34;color:#ae81ff&#34;&gt;600&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ClientAliveCountMax &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Add your local machine&amp;rsquo;s &lt;code&gt;ed25519_pub&lt;/code&gt; key to the &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt; file (creating it, if it doesn&amp;rsquo;t exist). This will allow key-based login for user &lt;code&gt;myuser&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Be careful not to lock yourself out here, test with password based login first! For example, by setting &lt;code&gt;PasswordAuthentication yes&lt;/code&gt; and logging in, before changing it to &lt;code&gt;PasswordAuthentication no&lt;/code&gt;&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure &lt;code&gt;DNS&lt;/code&gt; is setup properly - check &lt;code&gt;/etc/resolv.conf&lt;/code&gt;.
+Basic internet functionality can be tested &amp;amp; achieved by having the line &lt;code&gt;nameserver 8.8.8.8&lt;/code&gt;, but configure to your use case.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Login from local machine with &lt;code&gt;ssh myuser@XXX.XXX.XXX.XXX&lt;/code&gt;. Test your sudo privileges with &lt;code&gt;sudo ls /root&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Lock root account with &lt;code&gt;sudo passwd root -l&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Find the current &lt;code&gt;IP&lt;/code&gt; with &lt;code&gt;ip -a&lt;/code&gt; (typically on the &lt;code&gt;eth&lt;/code&gt; interface) and set it as static (in &lt;code&gt;proxmox&lt;/code&gt; and/or on your router).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;--install-docker-compose--itzg-minecraft-server&#34;&gt;- Install Docker (Compose) &amp;amp; itzg Minecraft Server&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Engine&lt;/strong&gt; - follow steps (distro-specific) &lt;a href=&#34;https://docs.docker.com/engine/install/&#34;&gt;here&lt;/a&gt;, as you will need to configure your package repository properly.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Install Docker Compose&lt;/strong&gt; - following steps &lt;a href=&#34;https://docs.docker.com/compose/install/linux/#install-using-the-repository&#34;&gt;here&lt;/a&gt;. &lt;code&gt;sudo apt install docker-compose&lt;/code&gt; worked for me.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Make a new directory for the Minecraft server&lt;/strong&gt; to sit in: &lt;code&gt;~/minecraft&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Inside, &lt;strong&gt;create a &lt;code&gt;docker-compose.yml&lt;/code&gt;&lt;/strong&gt;, generated with something like &lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;setupmc.com&lt;/a&gt; to specify server version, plugins, etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;My example &lt;code&gt;docker-compose.yml&lt;/code&gt; file is below &lt;em&gt;(for a &lt;code&gt;1.18&lt;/code&gt; server, replacing Timezone (&lt;code&gt;TZ&lt;/code&gt;) accordingly)&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;services&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;mc&lt;/span&gt;:    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;itzg/minecraft-server:java17    &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;tty&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;stdin_open&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;25565:25565&amp;#34;&lt;/span&gt;     
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;EULA&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;TRUE&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;TYPE&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PAPER&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;VERSION&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.18&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;PAPER_CHANNEL&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;experimental&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MEMORY&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4096M&amp;#34;&lt;/span&gt;       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			&lt;span style=&#34;color:#f92672&#34;&gt;MOTD&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;welcome, traveller, to an older time...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			USE_AIKAR_FLAGS: &amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;       
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;			TZ: &amp;#34;&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;YOUR-TIMEZONE]&amp;#34;     &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:       
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;			- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;./data:/data&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Start the container&lt;/strong&gt; from within the same directory as &lt;code&gt;docker-compose.yml&lt;/code&gt; with &lt;code&gt;sudo docker compose up -d&lt;/code&gt;. After the image is finished being pulled from the &lt;a href=&#34;https://github.com/itzg/docker-minecraft-server/tree/master&#34;&gt;itzg minecraft server repo&lt;/a&gt;, &lt;strong&gt;watch the logs&lt;/strong&gt; as the server starts with &lt;code&gt;sudo docker compose logs -f&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;If you get an error message about the “class file version” after starting the server, check &lt;a href=&#34;https://setupmc.com/guides/determining-correct-java-version-for-operating-minecraft-server/&#34;&gt;this table to see which Java version corresponds to the respective class file version&lt;/a&gt;. Then adjust the Docker image tag in the setupmc.com](&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;https://setupmc.com/java-server/&lt;/a&gt;) configurator accordingly.&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To stop the server&lt;/strong&gt;, run &lt;code&gt;sudo docker compose down&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;To migrate a world save file over&lt;/strong&gt; (if applicable), copy the following files (at minimum) over from your old server (using something like &lt;code&gt;scp&lt;/code&gt;, or via a GUI if you install something like &lt;a href=&#34;https://webmin.com/download/&#34;&gt;webmin&lt;/a&gt;):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;server.properties&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_nether&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/world_the_end&lt;/code&gt; (if exists)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;whitelist.json&lt;/code&gt; (if applicable)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Ensure to tweak server-specific configurations within &lt;code&gt;server.properties&lt;/code&gt; if needed!&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&#34;9&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;As you&amp;rsquo;re running through &lt;code&gt;docker&lt;/code&gt;, it should handle the local network ports on the &lt;code&gt;lxc&lt;/code&gt; for you nicely (if on a fresh &lt;code&gt;linux&lt;/code&gt; install). Also, before I continue, it would be remiss of me to exclude the obligatory ***do this so at your own risk, and please consider the below server hardening methods:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/root-minecraft-server/&#34;&gt;not running the server as root! &lt;em&gt;(not a problem if you followed the guide above)&lt;/em&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://madelinemiller.dev/blog/ultimate-guide-running-minecraft-server/#security&#34;&gt;general server tips&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://www.spigotmc.org/threads/minecraft-security-part-1-awareness.414081/&#34;&gt;links to hardening methodology&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With that out of the way, now time to &lt;strong&gt;open up a port on your local&lt;/strong&gt; router/modem. For me, I&amp;rsquo;ve opted for a little &amp;ldquo;security through obscurity&amp;rdquo; (a contentious topic, but given my threat model) by mapping my &lt;strong&gt;router&amp;rsquo;s external port&lt;/strong&gt;, &lt;code&gt;43456&lt;/code&gt; to the default minecraft listening port (&lt;code&gt;25565&lt;/code&gt; - specified in &lt;code&gt;server.properties&lt;/code&gt;) on my &lt;code&gt;lxc&lt;/code&gt; machine:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png&#34; alt=&#34;&#34;&gt;
+Additionally, I&amp;rsquo;ve set up a &lt;code&gt;DNS A record&lt;/code&gt; for the domain I own to point at my router&amp;rsquo;s &lt;code&gt;public IP&lt;/code&gt;, so I can access my server (and share it) with &lt;code&gt;my-domain:43456&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Now, you should be all up and running! :3&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align: center&#34;&gt;
+   &lt;img src=&#34;https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTY3OTM0YTI1dzBtb2htNHRzbzdtaTA1Yzh4ZHQ2aXdmZmZqb2xscCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/a6pzK009rlCak/giphy.gif&#34; style=&#34;max-width: 400px; max-height: 300px&#34;&gt;&lt;/img&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;--for-any-further-troubleshooting&#34;&gt;- For any further troubleshooting&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docker-minecraft-server.readthedocs.io/en/latest/#using-docker-compose&#34;&gt;itzg Docker Minecraft Server Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://setupmc.com/java-server/&#34;&gt;&lt;code&gt;docker-compose.yaml&lt;/code&gt; configuration generator (SetupMC)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Plex &amp; Proxmox</title>
+      <link>/public/posts/4/proxmox-plex-container/</link>
+      <pubDate>Fri, 04 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/4/proxmox-plex-container/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip; &amp;amp; pulling files from an external SSD &amp;amp;/or an internal HDD. &lt;strong&gt;Yes, this was&amp;hellip; interesting.&lt;/strong&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;--so-why-did-i-write-this&#34;&gt;- So&amp;hellip; why did I write this?&lt;/h2&gt;
+&lt;p&gt;My primary objective was to setup a home lab, which could do the following things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;run LXCs of various linux distros (Kali via external install, and CentOS via Proxmox template) &lt;strong&gt;[done]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;run a Plex Media server, accessing both external SSD and internal HDD data &lt;strong&gt;[done]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Setup a VPN for use in the server &lt;strong&gt;[done]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Setup VPNs for containers &lt;strong&gt;[yet to do]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Automatically pull files from various torrents safely and securely with Deluge (?), Sonarr, Radarr, and Prowlarr &lt;strong&gt;[yet to do]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run my previously self-hosted Minecraft server &lt;strong&gt;[yet to do]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;act as a NAS to store and backup family photos &lt;strong&gt;[for the future, if I upgrade hardware]&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I know that my use case is incredibly specific, but after scouring the web for guides on the various problems I had along the way, I was exhausted enough to pull together a guide of how I accomplished each of the above.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;This guide will focus on setting up a Plex Media server in a Proxmox container, which can access data from both an external SSD and an internal HDD.&lt;/strong&gt;&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;--prerequisites&#34;&gt;- Prerequisites:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Installing Proxmox on a server&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;--setting-up-a-container&#34;&gt;- Setting up a container&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Download a template for the distribution of Linux you want to use.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Simple? Should be. Pick your desired flavour of Linux and it should be available via accessing your local volume [&lt;code&gt;local (juniproxmox)&lt;/code&gt; for me] and selecting &lt;code&gt;CT Templates&lt;/code&gt; &amp;gt; &lt;code&gt;Templates&lt;/code&gt;. However, &lt;em&gt;make sure what you&amp;rsquo;re selecting is &lt;strong&gt;actually a LXC&lt;/strong&gt;, and not another version of Ubuntu/Debian (otherwise it will run like a VM inside of a container. And yes, that means it&amp;rsquo;s s l o w)&lt;/em&gt;. The difference is somewhat explored in the folllowing &amp;lsquo;shallow dive&amp;rsquo; of sorts, and practically illustrated within Proxmox in Figure 2.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;h3 id=&#34;testing-the-waters-1-lxc-vs-vms&#34;&gt;&lt;strong&gt;Testing the waters #1: LXC vs VMs.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;From what I understand, LXCs are essentially lightweight VMs, which share the kernel (lowest-level software interfacing with computer hardware) with the host OS. In my case, Proxmox (based on Debian Linux) will share its kernel with an installed LXC (in this case, CentOS 9 Stream), allowing the LXC to run significantly faster than a VM by having access to the same kernel. However, I am unsure if you can run a LXC of Debian/Ubuntu on top of existing Debian/Ubuntu infrastructure, as I haven&amp;rsquo;t been able to easily find LXC images for these online. However, I am most likely very much misunderstanding the nature of LXCs in general and am missing something obvious, so if anyone knows, please feel free to enlighten me by contacting me ~&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Figure 1: Finding CT Templates&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/e50f054c-0ace-44ed-bb6e-96fe76c6619b.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Figure 2: LXC Images vs Standard Image&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/069bb70d-9876-4d23-bcd9-f770b78adedc.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;After the CT template has been downloaded, installing is fairly straightforward.&lt;/strong&gt;
+I followed the following video to get up to speed on what was recommended for a container install.&lt;/p&gt;
+&lt;p&gt;Here are the specs for my installation of CentOS 9 Stream, running a Plex Server which would have 2-3 users MAX (these are only testing values, take them with a grain of salt!):&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/2434eda3-0247-48df-947b-9614ee44e17d.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/5d7670d4-5dc4-40d8-8de1-a02feb276966.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once the container has been setup and you can access the console (visuals included in above video, it&amp;rsquo;s pretty straightforward), login using root (and preferably setup a lower privilege user if you&amp;rsquo;re using the system for important things) and your container is ready to use!.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;--installing-plex-media-server&#34;&gt;- Installing Plex Media Server:&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;~ to be written ~&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;--passing-usbexternal-devices-to-lxc&#34;&gt;- Passing USB/External Devices to LXC:&lt;/h2&gt;
+&lt;p&gt;Now, for my use case, I wanted to use an external SSD containing media files as a sort of &amp;lsquo;attached storage device&amp;rsquo; and have my Plex media server access and make the files streamable. However, doing so is a little complicated. It&amp;rsquo;s covered rather well in &lt;a href=&#34;https://www.youtube.com/@virtualizeeverything&#34;&gt;Virtualize Everything&amp;rsquo;s&lt;/a&gt; series of videos, but it can be confusing as there are quite a few ways of doing it, depending on one&amp;rsquo;s use case.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;My use case: Pass an External Device to a LXC WITHOUT ERASING DATA FROM IT, to transfer/access files on the External Device.&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Based on the following video: &lt;a href=&#34;https://www.youtube.com/watch?v=6oripI7F8tw&#34;&gt;Add USB storage to Proxmox (CLI)&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note: The term &amp;lsquo;SSD&amp;rsquo; can be used interchangeably with &amp;lsquo;External HDD/USB&amp;rsquo; &amp;ndash;&amp;gt; this should work for all removable storage solutions.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Plug in your USB to the server (in my case, my brother&amp;rsquo;s old laptop). Nagivate to &lt;code&gt;&#39;your home node&#39; (juniproxmox)&lt;/code&gt; -&amp;gt; &lt;code&gt;disks&lt;/code&gt;. Here is a display of all of the functioning devices connected to your machine. My laptop has an internal HDD (listed as &lt;code&gt;sda&lt;/code&gt;), and an internal SSD (used as the boot drive, &lt;code&gt;sdb&lt;/code&gt;). I also have a USB plugged in to the device, occupying &lt;code&gt;sdc&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Thus, my SSD is &lt;code&gt;sdd&lt;/code&gt;, which checks out given it&amp;rsquo;s been identified as &lt;code&gt;SSD&lt;/code&gt; with &lt;code&gt;1.00TB&lt;/code&gt; of storage. It is best practice to have the drive using GPT, although I will be attempting to use one still using MBR, as it has worked before for me.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/212d77a6-88cd-47d8-9c21-d186f24e2da4.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;--formatting-drive-to-use-gpt---guid-partitioning-table&#34;&gt;- Formatting drive to use GPT - GUID Partitioning Table.&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;On your main node, open the shell and use &lt;code&gt;fdisk -l&lt;/code&gt; to list all available disks on the system in the CLI.&lt;/p&gt;
+&lt;p&gt;After the text has been printed, look near the bottom for your chosen device, in my case &lt;code&gt;sdd&lt;/code&gt;. It&amp;rsquo;s product name and actual usable size (smaller than but close to its advertised size) should be listed too. Take note of the device&amp;rsquo;s identifier, which includes its location on the system. For me, it&amp;rsquo;s listed under &amp;lsquo;Device&amp;rsquo; at the bottom, as &lt;code&gt;/dev/sdd1&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/d7352649-ef16-4aeb-b109-5d164023e67e.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now we know the path to the device, we need to make a folder on our home system for it to be accessed from. I think of this as creating its new address - the SSD has gone from floating around in the ether, homeless, and we&amp;rsquo;re now making a directory on our system for it to call home. I poked around a bit using the &lt;code&gt;cd&lt;/code&gt; (&lt;code&gt;cd&lt;/code&gt; = &lt;strong&gt;change directory&lt;/strong&gt; - essentially how you traverse your Linux system in the CLI) and &lt;code&gt;ls&lt;/code&gt; (&lt;code&gt;ls&lt;/code&gt; = &lt;strong&gt;list contents in current directory&lt;/strong&gt;) commands, before deciding to make a new directory in &lt;code&gt;/mnt/pve/&lt;/code&gt;, called &lt;code&gt;EXT_SSD&lt;/code&gt;. I suggest navigating to where you&amp;rsquo;d like the directory to be and &lt;strong&gt;then&lt;/strong&gt; making it, as not all system&amp;rsquo;s file structures are the same.&lt;/p&gt;
+&lt;p&gt;Once I found the desired folder, create the directory using:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mkdir YOUR_DIRECTORY_NAME_HERE&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/f1562673-1712-4dab-8f58-dfbc0106998a.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now, we need to mount the device so that the system can access its contents. This command takes the following form:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;mount [physical device identifier] [new folder &#39;home&#39;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This is essentially telling the system to point my SSD (which has the identifier &lt;code&gt;/dev/sdd1&lt;/code&gt;, as we identified in step 1) to live in the directory &lt;code&gt;/mnt/pve/EXT_SSD/&lt;/code&gt; so its contents can be accessed by my home user.&lt;/p&gt;
+&lt;p&gt;To test if it worked, I navigated to its new home with &lt;code&gt;cd mnt/pve/EXT_SSD/&lt;/code&gt; and then listed its contents and&amp;hellip; success! I can now access my files on an external SSD within Linux.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/4a1ee575-6f6a-4ca2-a52f-045261e4163b.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important Note:&lt;/strong&gt; Every time my system reboots, the device needs to be manually re-mounted (aka repeating step 3) in order to access the files on the SSD. To avoid having to do this, I modified the crontabs file (specifies tasks to be run ahead of time/periodically) using &lt;code&gt;sudo crontabs -e&lt;/code&gt; . I added &lt;code&gt;@reboot&lt;/code&gt; to specify the task to run upon reboot, added &lt;code&gt;sudo&lt;/code&gt; at the start just to ensure it runs even if logging in with a lower privilege user, and ended it with &amp;amp; to tell the system to keep going &amp;amp; setting up after running this command:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/924eddd8-ffd1-47a6-93eb-8c324bde0a91.png&#34; alt=&#34;&#34;&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I learnt this &lt;a href=&#34;https://www.youtube.com/watch?v=Gl9HS7-H0mI&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/blockquote&gt;&lt;/blockquote&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;-miscellaneous-images-to-be-used-in-future-tutorials-if-i-return-to-this-&#34;&gt;~ miscellaneous images to be used in future tutorials if i return to this ~&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/1327d5e1-354e-4fb3-a104-a1144c537db4.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/435c87ee-a2ff-41e3-831b-8b6b19ea58dd.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/a323178c-9191-4dde-823d-99a3d0bef9e2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/4/84802981-73da-427a-a7ab-1d2ef2e235cd.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Passing USB Devices into Proxmox VMs</title>
+      <link>/public/posts/3/usb-passthru-proxmox/</link>
+      <pubDate>Mon, 10 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/public/posts/3/usb-passthru-proxmox/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;~ Using &lt;a href=&#34;/public/posts/3/51YRuNnOOxL._AC_UF894,1000_QL80_.jpg&#34;&gt;TP-Link TL-WN722N&lt;/a&gt; ~&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;The GUI way of adding a USB device to a Proxmox VM didn&amp;rsquo;t work for me when using a USB network adapter (the device id was not showing up when trying to add to the VM via the GUI), so here is a simple manual workaround.&lt;/p&gt;
+&lt;h2 id=&#34;--steps&#34;&gt;- Steps:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Plug in your desired USB device into the physical machine you&amp;rsquo;re running Proxmox on.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Using the CLI on the Proxmox host machine (recommended to use ssh/webGUI CLI), list all connected USB devices with &lt;code&gt;lsusb&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/3/92c790c2-8df1-4fe9-b207-8822f3458801.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Note the ID of the desired device. In this case the &lt;code&gt;TP-Link TL-WN722&lt;/code&gt;, with ID: &lt;code&gt;2357:010c&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure the desired Proxmox VM that you want to pass the USB device to is powered off, and take note of its number (&lt;code&gt;104&lt;/code&gt; in the below image):&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/3/1198292a-3a93-4620-9c7f-27daa746d07e.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Still on the Proxmox host machine, run the following command to pass the USB device through to one or more of your virtual machines:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;qm set [VM#] -usb0 host=[host-id]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;e.g. for VM &lt;code&gt;#104&lt;/code&gt; &amp;amp; host id &lt;code&gt;2357:010c&lt;/code&gt;, I would run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;qm set 104 -usb0 host=2357:010c&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Source:&lt;/strong&gt; &lt;a href=&#34;https://pve.proxmox.com/wiki/USB_Devices_in_Virtual_Machines&#34;&gt;&lt;em&gt;Proxmox documentation&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Boot up your Proxmox VM (in my case, VM &lt;code&gt;#104&lt;/code&gt;) and run &lt;code&gt;lsusb&lt;/code&gt; in using the CLI. You should now see the USB device that you just passed through (&lt;code&gt;2357:010c&lt;/code&gt; for me) in there!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/public/posts/3/649e3f6b-48ca-4f50-a9b8-7189d64a135b.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;hope-this-helps-a-few-other-fellow-lost-souls-&#34;&gt;Hope this helps a few other fellow lost souls! ^^&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;/strong&gt; &lt;em&gt;I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
