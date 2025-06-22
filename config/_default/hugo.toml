@@ -1,5 +1,7 @@
 # base website-wide config
-baseURL = "/public"
+baseURL = "/"
+relativeURLs = true
+canonifyURLs = false
 enableGitInfo = true
 enableRobotsTXT = true
 hasCJKLanguage = true

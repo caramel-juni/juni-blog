@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Docker on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/tags/docker/</link>
+    <link>/tags/docker/</link>
     <description>Recent content in Docker on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 13 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 13 Apr 2025 00:00:00 +0000</lastBuildDate><atom:link href="/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Minecraft Server From Scratch (Proxmox LXC, Docker Compose &#43; itzg)</title>
-      <link>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</link>
+      <link>/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</link>
       <pubDate>Sun, 13 Apr 2025 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</guid>
+      <guid>/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</guid>
       <description>&lt;p&gt;Just a smol lil guide for myself to set up a minecraft server from scratch, &lt;em&gt;as I cannot count the number of times I&amp;rsquo;ve had to re-learn this when I migrate from server to server&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;ve opted for services that &lt;em&gt;should&lt;/em&gt; (for the most part) be supported long-term and are relatively secure &amp;amp; lightweight. However, as any good netizen should do, &lt;em&gt;&lt;strong&gt;please take my advice with a granule of sugar&lt;/strong&gt;&lt;/em&gt;&amp;hellip;&lt;/p&gt;
 &lt;h2 id=&#34;--set-up-lxc-container-in-proxmox&#34;&gt;- Set up &lt;code&gt;LXC&lt;/code&gt; Container in Proxmox&lt;/h2&gt;
@@ -131,7 +131,7 @@ Basic internet functionality can be tested &amp;amp; achieved by having the line
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;With that out of the way, now time to &lt;strong&gt;open up a port on your local&lt;/strong&gt; router/modem. For me, I&amp;rsquo;ve opted for a little &amp;ldquo;security through obscurity&amp;rdquo; (a contentious topic, but given my threat model) by mapping my &lt;strong&gt;router&amp;rsquo;s external port&lt;/strong&gt;, &lt;code&gt;43456&lt;/code&gt; to the default minecraft listening port (&lt;code&gt;25565&lt;/code&gt; - specified in &lt;code&gt;server.properties&lt;/code&gt;) on my &lt;code&gt;lxc&lt;/code&gt; machine:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/public/posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png&#34; alt=&#34;&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;../../posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png&#34; alt=&#34;&#34;&gt;
 Additionally, I&amp;rsquo;ve set up a &lt;code&gt;DNS A record&lt;/code&gt; for the domain I own to point at my router&amp;rsquo;s &lt;code&gt;public IP&lt;/code&gt;, so I can access my server (and share it) with &lt;code&gt;my-domain:43456&lt;/code&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
@@ -149,10 +149,10 @@ Additionally, I&amp;rsquo;ve set up a &lt;code&gt;DNS A record&lt;/code&gt; for 
     
     <item>
       <title>&#39;securely&#39; setting up web server with nginx @ home &amp; self hosting</title>
-      <link>/public/posts/9/securely-self-hosting-site-npm/</link>
+      <link>/posts/9/securely-self-hosting-site-npm/</link>
       <pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/9/securely-self-hosting-site-npm/</guid>
+      <guid>/posts/9/securely-self-hosting-site-npm/</guid>
       <description>&lt;ol&gt;
 &lt;li&gt;debian 12 container install inside proxmox&lt;/li&gt;
 &lt;li&gt;`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li&gt;

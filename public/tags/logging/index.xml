@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Logging on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/tags/logging/</link>
+    <link>/tags/logging/</link>
     <description>Recent content in Logging on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/logging/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="/tags/logging/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Splunk Forwarders with Multiple Indexes</title>
-      <link>/public/posts/0/splunk-forwarder/</link>
+      <link>/posts/0/splunk-forwarder/</link>
       <pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/0/splunk-forwarder/</guid>
+      <guid>/posts/0/splunk-forwarder/</guid>
       <description>&lt;h2 id=&#34;--pre-requisites&#34;&gt;- Pre-requisites:&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -33,7 +33,7 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;em&gt;&lt;strong&gt;[OPTIONAL]&lt;/strong&gt;&lt;/em&gt; Go to pfsense web UI, and create &amp;amp; configure the instance that you want to monitor. Once up and running, go to &amp;lsquo;Logs View&amp;rsquo; and select the instance to view.&lt;br&gt;
-&lt;img src=&#34;/public/posts/0/splunk3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;../../posts/0/splunk3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://cdn.hashnode.com/res/hashnode/image/upload/v1674202427414/c05ed6d0-aba7-4be3-bd8b-c790429611cc.png?auto=compress,format&amp;amp;format=webp&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Note the file path and importantly, the folder name where logs are sent for that instance. My path is &lt;code&gt;/var/log/suricata/suricata_em125470/eve.json&lt;/code&gt; and the folder name is &lt;code&gt;suricata_em125470&lt;/code&gt;.&lt;/p&gt;
 &lt;/li&gt;

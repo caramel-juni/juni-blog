@@ -1,6 +1,5 @@
 # Ignore everything
-/*
+*
+archetypes
 
 # But not this folder (keep public and its contents)
-!/public/
-!/public/**

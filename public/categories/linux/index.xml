@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Linux on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/categories/linux/</link>
+    <link>/categories/linux/</link>
     <description>Recent content in Linux on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="/categories/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tracking &amp; Syncing my dotfiles!</title>
-      <link>/public/posts/16/managing-my-dotfiles/</link>
+      <link>/posts/16/managing-my-dotfiles/</link>
       <pubDate>Sun, 22 Jun 2025 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/16/managing-my-dotfiles/</guid>
+      <guid>/posts/16/managing-my-dotfiles/</guid>
       <description>&lt;p&gt;&lt;em&gt;.dotfiles or&amp;hellip; (.)²files?&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&#34;--using-git--github--tracking-dotfiles-with-an-alias&#34;&gt;- Using Git + Github, &amp;amp; tracking dotfiles with an alias.&lt;/h2&gt;
 &lt;ul&gt;
@@ -103,10 +103,10 @@
     
     <item>
       <title>&#39;securely&#39; setting up web server with nginx @ home &amp; self hosting</title>
-      <link>/public/posts/9/securely-self-hosting-site-npm/</link>
+      <link>/posts/9/securely-self-hosting-site-npm/</link>
       <pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/9/securely-self-hosting-site-npm/</guid>
+      <guid>/posts/9/securely-self-hosting-site-npm/</guid>
       <description>&lt;ol&gt;
 &lt;li&gt;debian 12 container install inside proxmox&lt;/li&gt;
 &lt;li&gt;`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li&gt;
@@ -327,10 +327,10 @@ e.g. &lt;code&gt;182.46.382.83:443&lt;/code&gt;&lt;/p&gt;
     
     <item>
       <title>Backing up linux .config &amp; apps to move to a new device/distro</title>
-      <link>/public/posts/8/backup-linux-config-and-apps/</link>
+      <link>/posts/8/backup-linux-config-and-apps/</link>
       <pubDate>Wed, 25 Dec 2024 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/8/backup-linux-config-and-apps/</guid>
+      <guid>/posts/8/backup-linux-config-and-apps/</guid>
       <description>&lt;h1 id=&#34;burn-it-all-down-or&#34;&gt;burn it all down&amp;hellip; or?&lt;/h1&gt;
 &lt;p&gt;Ahh, a tale born from the first time that I dipped my toes into the weird, wide and wonderful world of distro-hopping. Because sometimes, instead of building it all from scratch again (like so many of us are fond of doing), bringing your old config, notes of a previous home, with you is desirable. Because don&amp;rsquo;t lie - we won&amp;rsquo;t get those hours spent tweaking shell configs to look &lt;em&gt;just&lt;/em&gt; how we like it back.&lt;/p&gt;
 &lt;p&gt;In any case - the following (somewhat high-level) overview should get you up and running on a new system/distro fairly quickly, in an environment&lt;/p&gt;

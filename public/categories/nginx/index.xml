@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nginx on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/categories/nginx/</link>
+    <link>/categories/nginx/</link>
     <description>Recent content in Nginx on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 26 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="/public/categories/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 26 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="/categories/nginx/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>&#39;securely&#39; setting up web server with nginx @ home &amp; self hosting</title>
-      <link>/public/posts/9/securely-self-hosting-site-npm/</link>
+      <link>/posts/9/securely-self-hosting-site-npm/</link>
       <pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/9/securely-self-hosting-site-npm/</guid>
+      <guid>/posts/9/securely-self-hosting-site-npm/</guid>
       <description>&lt;ol&gt;
 &lt;li&gt;debian 12 container install inside proxmox&lt;/li&gt;
 &lt;li&gt;`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li&gt;

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Git-Filter-Repo on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/tags/git-filter-repo/</link>
+    <link>/tags/git-filter-repo/</link>
     <description>Recent content in Git-Filter-Repo on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/git-filter-repo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="/tags/git-filter-repo/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>PACK files in .git - a rabbit hole</title>
-      <link>/public/posts/6/pack-files-git/</link>
+      <link>/posts/6/pack-files-git/</link>
       <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/6/pack-files-git/</guid>
+      <guid>/posts/6/pack-files-git/</guid>
       <description>&lt;h2 id=&#34;--so-how-did-we-get-here-see_no_evil&#34;&gt;- so, how did we get here? &amp;#x1f648;&lt;/h2&gt;
 &lt;hr&gt;
 &lt;p&gt;git stores all historical changes to a repo in a PACK file inside the hidden .git folder. This allows restoration of previous repo states in the future.&lt;/p&gt;
@@ -33,7 +33,7 @@
 &lt;p&gt;&lt;code&gt;git push --all [remote-repo-URL]&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;--and-then&#34;&gt;- and then&amp;hellip;&lt;/h3&gt;
 &lt;p&gt;well, if all things went well, you should have shaved a few KBs/MBs/GBs off your &lt;code&gt;PACK&lt;/code&gt; file - well done! grab yourself a cookie, you&amp;rsquo;ve well and truly earnt it :3&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/public/posts/6/saya-banner.jpeg&#34; alt=&#34;saya-congrats&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;../../posts/6/saya-banner.jpeg&#34; alt=&#34;saya-congrats&#34;&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;--other-helpful-links&#34;&gt;- other helpful links:&lt;/h3&gt;
 &lt;ul&gt;

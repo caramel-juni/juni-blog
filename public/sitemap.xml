@@ -2,238 +2,238 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/public/tags/arch/</loc>
+    <loc>/tags/arch/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/chezmoi/</loc>
+    <loc>/tags/chezmoi/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/config/</loc>
+    <loc>/tags/config/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/dotfiles/</loc>
+    <loc>/tags/dotfiles/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/git/</loc>
+    <loc>/tags/git/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/categories/linux/</loc>
+    <loc>/categories/linux/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/posts/</loc>
+    <loc>/posts/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/posts/16/managing-my-dotfiles/</loc>
+    <loc>/posts/16/managing-my-dotfiles/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/posts/15/git-cli-refresher---branching--stashing/</loc>
+    <loc>/posts/15/git-cli-refresher---branching--stashing/</loc>
     <lastmod>2025-06-22T23:58:46+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/docker/</loc>
+    <loc>/tags/docker/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/docker-compose/</loc>
+    <loc>/tags/docker-compose/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/itzg/</loc>
+    <loc>/tags/itzg/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/lxc/</loc>
+    <loc>/tags/lxc/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/minecraft/</loc>
+    <loc>/tags/minecraft/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</loc>
+    <loc>/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-&#43;-itzg/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/categories/proxmox/</loc>
+    <loc>/categories/proxmox/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/server/</loc>
+    <loc>/tags/server/</loc>
     <lastmod>2025-04-13T22:10:24+09:30</lastmod>
   </url><url>
-    <loc>/public/tags/authentication/</loc>
+    <loc>/tags/authentication/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/13/authentication-methods-deep-dive/</loc>
+    <loc>/posts/13/authentication-methods-deep-dive/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/cookies/</loc>
+    <loc>/tags/cookies/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/csrf/</loc>
+    <loc>/tags/csrf/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/jwt/</loc>
+    <loc>/tags/jwt/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/sessions/</loc>
+    <loc>/tags/sessions/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/websec/</loc>
+    <loc>/categories/websec/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/xss/</loc>
+    <loc>/tags/xss/</loc>
     <lastmod>2025-02-28T00:41:49+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/12/reverting-to-an-older-version-of-a-github-project/</loc>
+    <loc>/posts/12/reverting-to-an-older-version-of-a-github-project/</loc>
     <lastmod>2025-01-12T11:42:54+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/git/</loc>
+    <loc>/categories/git/</loc>
     <lastmod>2025-01-12T11:42:54+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/blog/</loc>
+    <loc>/categories/blog/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/10/building-hugo-blog/</loc>
+    <loc>/posts/10/building-hugo-blog/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/cloudflare/</loc>
+    <loc>/tags/cloudflare/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/github/</loc>
+    <loc>/tags/github/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/github-pages/</loc>
+    <loc>/tags/github-pages/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/go/</loc>
+    <loc>/tags/go/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/hugo/</loc>
+    <loc>/categories/hugo/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/markdown/</loc>
+    <loc>/tags/markdown/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/obsidian/</loc>
+    <loc>/categories/obsidian/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/website/</loc>
+    <loc>/categories/website/</loc>
     <lastmod>2025-01-08T20:25:25+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/9/securely-self-hosting-site-npm/</loc>
+    <loc>/posts/9/securely-self-hosting-site-npm/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/debian/</loc>
+    <loc>/tags/debian/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/nginx/</loc>
+    <loc>/categories/nginx/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/nginx-proxy-manager/</loc>
+    <loc>/tags/nginx-proxy-manager/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/self-hosting/</loc>
+    <loc>/tags/self-hosting/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/ufw/</loc>
+    <loc>/tags/ufw/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/8/backup-linux-config-and-apps/</loc>
+    <loc>/posts/8/backup-linux-config-and-apps/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/backup/</loc>
+    <loc>/tags/backup/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/distro-hopping/</loc>
+    <loc>/tags/distro-hopping/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/rsync/</loc>
+    <loc>/tags/rsync/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/existential/</loc>
+    <loc>/tags/existential/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/pointless/</loc>
+    <loc>/tags/pointless/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/7/hello-world/</loc>
+    <loc>/posts/7/hello-world/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/git-filter-repo/</loc>
+    <loc>/tags/git-filter-repo/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/pack-file/</loc>
+    <loc>/tags/pack-file/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/6/pack-files-git/</loc>
+    <loc>/posts/6/pack-files-git/</loc>
     <lastmod>2025-01-04T11:26:28+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/netgate/</loc>
+    <loc>/tags/netgate/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/pfsense/</loc>
+    <loc>/categories/pfsense/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/5/pfsense-and-unifi/</loc>
+    <loc>/posts/5/pfsense-and-unifi/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/unifi/</loc>
+    <loc>/categories/unifi/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/vlan/</loc>
+    <loc>/tags/vlan/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/centos/</loc>
+    <loc>/tags/centos/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/containers/</loc>
+    <loc>/tags/containers/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/plex/</loc>
+    <loc>/tags/plex/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/4/proxmox-plex-container/</loc>
+    <loc>/posts/4/proxmox-plex-container/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/3/usb-passthru-proxmox/</loc>
+    <loc>/posts/3/usb-passthru-proxmox/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/vms/</loc>
+    <loc>/tags/vms/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/2/pfsense-troubleshooting-update/</loc>
+    <loc>/posts/2/pfsense-troubleshooting-update/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/putty/</loc>
+    <loc>/tags/putty/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/esxi/</loc>
+    <loc>/categories/esxi/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/1/esxi-upgrade-and-tpm/</loc>
+    <loc>/posts/1/esxi-upgrade-and-tpm/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/tpm/</loc>
+    <loc>/tags/tpm/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/tags/logging/</loc>
+    <loc>/tags/logging/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/categories/splunk/</loc>
+    <loc>/categories/splunk/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/posts/0/splunk-forwarder/</loc>
+    <loc>/posts/0/splunk-forwarder/</loc>
     <lastmod>2025-01-04T16:35:46+10:30</lastmod>
   </url><url>
-    <loc>/public/</loc>
+    <loc>/</loc>
     <lastmod>2024-12-26T16:00:58+10:30</lastmod>
   </url><url>
-    <loc>/public/pages/</loc>
+    <loc>/pages/</loc>
     <lastmod>2024-12-26T19:56:39+10:30</lastmod>
   </url><url>
-    <loc>/public/pages/whoami/</loc>
+    <loc>/pages/whoami/</loc>
     <lastmod>2024-12-25T02:04:47+10:30</lastmod>
   </url><url>
-    <loc>/public/pages/untitled/</loc>
+    <loc>/pages/untitled/</loc>
     <lastmod>2024-12-26T19:56:39+10:30</lastmod>
   </url>
 </urlset>

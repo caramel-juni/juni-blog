@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Config on juni&#39;s blog ٩(◕‿◕｡)۶</title>
-    <link>/public/tags/config/</link>
+    <link>/tags/config/</link>
     <description>Recent content in Config on juni&#39;s blog ٩(◕‿◕｡)۶</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="/public/tags/config/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="/tags/config/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tracking &amp; Syncing my dotfiles!</title>
-      <link>/public/posts/16/managing-my-dotfiles/</link>
+      <link>/posts/16/managing-my-dotfiles/</link>
       <pubDate>Sun, 22 Jun 2025 00:00:00 +0000</pubDate>
       
-      <guid>/public/posts/16/managing-my-dotfiles/</guid>
+      <guid>/posts/16/managing-my-dotfiles/</guid>
       <description>&lt;p&gt;&lt;em&gt;.dotfiles or&amp;hellip; (.)²files?&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&#34;--using-git--github--tracking-dotfiles-with-an-alias&#34;&gt;- Using Git + Github, &amp;amp; tracking dotfiles with an alias.&lt;/h2&gt;
 &lt;ul&gt;
