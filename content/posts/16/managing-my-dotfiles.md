@@ -27,7 +27,7 @@ git init --bare ~/.dotfiles
 # Tells (/usr/bin/git) to link the git alias directory you just created to your real .config/
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-# 3. Hide untracked files in ~/ from cluttering "git status"
+# 3. Hide untracked files in ~/ from cluttering "git status".
 dotfiles config status.showUntrackedFiles no
 ```
 Setup & communicate with this repo via `ssh`, [authenticating with a local private key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux).
