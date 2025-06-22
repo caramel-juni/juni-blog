@@ -20,7 +20,7 @@ tags:
 - ... as mentioned on the [ever-wise *Arch Wiki*.](https://wiki.archlinux.org/title/Dotfiles#Tracking_dotfiles_directly_with_Git)
 
 ``` bash
-# 1. Create a bare Git repo to track dotfiles
+# 1. Create a bare Git repo to track dotfiles.
 git init --bare ~/.dotfiles
 
 # 2. Create an alias to simplify dotfiles management.
