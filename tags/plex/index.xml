@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Plex on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/plex/</link><description>Recent content in Plex on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 04 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/plex/index.xml" rel="self" type="application/rss+xml"/><item><title>Plex &amp; Proxmox</title><link>https://blog.juni-mp4.com/posts/4/proxmox-plex-container/</link><pubDate>Fri, 04 Aug 2023 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/4/proxmox-plex-container/</guid><description>&lt;blockquote>
+&lt;p>&amp;hellip; &amp;amp; pulling files from an external SSD &amp;amp;/or an internal HDD. &lt;strong>Yes, this was&amp;hellip; interesting.&lt;/strong>&lt;/p>&lt;/blockquote>
+&lt;h2 id="--so-why-did-i-write-this">- So&amp;hellip; why did I write this?&lt;/h2>
+&lt;p>My primary objective was to setup a home lab, which could do the following things:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>run LXCs of various linux distros (Kali via external install, and CentOS via Proxmox template) &lt;strong>[done]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>run a Plex Media server, accessing both external SSD and internal HDD data &lt;strong>[done]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Setup a VPN for use in the server &lt;strong>[done]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Setup VPNs for containers &lt;strong>[yet to do]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Automatically pull files from various torrents safely and securely with Deluge (?), Sonarr, Radarr, and Prowlarr &lt;strong>[yet to do]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Run my previously self-hosted Minecraft server &lt;strong>[yet to do]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>act as a NAS to store and backup family photos &lt;strong>[for the future, if I upgrade hardware]&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>I know that my use case is incredibly specific, but after scouring the web for guides on the various problems I had along the way, I was exhausted enough to pull together a guide of how I accomplished each of the above.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>This guide will focus on setting up a Plex Media server in a Proxmox container, which can access data from both an external SSD and an internal HDD.&lt;/strong>&lt;/p>&lt;/blockquote>
+&lt;h2 id="--prerequisites">- Prerequisites:&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>Installing Proxmox on a server&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;h2 id="--setting-up-a-container">- Setting up a container&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Download a template for the distribution of Linux you want to use.&lt;/strong>&lt;/p>
+&lt;p>Simple? Should be. Pick your desired flavour of Linux and it should be available via accessing your local volume [&lt;code>local (juniproxmox)&lt;/code> for me] and selecting &lt;code>CT Templates&lt;/code> &amp;gt; &lt;code>Templates&lt;/code>. However, &lt;em>make sure what you&amp;rsquo;re selecting is &lt;strong>actually a LXC&lt;/strong>, and not another version of Ubuntu/Debian (otherwise it will run like a VM inside of a container. And yes, that means it&amp;rsquo;s s l o w)&lt;/em>. The difference is somewhat explored in the folllowing &amp;lsquo;shallow dive&amp;rsquo; of sorts, and practically illustrated within Proxmox in Figure 2.&lt;/p>
+&lt;blockquote>
+&lt;h3 id="testing-the-waters-1-lxc-vs-vms">&lt;strong>Testing the waters #1: LXC vs VMs.&lt;/strong>&lt;/h3>
+&lt;p>From what I understand, LXCs are essentially lightweight VMs, which share the kernel (lowest-level software interfacing with computer hardware) with the host OS. In my case, Proxmox (based on Debian Linux) will share its kernel with an installed LXC (in this case, CentOS 9 Stream), allowing the LXC to run significantly faster than a VM by having access to the same kernel. However, I am unsure if you can run a LXC of Debian/Ubuntu on top of existing Debian/Ubuntu infrastructure, as I haven&amp;rsquo;t been able to easily find LXC images for these online. However, I am most likely very much misunderstanding the nature of LXCs in general and am missing something obvious, so if anyone knows, please feel free to enlighten me by contacting me ~&lt;/p>&lt;/blockquote>
+&lt;p>&lt;strong>Figure 1: Finding CT Templates&lt;/strong>&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/e50f054c-0ace-44ed-bb6e-96fe76c6619b.png" alt="">&lt;/p>
+&lt;p>&lt;strong>Figure 2: LXC Images vs Standard Image&lt;/strong>&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/069bb70d-9876-4d23-bcd9-f770b78adedc.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>After the CT template has been downloaded, installing is fairly straightforward.&lt;/strong>
+I followed the following video to get up to speed on what was recommended for a container install.&lt;/p>
+&lt;p>Here are the specs for my installation of CentOS 9 Stream, running a Plex Server which would have 2-3 users MAX (these are only testing values, take them with a grain of salt!):&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/2434eda3-0247-48df-947b-9614ee44e17d.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/5d7670d4-5dc4-40d8-8de1-a02feb276966.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Once the container has been setup and you can access the console (visuals included in above video, it&amp;rsquo;s pretty straightforward), login using root (and preferably setup a lower privilege user if you&amp;rsquo;re using the system for important things) and your container is ready to use!.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="--installing-plex-media-server">- Installing Plex Media Server:&lt;/h2>
+&lt;p>&lt;em>~ to be written ~&lt;/em>&lt;/p>
+&lt;hr>
+&lt;h2 id="--passing-usbexternal-devices-to-lxc">- Passing USB/External Devices to LXC:&lt;/h2>
+&lt;p>Now, for my use case, I wanted to use an external SSD containing media files as a sort of &amp;lsquo;attached storage device&amp;rsquo; and have my Plex media server access and make the files streamable. However, doing so is a little complicated. It&amp;rsquo;s covered rather well in &lt;a href="https://www.youtube.com/@virtualizeeverything">Virtualize Everything&amp;rsquo;s&lt;/a> series of videos, but it can be confusing as there are quite a few ways of doing it, depending on one&amp;rsquo;s use case.&lt;/p>
+&lt;p>&lt;em>&lt;strong>My use case: Pass an External Device to a LXC WITHOUT ERASING DATA FROM IT, to transfer/access files on the External Device.&lt;/strong>&lt;/em>&lt;/p>
+&lt;p>Based on the following video: &lt;a href="https://www.youtube.com/watch?v=6oripI7F8tw">Add USB storage to Proxmox (CLI)&lt;/a>&lt;/p>
+&lt;blockquote>
+&lt;p>Note: The term &amp;lsquo;SSD&amp;rsquo; can be used interchangeably with &amp;lsquo;External HDD/USB&amp;rsquo; &amp;ndash;&amp;gt; this should work for all removable storage solutions.&lt;/p>&lt;/blockquote>
+&lt;p>Plug in your USB to the server (in my case, my brother&amp;rsquo;s old laptop). Nagivate to &lt;code>'your home node' (juniproxmox)&lt;/code> -&amp;gt; &lt;code>disks&lt;/code>. Here is a display of all of the functioning devices connected to your machine. My laptop has an internal HDD (listed as &lt;code>sda&lt;/code>), and an internal SSD (used as the boot drive, &lt;code>sdb&lt;/code>). I also have a USB plugged in to the device, occupying &lt;code>sdc&lt;/code>.&lt;/p>
+&lt;p>Thus, my SSD is &lt;code>sdd&lt;/code>, which checks out given it&amp;rsquo;s been identified as &lt;code>SSD&lt;/code> with &lt;code>1.00TB&lt;/code> of storage. It is best practice to have the drive using GPT, although I will be attempting to use one still using MBR, as it has worked before for me.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/212d77a6-88cd-47d8-9c21-d186f24e2da4.png" alt="">&lt;/p>
+&lt;h2 id="--formatting-drive-to-use-gpt---guid-partitioning-table">- Formatting drive to use GPT - GUID Partitioning Table.&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>On your main node, open the shell and use &lt;code>fdisk -l&lt;/code> to list all available disks on the system in the CLI.&lt;/p>
+&lt;p>After the text has been printed, look near the bottom for your chosen device, in my case &lt;code>sdd&lt;/code>. It&amp;rsquo;s product name and actual usable size (smaller than but close to its advertised size) should be listed too. Take note of the device&amp;rsquo;s identifier, which includes its location on the system. For me, it&amp;rsquo;s listed under &amp;lsquo;Device&amp;rsquo; at the bottom, as &lt;code>/dev/sdd1&lt;/code>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/d7352649-ef16-4aeb-b109-5d164023e67e.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Now we know the path to the device, we need to make a folder on our home system for it to be accessed from. I think of this as creating its new address - the SSD has gone from floating around in the ether, homeless, and we&amp;rsquo;re now making a directory on our system for it to call home. I poked around a bit using the &lt;code>cd&lt;/code> (&lt;code>cd&lt;/code> = &lt;strong>change directory&lt;/strong> - essentially how you traverse your Linux system in the CLI) and &lt;code>ls&lt;/code> (&lt;code>ls&lt;/code> = &lt;strong>list contents in current directory&lt;/strong>) commands, before deciding to make a new directory in &lt;code>/mnt/pve/&lt;/code>, called &lt;code>EXT_SSD&lt;/code>. I suggest navigating to where you&amp;rsquo;d like the directory to be and &lt;strong>then&lt;/strong> making it, as not all system&amp;rsquo;s file structures are the same.&lt;/p>
+&lt;p>Once I found the desired folder, create the directory using:&lt;/p>
+&lt;p>&lt;code>mkdir YOUR_DIRECTORY_NAME_HERE&lt;/code>&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/f1562673-1712-4dab-8f58-dfbc0106998a.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Now, we need to mount the device so that the system can access its contents. This command takes the following form:&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;code>mount [physical device identifier] [new folder 'home']&lt;/code>&lt;/p>
+&lt;p>This is essentially telling the system to point my SSD (which has the identifier &lt;code>/dev/sdd1&lt;/code>, as we identified in step 1) to live in the directory &lt;code>/mnt/pve/EXT_SSD/&lt;/code> so its contents can be accessed by my home user.&lt;/p>
+&lt;p>To test if it worked, I navigated to its new home with &lt;code>cd mnt/pve/EXT_SSD/&lt;/code> and then listed its contents and&amp;hellip; success! I can now access my files on an external SSD within Linux.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/4a1ee575-6f6a-4ca2-a52f-045261e4163b.png" alt="">&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Important Note:&lt;/strong> Every time my system reboots, the device needs to be manually re-mounted (aka repeating step 3) in order to access the files on the SSD. To avoid having to do this, I modified the crontabs file (specifies tasks to be run ahead of time/periodically) using &lt;code>sudo crontabs -e&lt;/code> . I added &lt;code>@reboot&lt;/code> to specify the task to run upon reboot, added &lt;code>sudo&lt;/code> at the start just to ensure it runs even if logging in with a lower privilege user, and ended it with &amp;amp; to tell the system to keep going &amp;amp; setting up after running this command:&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/924eddd8-ffd1-47a6-93eb-8c324bde0a91.png" alt="">.&lt;/p>
+&lt;blockquote>
+&lt;p>I learnt this &lt;a href="https://www.youtube.com/watch?v=Gl9HS7-H0mI">here&lt;/a>.&lt;/p>&lt;/blockquote>&lt;/blockquote>&lt;/blockquote>
+&lt;hr>
+&lt;h3 id="-miscellaneous-images-to-be-used-in-future-tutorials-if-i-return-to-this-">~ miscellaneous images to be used in future tutorials if i return to this ~&lt;/h3>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/1327d5e1-354e-4fb3-a104-a1144c537db4.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/435c87ee-a2ff-41e3-831b-8b6b19ea58dd.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/a323178c-9191-4dde-823d-99a3d0bef9e2.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/4/84802981-73da-427a-a7ab-1d2ef2e235cd.png" alt="">&lt;/p>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Rsync on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/rsync/</link><description>Recent content in Rsync on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 25 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/rsync/index.xml" rel="self" type="application/rss+xml"/><item><title>Backing up linux .config &amp; apps to move to a new device/distro</title><link>https://blog.juni-mp4.com/posts/8/backup-linux-config-and-apps/</link><pubDate>Wed, 25 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/8/backup-linux-config-and-apps/</guid><description>&lt;h1 id="burn-it-all-down-or">burn it all down&amp;hellip; or?&lt;/h1>
+&lt;p>Ahh, a tale born from the first time that I dipped my toes into the weird, wide and wonderful world of distro-hopping. Because sometimes, instead of building it all from scratch again (like so many of us are fond of doing), bringing your old config, notes of a previous home, with you is desirable. Because don&amp;rsquo;t lie - we won&amp;rsquo;t get those hours spent tweaking shell configs to look &lt;em>just&lt;/em> how we like it back.&lt;/p>
+&lt;p>In any case - the following (somewhat high-level) overview should get you up and running on a new system/distro fairly quickly, in an environment&lt;/p>
+&lt;p>Basically, most user settings (from my research - some may be hidden in other corners, but this got me back to a similar place) are stored in `/home/[user-name]/.config/.&lt;/p>
+&lt;p>So, for me, this was at &lt;code>/home/juni/.config/&lt;/code>. So, simply copy that folder to an external drive or over the network, and paste it in the corresponding place on your new system.&lt;/p>
+&lt;h2 id="--copying-over-config">- Copying over .config&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;code>cd /home/[user]/&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>navigate to the user&amp;rsquo;s directory where the &lt;code>.config&lt;/code> folder is stored.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo tar cvzf configs-backup.tgz .config/&lt;/p>
+&lt;ul>
+&lt;li>creates a compressed archive (&lt;code>configs-backup.tgz&lt;/code>) of the &lt;code>.config&lt;/code> folder with &lt;code>tar&lt;/code>, and passing &lt;code>cvzf&lt;/code> as parameters:
+&lt;ul>
+&lt;li>&lt;code>c&lt;/code> - &lt;code>c&lt;/code>reate a new archive&lt;/li>
+&lt;li>&lt;code>v&lt;/code> - enable &lt;code>v&lt;/code>erbose output, to monitor the progress&lt;/li>
+&lt;li>&lt;code>z&lt;/code> - compress with the g&lt;code>z&lt;/code>ip algorithm&lt;/li>
+&lt;li>&lt;code>f&lt;/code> - specifies the name of the created archive &lt;code>f&lt;/code>ile (in this case, &lt;code>configs-backup.tgz&lt;/code>)
+Alternatively, you could use a tool like &lt;code>rsync&lt;/code> to copy the &lt;strong>entire&lt;/strong> &lt;code>/home/&lt;/code> folder to an external ssd, although this can take a &lt;strong>long time&lt;/strong> depending on its size. I&amp;rsquo;d recommend &lt;code>rsync&lt;/code> over just copying with &lt;code>cp&lt;/code>, as &lt;code>rsync&lt;/code> copies all files &lt;strong>whilst&lt;/strong> retaining &lt;code>owner/group/other&lt;/code> file permissions.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>If connecting an external SSD to copy to:
+`sudo fdisk -l&lt;/p>
+&lt;ul>
+&lt;li>lists the connected disk drives and their corresponding filesystem location - like `/dev/sda1)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo mkdir -p /mnt/externalssd&lt;/p>
+&lt;ul>
+&lt;li>creates a folder on your computer&amp;rsquo;s filesystem to act as a &lt;strong>mount point:&lt;/strong> i.e. a place where you can access files stored on a mounted external SSD.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo mount -t exfat /dev/sda1 /mnt/externalssd&lt;/p>
+&lt;ul>
+&lt;li>Mounting the SSD (the device we found at &lt;code>/dev/sda1&lt;/code>) &amp;lsquo;in&amp;rsquo; this new folder created in the previous step, allowing all the files on it to appear in &lt;code>/mnt/externalssd&lt;/code>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>You should now be able to navigate there with &lt;code>cd /mnt/externalssd&lt;/code> and run a &lt;code>ls&lt;/code> to show the SSD&amp;rsquo;s existing contents. Then, copy the compressed .config file with &lt;code>cp /home/[user]/configs-backup.tgz /mnt/externalssd&lt;/code> (may require prepending &lt;code>sudo&lt;/code> depending on user permissions) - and you&amp;rsquo;re done!.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>If you opted for &lt;code>rsync&lt;/code> instead above:&lt;/p>
+&lt;p>&lt;code>sudo rsync -avh --progress /home/[user]/ /mnt/externalssd/home-backup&lt;/code>
+- &lt;code>a&lt;/code> - preserves file &lt;code>a&lt;/code>ttributes &amp;amp; ensures a &lt;strong>mirror copy&lt;/strong> is created, including permissions, symlinks, etc.
+- &lt;code>v&lt;/code> - enable &lt;code>v&lt;/code>erbose output, to monitor the progress
+- &lt;code>h&lt;/code> - ensures output is &lt;code>h&lt;/code>uman-readable
+- &lt;code>--progress&lt;/code> - displays real-time progress for troubleshooting purposes.&lt;/p>
+&lt;ol start="7">
+&lt;li>
+&lt;p>Now just unmount the drive with &lt;code>sudo umount /mnt/externalssd&lt;/code> (or don&amp;rsquo;t - live on the edge ;), plug it into new machine/distro, and copy the file you created over into &lt;code>/home/[new-user]/&lt;/code> with &lt;code>cp&lt;/code>.&lt;/p>
+&lt;p>Make sure to de-compress the file (if you used &lt;code>tar&lt;/code>) with &lt;code>tar xvzf configs-backup.tgz&lt;/code>, so it can be read by the system!&lt;/p>
+&lt;p>Then reboot, and your settings should be re-applied! :3&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="--bonus-grabbing-a-list-of-installed-packages-to-re-install">- BONUS: Grabbing a list of installed packages to re-install&lt;/h2>
+&lt;p>Optionally, if you want to grab a list of all packages/apps installed on your current distro to bring over and auto-install on your new one, run the following:&lt;/p>
+&lt;p>&lt;strong>Debian-based distros (e.g. Ubuntu, Kali, etc.):&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>dpkg --get-selections &amp;gt; installed-packages.txt&lt;/code>
+&lt;ul>
+&lt;li>saves a list of all packages to &lt;code>installed-packages.txt&lt;/code>. Save this on an external SSD or transfer to the new machine via the network.
+&lt;strong>On the New Machine/Distro:&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>sudo apt update&lt;/code>&lt;/li>
+&lt;li>Navigate to where &lt;code>installed-packages.txt&lt;/code> is stored (on the local machine), and run &lt;code>sudo dpkg --set-selections &amp;lt; installed-packages.txt&lt;/code>&lt;/li>
+&lt;li>Run &lt;code>sudo apt-get dselect-upgrade&lt;/code>&lt;/li>
+&lt;/ol>
+&lt;p>The process is similar for distributions using different package managers like &lt;code>yum&lt;/code>, &lt;code>pacman&lt;/code>, or &lt;code>rpm&lt;/code>, the concept is the same but the commands will differ slightly. A little net/manual searching will fix you up :P.&lt;/p>
+&lt;h2 id="--related-helpful-articles">- Related helpful articles:&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://help.ubuntu.com/community/BackupYourSystem/TAR">https://help.ubuntu.com/community/BackupYourSystem/TAR&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system">https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

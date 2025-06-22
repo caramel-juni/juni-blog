@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>VMs on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/vms/</link><description>Recent content in VMs on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 10 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/vms/index.xml" rel="self" type="application/rss+xml"/><item><title>Passing USB Devices into Proxmox VMs</title><link>https://blog.juni-mp4.com/posts/3/usb-passthru-proxmox/</link><pubDate>Mon, 10 Jul 2023 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/3/usb-passthru-proxmox/</guid><description>&lt;blockquote>
+&lt;p>~ Using &lt;a href="https://blog.juni-mp4.com/posts/3/51YRuNnOOxL._AC_UF894,1000_QL80_.jpg">TP-Link TL-WN722N&lt;/a> ~&lt;/p>&lt;/blockquote>
+&lt;p>The GUI way of adding a USB device to a Proxmox VM didn&amp;rsquo;t work for me when using a USB network adapter (the device id was not showing up when trying to add to the VM via the GUI), so here is a simple manual workaround.&lt;/p>
+&lt;h2 id="--steps">- Steps:&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>Plug in your desired USB device into the physical machine you&amp;rsquo;re running Proxmox on.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Using the CLI on the Proxmox host machine (recommended to use ssh/webGUI CLI), list all connected USB devices with &lt;code>lsusb&lt;/code>:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/3/92c790c2-8df1-4fe9-b207-8822f3458801.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Note the ID of the desired device. In this case the &lt;code>TP-Link TL-WN722&lt;/code>, with ID: &lt;code>2357:010c&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Ensure the desired Proxmox VM that you want to pass the USB device to is powered off, and take note of its number (&lt;code>104&lt;/code> in the below image):&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/3/1198292a-3a93-4620-9c7f-27daa746d07e.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Still on the Proxmox host machine, run the following command to pass the USB device through to one or more of your virtual machines:&lt;/p>
+&lt;p>&lt;code>qm set [VM#] -usb0 host=[host-id]&lt;/code>&lt;/p>
+&lt;p>e.g. for VM &lt;code>#104&lt;/code> &amp;amp; host id &lt;code>2357:010c&lt;/code>, I would run:&lt;/p>
+&lt;p>&lt;code>qm set 104 -usb0 host=2357:010c&lt;/code>&lt;/p>
+&lt;p>&lt;strong>Source:&lt;/strong> &lt;a href="https://pve.proxmox.com/wiki/USB_Devices_in_Virtual_Machines">&lt;em>Proxmox documentation&lt;/em>&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Boot up your Proxmox VM (in my case, VM &lt;code>#104&lt;/code>) and run &lt;code>lsusb&lt;/code> in using the CLI. You should now see the USB device that you just passed through (&lt;code>2357:010c&lt;/code> for me) in there!&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/3/649e3f6b-48ca-4f50-a9b8-7189d64a135b.png" alt="">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="hope-this-helps-a-few-other-fellow-lost-souls-">Hope this helps a few other fellow lost souls! ^^&lt;/h2>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PACK File on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/pack-file/</link><description>Recent content in PACK File on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 23 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/pack-file/index.xml" rel="self" type="application/rss+xml"/><item><title>PACK files in .git - a rabbit hole</title><link>https://blog.juni-mp4.com/posts/6/pack-files-git/</link><pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/6/pack-files-git/</guid><description>&lt;h2 id="--so-how-did-we-get-here-see_no_evil">- so, how did we get here? &amp;#x1f648;&lt;/h2>
+&lt;hr>
+&lt;p>git stores all historical changes to a repo in a PACK file inside the hidden .git folder. This allows restoration of previous repo states in the future.&lt;/p>
+&lt;p>However, if you upload files like binaries, photos or videos, this file gets VERY large, even if you delete them in a future commit.&lt;/p>
+&lt;h3 id="--enter-git-filter-repo">- enter: &lt;code>git-filter-repo&lt;/code>&lt;/h3>
+&lt;p>Luckily a tool exists called git-filter-repo that you can download and use (python script) to analyse your PACK file, and filter out any unwanted bits (e.g. file extensions, paths, etc.). This can dramatically reduce the size of the PACK file.&lt;/p>
+&lt;p>It works in a single command (with the option to point the command to a file defining what to keep/exclude, if preferred). Just download the python script, move it to your working directory (MUST have .git folder, as it will analyze this), and run:&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --analyze&lt;/code>&lt;/p>
+&lt;p>(the use of &amp;ldquo;python&amp;rdquo; or similar, and giving the script a .py extension, is necessary sometimes on windows, depending on what shell you&amp;rsquo;re running the above command in, your PATH configuration etc. - but just think of it as running a script file and passing the &amp;ldquo;analyze&amp;rdquo; argument to it)&lt;/p>
+&lt;p>It then produces a folder with text files showing files/repo paths (historical) and their relative sizes. From here, you can search through and figure out how to filter what you&amp;rsquo;d like to remove.&lt;/p>
+&lt;p>When you&amp;rsquo;ve decided what you&amp;rsquo;re going to remove and how (path/extension/date etc.), I recommend doing a &amp;ndash;dry-run, which will produce two files (the original version and the modified version) and comparing what elements were removed with your filter. For me, using the following command, I went from 6473 lines of committed files to 1428.&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --path 'old-site/audio/' --path 'old-site/photos/' --invert-paths --dry-run --force&lt;/code>&lt;/p>
+&lt;p>&lt;em>(I used &amp;ndash;force as I had one untracked change - being moving the git-filter-repo script file itself into the directory - that I didn&amp;rsquo;t want to push to git)&lt;/em>&lt;/p>
+&lt;p>And to make &lt;em>&amp;ldquo;the changes&amp;rdquo;&lt;/em> &lt;em>&lt;strong>[PERMANENTLY!! CAUTION!!!]&lt;/strong>&lt;/em> remove the &lt;code>--dry-run&lt;/code> component of the above command, resulting the following:&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --path 'old-site/audio/' --path 'old-site/photos/' --invert-paths&lt;/code>&lt;/p>
+&lt;p>Run that, and then there you go - it should make the changes to the .git folder in your repo, stripping out the components of the file you filtered and producing a new, (hopefully) smaller &lt;code>PACK&lt;/code> file.&lt;/p>
+&lt;p>Now, it just needs to be pushed to the remote repository with:&lt;/p>
+&lt;p>&lt;code>git push --all [remote-repo-URL]&lt;/code>&lt;/p>
+&lt;h3 id="--and-then">- and then&amp;hellip;&lt;/h3>
+&lt;p>well, if all things went well, you should have shaved a few KBs/MBs/GBs off your &lt;code>PACK&lt;/code> file - well done! grab yourself a cookie, you&amp;rsquo;ve well and truly earnt it :3&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/6/saya-banner.jpeg" alt="saya-congrats">&lt;/p>
+&lt;hr>
+&lt;h3 id="--other-helpful-links">- other helpful links:&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=eoF2p3ZDiAc">https://www.youtube.com/watch?v=eoF2p3ZDiAc&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES">https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Debian on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/debian/</link><description>Recent content in Debian on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 26 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/debian/index.xml" rel="self" type="application/rss+xml"/><item><title>'securely' setting up web server with nginx @ home &amp; self hosting</title><link>https://blog.juni-mp4.com/posts/9/securely-self-hosting-site-npm/</link><pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/9/securely-self-hosting-site-npm/</guid><description>&lt;ol>
+&lt;li>debian 12 container install inside proxmox&lt;/li>
+&lt;li>`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li>
+&lt;li>network settings: If your router supports subnets/VLANs, connect this to the isolated VLAN. within proxmox, assign static IP not in use and point to your router&amp;rsquo;s gateway.![[Screenshot 2024-07-08 at 8.40.32 PM.png]]&lt;/li>
+&lt;li>install nginx on debian - &lt;code>sudo apt install nginx -y&lt;/code>&lt;/li>
+&lt;li>create a file for website settings: `nano /etc/nginx/sites-available/mywebsite&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#ae81ff">80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#e6db74">[::]:80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server_name&lt;/span> &lt;span style="color:#e6db74">juni-mp4.org&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">root&lt;/span> &lt;span style="color:#e6db74">/var/www/juni-web&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">index.html&lt;/span> &lt;span style="color:#e6db74">index.htm&lt;/span> &lt;span style="color:#e6db74">index.nginx-debian.html&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">location&lt;/span> &lt;span style="color:#e6db74">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">try_files&lt;/span> $uri $uri/ =&lt;span style="color:#ae81ff">404&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>listen&lt;/code> lines tell &lt;code>nginx&lt;/code> to listen for connections on both IPv4 and IPv6.
+The &lt;code>server_name&lt;/code> is the website that we are looking for. By putting &lt;code>landchad.net&lt;/code> here, that means whenever someone connects to this server and is looking for that address, they will be directed to the content in this block. &lt;code>root&lt;/code> specifies the directory we&amp;rsquo;re going to put our website files in.&lt;/p>
+&lt;p>This can theoretically be wherever, but it is conventional to have them in &lt;code>/var/www/&lt;/code>. Name the directory in that whatever you want. &lt;code>index&lt;/code> determine what the &amp;ldquo;default&amp;rdquo; file is; normally when you go to a website, say &lt;code>landchad.net&lt;/code>, you are actually going to a file at &lt;code>landchad.net/index.html&lt;/code>. That&amp;rsquo;s all that is. Note that that this in concert with the line above mean that &lt;code>/var/www/landchad/index.html&lt;/code>, a file on our computer that we&amp;rsquo;ll create, will be the main page of our website.&lt;/p>
+&lt;p>Lastly, the &lt;code>location&lt;/code> block is really just telling the server how to look up files, otherwise throw a 404 error. Location settings are very powerful, but this is all we need them for now.
+7. create directory for your website&amp;rsquo;s contents/files using: &lt;code>mkdir /var/www/juni-web&lt;/code> (can be located wherever but standard to store in &lt;code>/var/www/[X]&lt;/code> ) where you can place website files like &lt;code>index.html&lt;/code> etc.)
+8. enable the site by making a link between the config file in you just created in &lt;code>sites-available&lt;/code> and the &lt;code>sites-enabled&lt;/code> directory:
+&lt;code>ln -s /etc/nginx/sites-available/juni-web /etc/nginx/sites-enabled/ 9. restart nginx &lt;/code>systemctl restart nginx`&lt;/p>
+&lt;p>&lt;em>&lt;strong>make sure the &amp;ldquo;default&amp;rdquo; file doesn&amp;rsquo;t remain in &lt;code>/etc/nginx/sites-enabled/&lt;/code> otherwise will serve the default config page for nginx!!&lt;/strong>&lt;/em>&lt;/p>
+&lt;h2 id="main-nginx-files--explanation">Main Nginx Files &amp;amp; Explanation:&lt;/h2>
+&lt;p>&lt;em>The idea is that you can make a site configuration file in &lt;code>sites-available&lt;/code> (that links to where your website is stored locally, e.g. &lt;code>/var/www/sitestorage&lt;/code>), then make a link to this configuration file in &lt;code>sites-enabled&lt;/code>, which will activate it.&lt;/em>&lt;/p>
+&lt;h3 id="config-files">Config Files:&lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>/etc/nginx/sites-available/&lt;/code> - directory containing any site configuration files. Points to directory containing main website content, e.g. &lt;code>/var/www/juni-web&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#ae81ff">80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#e6db74">[::]:80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server_name&lt;/span> &lt;span style="color:#e6db74">juni-mp4.org&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">root&lt;/span> &lt;span style="color:#e6db74">/var/www/juni-web&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">index.html&lt;/span> &lt;span style="color:#e6db74">index.htm&lt;/span> &lt;span style="color:#e6db74">index.nginx-debian.html&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">location&lt;/span> &lt;span style="color:#e6db74">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">try_files&lt;/span> $uri $uri/ =&lt;span style="color:#ae81ff">404&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;code>/etc/nginx/sites-enabled/&lt;/code> - directory containing &lt;strong>links&lt;/strong> to site configuration files
+make links via: `ln -s [link-source-path] [link-destination-path]&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="main-website-location">Main website location:&lt;/h3>
+&lt;ul>
+&lt;li>&lt;code>/var/www/[site-name]&lt;/code>'
+e.g. &lt;code>/var/www/juni-web&lt;/code>
+contains files like index.html, etc.&lt;/li>
+&lt;/ul>
+&lt;h1 id="securing-it">Securing it:&lt;/h1>
+&lt;h3 id="ufw">UFW:&lt;/h3>
+&lt;p>sudo apt install ufw&lt;/p>
+&lt;pre tabindex="0">&lt;code># Limit SSH access to port 22
+sudo ufw limit 22/tcp
+# Allow HTT![[Screenshot 2024-07-19 at 9.04.25 PM.png]]P traffic on port 80
+sudo ufw allow 80
+# Allow HTTPS traffic on port 443
+sudo ufw allow 443
+# Limit SSH access to port 22 for IPv6
+sudo ufw limit 22/tcp6
+# Allow HTTP traffic on port 80 for IPv6
+sudo ufw allow 80/tcp6
+# Allow HTTPS traffic on port 443 for IPv6
+sudo ufw allow 443/tcp6
+ufw enable
+ufw logging on
+ufw status
+&lt;/code>&lt;/pre>&lt;p>![[Screenshot 2024-07-09 at 11.51.31 PM.png]]
+&lt;a href="https://www.linode.com/docs/guides/configure-firewall-with-ufw/">https://www.linode.com/docs/guides/configure-firewall-with-ufw/&lt;/a>&lt;/p>
+&lt;h1 id="docker-install-debian">docker install (&lt;a href="https://docs.docker.com/engine/install/debian/">debian&lt;/a>):&lt;/h1>
+&lt;p>Run the following command to uninstall all conflicting packages:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> pkg in docker.io docker-doc docker-compose podman-docker containerd runc; &lt;span style="color:#66d9ef">do&lt;/span> sudo apt-get remove $pkg; &lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>install dependencies:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Set up Docker&amp;rsquo;s &lt;code>apt&lt;/code> repository.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Add Docker&amp;#39;s official GPG key:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get install ca-certificates curl
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo install -m &lt;span style="color:#ae81ff">0755&lt;/span> -d /etc/apt/keyrings
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo chmod a+r /etc/apt/keyrings/docker.asc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Add the repository to Apt sources:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> &lt;span style="color:#e6db74">&amp;#34;deb [arch=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>dpkg --print-architecture&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>. /etc/os-release &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$VERSION_CODENAME&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> stable&amp;#34;&lt;/span> | &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> sudo tee /etc/apt/sources.list.d/docker.list &amp;gt; /dev/null
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>install latest docker version&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Verify that the installation is successful by running the &lt;code>hello-world&lt;/code> image:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> sudo docker run hello-world
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="docker-compose-install">docker compose install&lt;/h2>
+&lt;p>why install it? manage all containers &amp;amp; deployments from a &lt;a href="https://docs.docker.com/compose/">single yaml file&lt;/a>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get install docker-compose-plugin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker compose version
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>![[Screenshot 2024-07-10 at 12.12.09 AM.png]]&lt;/p>
+&lt;p>create compose file near website data for ease of management&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## if website located in mkdir /var/www/juni-web&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mkdir /var/www/docker-compose
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano docker-compose.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>we can use this to install&amp;hellip;&lt;/p>
+&lt;h3 id="nginx-proxy-manager-npm-install">nginx proxy manager (NPM) install&lt;/h3>
+&lt;p>&lt;em>(not to be confused with node package manager npm lol)&lt;/em>&lt;/p>
+&lt;p>&lt;em>note: make sure to set ports for managing nginx proxy manager (NPM) to 8080 &amp;amp; 4443 (or whatever custom ones you&amp;rsquo;d like) and NOT 80 &amp;amp; 443, as the latter will likely be in use by nginx to serve &amp;amp; access your website at.&lt;/em>&lt;/p>
+&lt;p>in the docker-compose.yml&amp;hellip;&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cd /var/www/docker-compose
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano docker-compose.yml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## then add into file:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>services:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> app:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> image: &lt;span style="color:#e6db74">&amp;#39;jc21/nginx-proxy-manager:latest&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> restart: unless-stopped
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ports:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># These ports are in format &amp;lt;host-port&amp;gt;:&amp;lt;container-port&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;8080:80&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Port for HTTP access to NPM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;4443:443&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Port for HTTS access to NPM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;81:81&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Admin Web Port&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Add any other Stream port you want to expose&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># - &amp;#39;21:21&amp;#39; # FTP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment the next line if you uncomment anything in the section&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># environment:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment this if you want to change the location of&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># the SQLite DB file within the container&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># DB_SQLITE_FILE: &amp;#34;/data/database.sqlite&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment this if IPv6 is not enabled on your host&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># DISABLE_IPV6: &amp;#39;true&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> volumes:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - ./data:/data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - ./letsencrypt:/etc/letsencrypt
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## then run&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker compose up -d
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>access nginx via &lt;code>http://[server-ip]:81&lt;/code> &amp;amp; login with &lt;code>admin@example.com&lt;/code> and &lt;code>changeme&lt;/code> (changed upon entry)&lt;/p>
+&lt;h2 id="cloudflare-setup">cloudflare setup&lt;/h2>
+&lt;p>sign up for free cloudflare account
+follow signup steps to point existing domain at cloudflare&lt;/p>
+&lt;p>autoscan for any DNS records you changed with your registrar (* domains, subdomains etc.) so cloudflare is aware of them&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 9.05.00 PM.png]]
+![[Screenshot 2024-07-19 at 9.09.40 PM.png]]&lt;/p>
+&lt;p>navigate to your domain registrar and set the custom DNS servers to the ones provided to you by cloudflare.&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 9.08.37 PM.png]]&lt;/p>
+&lt;p>cloudflare setup guide here - &lt;a href="https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/">https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/&lt;/a>
+![[Screenshot 2024-07-19 at 9.17.23 PM.png]]
+![[Screenshot 2024-07-19 at 9.17.34 PM.png]]
+![[Screenshot 2024-07-19 at 9.18.03 PM.png]]&lt;/p>
+&lt;p>API token: HRWvk067sLPv_RMGDPhS1y0lj5XDcLErat5nY18m
+verify with cul command:
+&lt;code> curl -X GET &amp;quot;https://api.cloudflare.com/client/v4/user/tokens/verify&amp;quot; \      -H &amp;quot;Authorization: Bearer [YOUR TOKEN]&amp;quot; \ -H &amp;quot;Content-Type:application/json&amp;quot;&lt;/code>&lt;/p>
+&lt;h3 id="cloudflare--ssl-issues-certbot">Cloudflare &amp;amp; SSL issues (certbot)&lt;/h3>
+&lt;p>if you&amp;rsquo;ve setup certbot or something similar to manage ssl certificates on your nginx server, MAKE SURE to go to cloudflare and select Full (strict) SSL/TLS encryption mode so it doesn&amp;rsquo;t have an SSL mismatch and make your site inaccessible via the browser - ![[Screenshot 2024-07-19 at 10.00.00 PM.png]]&lt;/p>
+&lt;p>&lt;strong>The Why:&lt;/strong> as with &lt;strong>&amp;lsquo;flexible&amp;rsquo;&lt;/strong> ticked, cloudflare will (by default) try and make requests to your server via HTTP and the server will throw an error if it&amp;rsquo;s using SSL due to a cipher mismatch, then browsers interpret this as a potential MiTM attack. see below: ![[Screenshot 2024-07-19 at 10.03.20 PM.png]]
+![[Screenshot 2024-07-19 at 10.03.46 PM.png]]&lt;/p>
+&lt;p>you can also check your site&amp;rsquo;s nginx config file to see that certs are set up properly:&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.07.33 PM.png]]&lt;/p>
+&lt;h2 id="opening-the-ports">OPENING the ports&lt;/h2>
+&lt;p>&lt;strong>External port&lt;/strong>: what port is used by external users to access, like:
+&lt;code>pu.bl.ic.ip:[external-port]&lt;/code>
+e.g. &lt;code>182.46.382.83:443&lt;/code>&lt;/p>
+&lt;p>&lt;strong>Internal port&lt;/strong>: what port on the specified &lt;strong>Device&lt;/strong> (the one identified by the &lt;code>Device IP Address&lt;/code> field) that the traffic will be forwarded to.&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.24.08 PM.png]]&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.23.53 PM.png]]&lt;/p>
+&lt;h2 id="set-up-static-ip-for-container-in-proxmox-on-router">set up static IP for container in proxmox on router&lt;/h2>
+&lt;p>OR just change the DHCP pool to not include the IP address you want statically added on the proxmox&lt;/p>
+&lt;p>(e.g. setting DNS pool to &lt;code>192.168.0.20&lt;/code> -&amp;gt; &lt;code>192.168.0.200&lt;/code> and then assigning static IP for your container in proxmox outside of the pool range but on the same subnet, e.g. &lt;code>192.168.0.5&lt;/code> )
+![[Screenshot 2024-07-19 at 10.19.57 PM.png]]&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.19.45 PM.png]]&lt;/p>
+&lt;h2 id="adding-ssl-cert-to-nginx-proxy-manager">adding SSL cert to nginx proxy manager&lt;/h2>
+&lt;p>![[Screenshot 2024-07-19 at 10.40.02 PM.png]]&lt;/p>
+&lt;p>certs on web server:
+![[Screenshot 2024-07-19 at 10.43.38 PM.png]]&lt;/p>
+&lt;h2 id="setup-proxy-host-on-npm">setup proxy host on NPM&lt;/h2>
+&lt;p>![[Screenshot 2024-07-19 at 11.37.22 PM.png]]
+![[Screenshot 2024-07-19 at 11.38.09 PM.png]]&lt;/p>
+&lt;h2 id="setup-npm--dynamic-dns">setup NPM &amp;amp; dynamic DNS&lt;/h2>
+&lt;p>to do:&lt;/p>
+&lt;ul>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/">https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://www.youtube.com/watch?v=GarMdDTAZJo">https://www.youtube.com/watch?v=GarMdDTAZJo&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/">https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> set up nginx reverse proxy, cloudflare etc. &lt;a href="https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/">https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> install certbot &amp;amp; auto renewal &amp;amp; setup https&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> setup firewall around docker - &lt;a href="https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw">https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> ssh harden copy config files &amp;amp; replace keys&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> install auto updates for all respective software (docker, docker compose, nginx, nginx proxy manager, ufw, anything else used)&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> port forward website to internet to make accessible&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> update domain registrar to point to local public IP&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> write scp command that writes locally-edited files to website remotely
+&lt;code>scp -r user@[remoteTargetComputerIP]: [RemoteFilesPath] [localDestinationPath] e.g. &lt;/code>scp -r &lt;a href="mailto:root@45.77.26.67">root@45.77.26.67&lt;/a>:/var/www/mysite ~&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

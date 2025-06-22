@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Logging on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/logging/</link><description>Recent content in Logging on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 23 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/logging/index.xml" rel="self" type="application/rss+xml"/><item><title>Splunk Forwarders with Multiple Indexes</title><link>https://blog.juni-mp4.com/posts/0/splunk-forwarder/</link><pubDate>Mon, 23 Jan 2023 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/0/splunk-forwarder/</guid><description>&lt;h2 id="--pre-requisites">- Pre-requisites:&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>Have a working Splunk instance (Splunk Enterprise, in my case) to connect to. There are plenty of tuts for this online.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Have installed a universal forwarder on the endpoint that you want to monitor (see here, an excellent post which will get you most of the way through setting up Splunk to analyse Suricata &amp;amp; pfSense logs)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+&lt;p>Note: There are some steps specific to my use case, which are marked accordingly with &lt;em>&lt;strong>[OPTIONAL]&lt;/strong>&lt;/em>. These can be ignored if you&amp;rsquo;re just trying to configure a universal forwarder to send data to multiple indexes in Splunk.&lt;/p>&lt;/blockquote>
+&lt;h2 id="--detailed-steps">- Detailed Steps:&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>Create the desired index in Splunk (Settings &amp;ndash;&amp;gt; Indexes). I named mine &lt;code>ids_lan&lt;/code> as I am using an Intrusion Detection System (IDS) to monitor my LAN network on pfSense. You can leave all the index settings as default for now.&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674202112483/cce019ab-74e4-4018-b49c-e329f0b52e60.png" alt="Indexes">&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674202139846/a4d02e8f-7c8b-4155-9d19-571085ee88b4.png" alt="index name ids_lan">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>&lt;strong>[OPTIONAL]&lt;/strong>&lt;/em> Go to pfsense web UI, and create &amp;amp; configure the instance that you want to monitor. Once up and running, go to &amp;lsquo;Logs View&amp;rsquo; and select the instance to view.&lt;br>
+&lt;img src="https://blog.juni-mp4.com/posts/0/splunk3.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674202427414/c05ed6d0-aba7-4be3-bd8b-c790429611cc.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;p>Note the file path and importantly, the folder name where logs are sent for that instance. My path is &lt;code>/var/log/suricata/suricata_em125470/eve.json&lt;/code> and the folder name is &lt;code>suricata_em125470&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>SSH into your VM/machine with the splunk forwarder installed and modify the inputs.conf file. In my case it&amp;rsquo;s found in &lt;code>/opt/splunkforwarder/etc/apps/TA-Suricata/default&lt;/code>, but that&amp;rsquo;s because I&amp;rsquo;m using the &lt;a href="https://splunkbase.splunk.com/app/2760">&lt;strong>TA-Suricata&lt;/strong>&lt;/a> app to make my Suricata logs Splunk-readable (matching Splunk&amp;rsquo;s Common Information Model [CIM]).&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674202463423/f0338623-9179-4154-afab-6eff2dfe8af1.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;p>In most cases, you should navigate to &lt;code>/opt/splunkforwarder/etc/system/local&lt;/code> and create an inputs.conf file if there isn&amp;rsquo;t already one. This overrides all of the defaults located in &lt;code>/opt/splunkforwarder/etc/system/default&lt;/code>, and it&amp;rsquo;s &lt;a href="https://docs.splunk.com/Documentation/Splunk/9.0.3/Data/Monitorfilesanddirectorieswithinputs.conf#:~:text=The%20inputs.,a%20stanza%20to%20the%20inputs.">&lt;strong>best practice&lt;/strong>&lt;/a> to modify files within &lt;code>/local&lt;/code> instead when you&amp;rsquo;re not using an extra app like I am.&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674202812915/47e63a91-6b6b-48f3-9a94-f163b7de5b19.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Within the &lt;code>inputs.conf&lt;/code> file, create entries like so (as many as needed), making sure to reference the new folder that was created in step 3 (&lt;code>suricata_em125470&lt;/code>).&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674203175586/f3a9904a-2e33-4b61-b964-fd9207851993.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;p>Additionally, set &lt;code>index = ids_lan&lt;/code> , or whatever index you created in Step 1.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>~&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>For a more general installation, here is some sample code (excluding suricata-specific options).&lt;/strong>&lt;/p>&lt;/blockquote>
+&lt;h2 id="--code-dump">- Code Dump:&lt;/h2>
+&lt;hr>
+&lt;p>&lt;code>[monitor://path_to_your_monitored_file_here]&lt;/code>&lt;/p>
+&lt;p>&lt;code>disabled = false&lt;/code>&lt;/p>
+&lt;p>&lt;code>index = your_index_from_step_1&lt;/code>&lt;/p>
+&lt;p>&lt;code>host = your_splunk_instance_name&lt;/code>&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>&lt;strong>(Your splunk instance name is found by going to &lt;code>Settings --&amp;gt; Server Settings --&amp;gt; General Settings&lt;/code> in the splunk web UI)&lt;/strong>&lt;/em>&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Navigate to the &lt;code>/opt/splunkforwarder/bin/&lt;/code> directory and run the command &lt;code>./splunk restart&lt;/code> to restart the splunk forwarder. &lt;strong>A reboot of the system is (likely) not sufficient.&lt;/strong>&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674203970829/b7c520ae-14df-4fdb-910c-2668fc8ac35f.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Upon restarting, within the same directory (&lt;code>/opt/splunkforwarder/bin/&lt;/code>) check that Splunk is running with &lt;code>./splunk status&lt;/code>. If it isn&amp;rsquo;t, run &lt;code>./splunk start&lt;/code>. Verify there are logs in the folder you just linked to (in my case, &lt;code>suricata_em125470&lt;/code>), which can be done either by navigating to the path where they are stored, or in my use case, via &lt;code>Log Contents&lt;/code> in the pfSense web UI (see step 3).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Wait a few minutes or so, and then run a splunk search for a timeframe for which you know there are log entries for, with something like &lt;code>index=&amp;quot;your_index_from_step_1&amp;quot;&lt;/code> . Check the time stamp matches when you expect the last log to have been from, and voila!&lt;/p>
+&lt;p>&lt;img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1674204285133/70586cb2-a6d8-4ae9-8273-01f5add4dc02.png?auto=compress,format&amp;amp;format=webp" alt="">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>💛 &lt;em>&lt;strong>Best of luck, I hope this helps some people and avoids too much keyboard-bashing!&lt;/strong>&lt;/em> 💛&lt;/p>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

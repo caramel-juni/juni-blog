@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PuTTY on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/putty/</link><description>Recent content in PuTTY on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 08 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/putty/index.xml" rel="self" type="application/rss+xml"/><item><title>pfSense Updating Woes: Crisis Aversion</title><link>https://blog.juni-mp4.com/posts/2/pfsense-troubleshooting-update/</link><pubDate>Thu, 08 Jun 2023 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/2/pfsense-troubleshooting-update/</guid><description>&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/image.png" alt="donkey">&lt;/p>
+&lt;p>Here is a little guide from a nightmare I encountered whilst trying to perform a maintenance update on a pfSense router&amp;hellip; I hope my pain and suffering can help someone else :&amp;rsquo;).&lt;/p>
+&lt;blockquote>
+&lt;p>DO NOT MAKE MY MISTAKE - &lt;strong>CREATE A BACKUP FOR YOUR PFSENSE SETTINGS AND STORE IT LOCALLY BEFORE UPDATING!!!!&lt;/strong>.&lt;/p>&lt;/blockquote>
+&lt;blockquote>
+&lt;p>pfSense DOES create a backup of settings before updating, but accessing it can be problematic to say the least&amp;hellip; (see below)&lt;/p>&lt;/blockquote>
+&lt;h2 id="context">Context:&lt;/h2>
+&lt;p>I initiated system reboot and upgrade via the pfSense web UI at 1pm on May 15th. Everything seemed to go well in the web UI, until it restarted and then got stuck reassigning the network interfaces.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/54985275-a984-494f-923a-e9a771db2005.png" alt="">&lt;/p>
+&lt;p>Looked like the update was successful but got confused when it got to reassigning the interfaces (aka which network interfaces were associated with which network config files previously created) resulting in the boot process being interrupted and not completed, meaning no wifi.&lt;/p>
+&lt;p>To fix, connected to the pfSense box directly via serial (details at end) &amp;amp; navigated to &lt;code>/cf/conf/backup/&lt;/code> and did a &lt;code>ls -lah&lt;/code> to find the last auto-backup xml file and see which network settings were assigned to each interface.&lt;/p>
+&lt;p>By cross-referencing with the previous backup’s XML data of &lt;code>&amp;lt;interfaces&amp;gt;&lt;/code>, it was determined that these were the previous assignments:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/21412848-0228-41eb-b793-7045eea4ee70.png" alt="">&lt;/p>
+&lt;blockquote>
+&lt;p>note: for opt3&amp;amp;4, it is ixl0 &amp;amp; ixl1, NOT ix10/ix11 (is an l and NOT a 1)&lt;/p>&lt;/blockquote>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/4e5fde35-f32e-4abd-912b-a8c8234755e7.png" alt="">&lt;/p>
+&lt;blockquote>
+&lt;p>extract from “config-XXXXXXXXXX.xml”&lt;/p>&lt;/blockquote>
+&lt;p>After reassigning the network interfaces, all seemed to be well and the box booted without any noticeable issues into the new OS.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/16014c4f-ddbf-480a-8731-980e55020531.png" alt="">&lt;/p>
+&lt;p>From here, I reconnected in powershell by IP via SSH to check it was working, and then accessed the webUI. 🥳&lt;/p>
+&lt;p>&lt;em>&lt;strong>…I can finally breathe again.&lt;/strong>&lt;/em>&lt;/p>
+&lt;h2 id="connecting-via-serial-cable-older-tutorial-here">Connecting Via Serial Cable (&lt;a href="https://www.youtube.com/watch?v=M0yyyZojg3M">older tutorial here&lt;/a>)&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>Get micro-usb to usb cable.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Plug micro-usb end into pfsense port labelled &lt;code>“CONSOLE”&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Plug usb end into laptop usb port. may need to try a few different ones if the steps below don’t work.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Navigate &lt;a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads">here&lt;/a> &amp;amp; download the CP210x Universal Windows Driver (&lt;a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads">direct download link&lt;/a>).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Unzip it, right click on &lt;code>silabser.inf&lt;/code> and click &lt;code>Install&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Once installed, open device manager (on Windows). There should be a new option called &lt;code>Silicon Labs CP210x USB to UART Bridge&lt;/code> or similar. The &lt;strong>COM[&lt;code>X&lt;/code>]&lt;/strong> at the end will vary depending on which of your device’s serial ports are already in use.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/dc5ecce7-bbd4-41a1-ba7c-d7a766ddb608.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html">Download&lt;/a> &amp;amp; open puTTY, and create a session with the following settings, replacing COM6 with whatever &lt;strong>COM[&lt;code>X&lt;/code>]&lt;/strong> your device listed as being open to communicate with &lt;code>CP210x&lt;/code> in device manager.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/d47049f6-8c1b-45f7-b74e-5aaa7a3c0bcb.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Go to &lt;code>Session&lt;/code> → &lt;code>Logging&lt;/code> and track all output to a log file saved locally on your machine.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/c526fa04-bf4d-4af5-bf35-3814c46ea260.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Click &lt;code>Open&lt;/code> and session should begin.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/2/43a6dee8-d8a4-42fa-be42-2ffdf14fdac3.png" alt="">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="alternative-solutions">Alternative solutions:&lt;/h2>
+&lt;p>Thankfully a restore point was (and should, by default on pfSense installations) automatically made right before the update, meaning if worst comes to worst, we could:&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>copy the last restore point (config file, found at &lt;code>/cf/conf/backup/&lt;/code>) to local machine by: turning on the putty output logger, then opening a session &amp;amp; navigating to the config file &amp;amp; &lt;code>cat&lt;/code>-ting it, saving the output to the local machine. Then:&lt;/p>
+&lt;p>a. EITHER completely re-install the 22.05 version of pfSense via USB flash, get network settings reset, then SCP the restore point config file to it and assign it as settings OR used webUI backup option to reload the settings.&lt;/p>
+&lt;p>b. OR try and roll back to the previous version (22.05) by assigning the network interfaces randomly and getting to the pfsense options screen, selecting option &lt;code>15) Restore recent configuration&lt;/code>, and then using the backup config file as the desired settings.&lt;/p>
+&lt;p>in case of further panic&amp;hellip; here is a link to further &lt;a href="https://agix.com.au/restore-pfsense-from-backup-using-the-cli-command-line/">troubleshooting&lt;/a>. I wish you well on your journey, and hope it is substantially shorter than mine was 🙃😭.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

@@ -1,0 +1,839 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/posts/</link><description>Recent content in Posts on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 22 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Tracking &amp; Syncing my dotfiles!</title><link>https://blog.juni-mp4.com/posts/16/managing-my-dotfiles/</link><pubDate>Sun, 22 Jun 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/16/managing-my-dotfiles/</guid><description>&lt;p>&lt;em>.dotfiles or&amp;hellip; (.)²files?&lt;/em>&lt;/p>
+&lt;h2 id="--using-git--github--tracking-dotfiles-with-an-alias">- Using Git + Github, &amp;amp; tracking dotfiles with an alias.&lt;/h2>
+&lt;ul>
+&lt;li>&amp;hellip; as mentioned on the &lt;a href="https://wiki.archlinux.org/title/Dotfiles#Tracking_dotfiles_directly_with_Git">ever-wise &lt;em>Arch Wiki&lt;/em>.&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 1. Create a bare Git repo to track dotfiles.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git init --bare ~/.dotfiles
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 2. Create an alias to simplify dotfiles management.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Tells (/usr/bin/git) to link the git alias directory you just created to your real .config/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>alias dotfiles&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 3. Hide untracked files in ~/ from cluttering &amp;#34;git status&amp;#34;.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>dotfiles config status.showUntrackedFiles no
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Setup &amp;amp; communicate with this repo via &lt;code>ssh&lt;/code>, &lt;a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux">authenticating with a local private key&lt;/a>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 4. Generate SSH key for GitHub auth (if you haven&amp;#39;t got one already).&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ssh-keygen -t ed25519 -C &lt;span style="color:#e6db74">&amp;#34;you@example.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ssh-add ~/.ssh/id_ed25519
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Add the value of ~/.ssh/id_ed25519.pub as an entry in your Github --&amp;gt; Settings --&amp;gt; SSH &amp;amp; GPG Keys, via cat + copy-pasting, or however you&amp;#39;d like.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 5. Force git on your machine to always push to github with SSH instead of HTTPS.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git config --global url.&lt;span style="color:#e6db74">&amp;#34;git@github.com:&amp;#34;&lt;/span>.insteadOf &lt;span style="color:#e6db74">&amp;#34;https://github.com/&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 6. Set upstream branch as origin main &amp;amp; push via ssh!&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>dotfiles push --set-upstream origin main
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>then, upon changing my &lt;code>dotfiles&lt;/code>, can push to github with:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>dotfiles status&lt;/code>&lt;/li>
+&lt;li>&lt;code>dotfiles add XXXXX&lt;/code>&lt;/li>
+&lt;li>&lt;code>dotfiles commit -m &amp;quot;Update shell and Hyprland config&amp;quot;&lt;/code>&lt;/li>
+&lt;li>&lt;code>dotfiles push&lt;/code> (to remote, via SSH)&lt;/li>
+&lt;/ul>
+&lt;h2 id="--or-using-a-dotfiles-manager-comme">- or&amp;hellip; using a dotfiles manager, &lt;em>comme &lt;a href="https://www.chezmoi.io/quick-start/#concepts">&lt;code>chezmoi&lt;/code>&lt;/a>.&lt;/em>&lt;/h2>
+&lt;p>&amp;hellip; which is a tool that essentially creates a copy of your &lt;code>dotfiles&lt;/code> folder &lt;em>&lt;strong>outside&lt;/strong>&lt;/em> of your &lt;code>/home&lt;/code> directory (e.g. in &lt;code>~/.local/share/chezmoi/private_dot_config/&lt;/code>) to act as a place to &lt;strong>stage&lt;/strong>, &lt;strong>synchronise&lt;/strong> (with &lt;code>git&lt;/code>) &amp;amp; &lt;strong>manage&lt;/strong> changes to your local &lt;code>dotfiles.&lt;/code>&lt;/p>
+&lt;p>I think of it as a &lt;strong>remotely-connected playground for your &lt;code>dotfiles&lt;/code>&lt;/strong>, to mess with them, pull them from remote repos etc., &lt;strong>before applying the changes&lt;/strong> (via symlinks, copying, or templating) into your &lt;strong>local&lt;/strong> home directory (e.g. &lt;code>~/.config&lt;/code>).&lt;/p>
+&lt;h3 id="--to-install">- To install:&lt;/h3>
+&lt;ul>
+&lt;li>&lt;code>sudo pacman -S chezmoi&lt;/code>&lt;/li>
+&lt;li>&lt;code>chezmoi init&lt;/code>&lt;/li>
+&lt;li>Check what is &amp;amp; isn&amp;rsquo;t managed by &lt;code>chezmoi&lt;/code> with &lt;code>chezmoi managed&lt;/code>/&lt;code>chezmoi unmanaged&lt;/code>.&lt;/li>
+&lt;li>&amp;hellip; then follow steps on &lt;a href="https://www.chezmoi.io/quick-start/#start-using-chezmoi-on-your-current-machine">this tutorial&lt;/a> to connect to your repository &amp;amp; get your first commit. I&amp;rsquo;m using &lt;code>chezmoi&lt;/code> to push to the same remote &lt;code>dotfiles&lt;/code> repo created above, and so just &lt;code>rebased&lt;/code> my changes (overwriting the old, &lt;code>chezmoi&lt;/code>-less &lt;code>dotfiles&lt;/code> from above) to keep it nice and clean.&lt;/li>
+&lt;/ul>
+&lt;h3 id="--editing-your-dotfiles--using-chezmoi">- Editing your dotfiles &amp;amp; using &lt;code>chezmoi&lt;/code>:&lt;/h3>
+&lt;p>&lt;strong>You can edit your &lt;code>dotfiles&lt;/code> in &lt;a href="https://www.chezmoi.io/user-guide/frequently-asked-questions/usage/#how-do-i-edit-my-dotfiles-with-chezmoi">multiple ways&lt;/a> with &lt;code>chezmoi&lt;/code>.&lt;/strong>&lt;/p>
+&lt;h4 id="-you-can-work-and-make-changes-within-the-locally-created-chezmoi-copy-of-your-dotfiles-apply-them-locally-and-push-them-to-remote-repo-once-done">&lt;strong>(&lt;code>RECOMMENDED&lt;/code>)&lt;/strong> You can work and make changes within the locally-created &lt;code>chezmoi&lt;/code> copy of your &lt;code>dotfiles&lt;/code>, apply them locally, and push them to remote repo once done.&lt;/h4>
+&lt;ul>
+&lt;li>
+&lt;p>Navigate to your &lt;code>chezmoi&lt;/code> dotfiles copy with &lt;code>chezmoi cd&lt;/code> (you should be able to tell that it&amp;rsquo;s the &lt;code>chezmoi&lt;/code>-managed copy - e.g. it&amp;rsquo;s called &lt;code>private_dot_config&lt;/code> for me).&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Then, once you&amp;rsquo;ve made changes and are ready to see them/apply them to your &lt;strong>real&lt;/strong> &lt;code>dotfiles&lt;/code> (e.g to see changes live made to your desktop GUI), use &lt;code>chezmoi status&lt;/code> to list all changed files, &lt;code>chezmoi diff&lt;/code> to check any changes, and &lt;code>chezmoi apply&lt;/code> to copy the &lt;code>chezmoi&lt;/code>-managed files over to your &lt;em>&lt;strong>local&lt;/strong>&lt;/em> &lt;code>dotfiles.&lt;/code> Now, you should see any changes made &lt;strong>reflected on your live system&lt;/strong> (after reloading the given services, if applicable)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Then²&lt;/em>, once you&amp;rsquo;re ready to update your remote repo with your changes, go through the usual &lt;code>git commit&lt;/code> process within the &lt;code>chezmoi&lt;/code>-managed directory.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>git status&lt;/code> to see all changed files (within the &lt;code>chezmoi&lt;/code>-managed copy)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>git add .&lt;/code> (or whatever files you want to add)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>git commit -m &amp;quot;cool changes&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>git push origin main&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;em>&lt;strong>However&lt;/strong>&lt;/em>, you also have the option of&amp;hellip;&lt;/p>
+&lt;h3 id="-ie-not-within-the-chezmoi-managed-copy-of-your-dotfiles">&lt;strong>&amp;hellip;making changes to your dotfiles normally&lt;/strong> (i.e. not within the &lt;code>chezmoi&lt;/code>-managed copy of your &lt;code>dotfiles&lt;/code>)&lt;/h3>
+&lt;p>So, after you&amp;rsquo;re finished a &lt;a href="https://i.ytimg.com/vi/GlSa_gh8xaQ/maxresdefault.jpg">particularly spicy ricing session&lt;/a>, you can run:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>chezmoi status&lt;/code> - to see what&amp;rsquo;s changed between your local &lt;code>dotfiles&lt;/code> and &lt;code>chezmoi&lt;/code>&amp;rsquo;s copy.&lt;/li>
+&lt;li>&lt;code>chezmoi add ~/.config/path/to/file.config&lt;/code> - to add any &lt;strong>locally-changed files&lt;/strong> to &lt;code>chezmoi&lt;/code>&amp;rsquo;s tracked &amp;amp; &lt;code>git&lt;/code>-managed copy.&lt;/li>
+&lt;li>&lt;code>chezmoi apply -v&lt;/code> to write these local changes to &lt;code>chezmoi's&lt;/code> working copy of your &lt;code>dotfiles&lt;/code>.&lt;/li>
+&lt;li>Then switch to the &lt;code>chezmoi&lt;/code>-managed copy with &lt;code>cd chezmoi&lt;/code>, and go through the usual &lt;code>git commit&lt;/code> process to &lt;strong>update your remote repo if desired.&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;em>&lt;strong>&lt;code>chezmoi&lt;/code>, importantly, allows you to do some of the following cool things:&lt;/strong>&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>Set up your &lt;code>dotfiles&lt;/code> on a new machine with a single command:
+&lt;code>chezmoi init --apply https://github.com/$GITHUB_USERNAME/dotfiles.git&lt;/code> (public repo - private requires &lt;a href="https://docs.github.com/en/get-started/git-basics/about-remote-repositories#cloning-with-https-urls">other methods&lt;/a>)&lt;/li>
+&lt;li>Using &lt;strong>&lt;a href="https://www.chezmoi.io/reference/templates/">templates&lt;/a>&lt;/strong> to manage &lt;code>dotfiles&lt;/code> between different machines/distros.&lt;/li>
+&lt;li>Encrypting your &lt;code>dotfiles&lt;/code> using &lt;strong>&lt;a href="https://www.chezmoi.io/user-guide/password-managers/">secrets from your password manager&lt;/a>&lt;/strong>&lt;/li>
+&lt;/ul></description></item><item><title>Git CLI Basics - branching &amp; stashing!</title><link>https://blog.juni-mp4.com/posts/15/git-cli-refresher---branching--stashing/</link><pubDate>Tue, 22 Apr 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/15/git-cli-refresher---branching--stashing/</guid><description>&lt;p>&lt;strong>Smol Objective:&lt;/strong> &lt;em>&lt;strong>Revisiting &lt;code>branch&lt;/code>ing, &lt;code>checkout&lt;/code>&amp;rsquo;s, and &lt;code>stash&lt;/code>ing!&lt;/strong>&lt;/em>&lt;/p>
+&lt;p>&lt;strong>Via:&lt;/strong> creating a new local branch to save recent experimental changes on, publishing the branch to a remote Github repository, and then switching back to the functional, remote main branch locally. Oh, and stashing changes as I switch between the two to compare.&lt;/p>
+&lt;h2 id="--branching--checkouts">- Branching &amp;amp; Checkouts&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Check the current status (ensure connected to remote origin)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git status
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># checkout - create (argument -b) and switch to a new branch.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git checkout -b branch-name
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Stage all changes at the HEAD of this new branch (or select specific files/changes by specifying them, instead of &amp;#39;.&amp;#39;)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git add .
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Commit changes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git commit -m &lt;span style="color:#e6db74">&amp;#34;Describe changes here&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Publish changes to upstream branch on Github&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git push origin branch-name
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="--in-the-wild">- in the wild:&lt;/h3>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/15/Screenshot%202025-04-22%20at%203.13.48%20pm.png" alt="">&lt;/p>
+&lt;p>To switch back to the remote &lt;code>main&lt;/code> branch locally (which will also change your working file tree in &lt;code>VSCode&lt;/code> to match what&amp;rsquo;s on &lt;code>main&lt;/code>), use:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Switch back to the main branch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git checkout main
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Verify you&amp;#39;re on the main branch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git branch
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># or&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git status
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="--stashing">- Stashing&lt;/h2>
+&lt;p>To briefly save your working changes, you can &amp;ldquo;&lt;code>stash&lt;/code>&amp;rdquo; them. Useful when you&amp;rsquo;re switching between branches or pulling from a remote repository, and don&amp;rsquo;t want to commit your current changes yet.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## saves your modified tracked files and reverts the working directory to match the HEAD commit (a pointer indicating the current commit your directory is based on).&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## stashing, with a message:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash save &lt;span style="color:#e6db74">&amp;#34;message here&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## list current stashes with:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash list
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## apply them to your current working directory with:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash apply stash@&lt;span style="color:#f92672">{&lt;/span>index&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## &amp;#34;pop&amp;#34; them - aka, apply the stash &amp;amp; then remove it from the list&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash pop
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## &amp;#34;drop&amp;#34; them - aka, remove them from the stash list&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash drop stash@&lt;span style="color:#f92672">{&lt;/span>index&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## clears all stashed changes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>git stash clear
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div style="text-align: center">
+&lt;img src="https://c.tenor.com/ZAbjZRK0U1sAAAAd/tenor.gif" style="max-width: 400px; max-height: 300px">&lt;/img>&lt;/div></description></item><item><title>Minecraft Server From Scratch (Proxmox LXC, Docker Compose + itzg)</title><link>https://blog.juni-mp4.com/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-+-itzg/</link><pubDate>Sun, 13 Apr 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/14/minecraft-server-from-scratch-proxmox-lxc-docker-compose-+-itzg/</guid><description>&lt;p>Just a smol lil guide for myself to set up a minecraft server from scratch, &lt;em>as I cannot count the number of times I&amp;rsquo;ve had to re-learn this when I migrate from server to server&lt;/em>.&lt;/p>
+&lt;p>I&amp;rsquo;ve opted for services that &lt;em>should&lt;/em> (for the most part) be supported long-term and are relatively secure &amp;amp; lightweight. However, as any good netizen should do, &lt;em>&lt;strong>please take my advice with a granule of sugar&lt;/strong>&lt;/em>&amp;hellip;&lt;/p>
+&lt;h2 id="--set-up-lxc-container-in-proxmox">- Set up &lt;code>LXC&lt;/code> Container in Proxmox&lt;/h2>
+&lt;ol>
+&lt;li>Create new container in &lt;code>proxmox&lt;/code> using the &lt;code>Ubuntu 24.04&lt;/code> &lt;code>LXC&lt;/code> image (or your desired flavour, noting commands may differ slightly depending on package managers) - allocating at least &lt;code>4GB RAM&lt;/code> &amp;amp; &lt;code>2-4 CPU&lt;/code> cores to the machine.&lt;/li>
+&lt;li>Once logged in, create a &lt;a href="https://www.digitalocean.com/community/tutorials/how-to-create-a-new-sudo-enabled-user-on-ubuntu">sudo-enabled user&lt;/a> with:
+&lt;code>adduser myuser&lt;/code>
+Set the password, then:
+&lt;code>usermod -aG sudo myuser&lt;/code>
+&lt;code>su myuser&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Harden SSH&lt;/strong> - ensuring the following values are changed &amp;amp; set within &lt;code>/etc/sshd_config&lt;/code>.&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Port &lt;span style="color:#ae81ff">22&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PermitRootLogin no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MaxAuthTries &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MaxSessions &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PubkeyAuthentication yes
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PasswordAuthentication no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PermitEmptyPasswords no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>KbdInteractiveAuthentication no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>UsePAM no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>X11Forwarding no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PrintMotd no
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ClientAliveInterval &lt;span style="color:#ae81ff">600&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ClientAliveCountMax &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="3">
+&lt;li>Add your local machine&amp;rsquo;s &lt;code>ed25519_pub&lt;/code> key to the &lt;code>~/.ssh/authorized_keys&lt;/code> file (creating it, if it doesn&amp;rsquo;t exist). This will allow key-based login for user &lt;code>myuser&lt;/code>.&lt;/li>
+&lt;/ol>
+&lt;p>&lt;em>&lt;strong>Be careful not to lock yourself out here, test with password based login first! For example, by setting &lt;code>PasswordAuthentication yes&lt;/code> and logging in, before changing it to &lt;code>PasswordAuthentication no&lt;/code>&lt;/strong>&lt;/em>.&lt;/p>
+&lt;ol start="4">
+&lt;li>
+&lt;p>Ensure &lt;code>DNS&lt;/code> is setup properly - check &lt;code>/etc/resolv.conf&lt;/code>.
+Basic internet functionality can be tested &amp;amp; achieved by having the line &lt;code>nameserver 8.8.8.8&lt;/code>, but configure to your use case.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Login from local machine with &lt;code>ssh myuser@XXX.XXX.XXX.XXX&lt;/code>. Test your sudo privileges with &lt;code>sudo ls /root&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Lock root account with &lt;code>sudo passwd root -l&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Run &lt;code>sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Find the current &lt;code>IP&lt;/code> with &lt;code>ip -a&lt;/code> (typically on the &lt;code>eth&lt;/code> interface) and set it as static (in &lt;code>proxmox&lt;/code> and/or on your router).&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="--install-docker-compose--itzg-minecraft-server">- Install Docker (Compose) &amp;amp; itzg Minecraft Server&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Install Docker Engine&lt;/strong> - follow steps (distro-specific) &lt;a href="https://docs.docker.com/engine/install/">here&lt;/a>, as you will need to configure your package repository properly.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Install Docker Compose&lt;/strong> - following steps &lt;a href="https://docs.docker.com/compose/install/linux/#install-using-the-repository">here&lt;/a>. &lt;code>sudo apt install docker-compose&lt;/code> worked for me.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>Make a new directory for the Minecraft server&lt;/strong> to sit in: &lt;code>~/minecraft&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Inside, &lt;strong>create a &lt;code>docker-compose.yml&lt;/code>&lt;/strong>, generated with something like &lt;a href="https://setupmc.com/java-server/">setupmc.com&lt;/a> to specify server version, plugins, etc.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>My example &lt;code>docker-compose.yml&lt;/code> file is below &lt;em>(for a &lt;code>1.18&lt;/code> server, replacing Timezone (&lt;code>TZ&lt;/code>) accordingly)&lt;/em>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mc&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">itzg/minecraft-server:java17 &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tty&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stdin_open&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;25565:25565&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">EULA&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;TRUE&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">TYPE&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;PAPER&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">VERSION&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;1.18&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">PAPER_CHANNEL&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;experimental&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">MEMORY&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;4096M&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">MOTD&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;welcome, traveller, to an older time...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> USE_AIKAR_FLAGS: &amp;#34;&lt;/span>&lt;span style="color:#66d9ef">true&lt;/span>&lt;span style="color:#e6db74">&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> TZ: &amp;#34;&lt;/span>[&lt;span style="color:#ae81ff">YOUR-TIMEZONE]&amp;#34; &lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;./data:/data&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ol start="5">
+&lt;li>
+&lt;p>&lt;strong>Start the container&lt;/strong> from within the same directory as &lt;code>docker-compose.yml&lt;/code> with &lt;code>sudo docker compose up -d&lt;/code>. After the image is finished being pulled from the &lt;a href="https://github.com/itzg/docker-minecraft-server/tree/master">itzg minecraft server repo&lt;/a>, &lt;strong>watch the logs&lt;/strong> as the server starts with &lt;code>sudo docker compose logs -f&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>If you get an error message about the “class file version” after starting the server, check &lt;a href="https://setupmc.com/guides/determining-correct-java-version-for-operating-minecraft-server/">this table to see which Java version corresponds to the respective class file version&lt;/a>. Then adjust the Docker image tag in the setupmc.com](&lt;a href="https://setupmc.com/java-server/">https://setupmc.com/java-server/&lt;/a>) configurator accordingly.&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>To stop the server&lt;/strong>, run &lt;code>sudo docker compose down&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>To migrate a world save file over&lt;/strong> (if applicable), copy the following files (at minimum) over from your old server (using something like &lt;code>scp&lt;/code>, or via a GUI if you install something like &lt;a href="https://webmin.com/download/">webmin&lt;/a>):&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>server.properties&lt;/code>&lt;/li>
+&lt;li>&lt;code>/world&lt;/code>&lt;/li>
+&lt;li>&lt;code>/world_the_nether&lt;/code> (if exists)&lt;/li>
+&lt;li>&lt;code>/world_the_end&lt;/code> (if exists)&lt;/li>
+&lt;li>&lt;code>whitelist.json&lt;/code> (if applicable)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;em>Ensure to tweak server-specific configurations within &lt;code>server.properties&lt;/code> if needed!&lt;/em>&lt;/p>
+&lt;ol start="9">
+&lt;li>
+&lt;p>As you&amp;rsquo;re running through &lt;code>docker&lt;/code>, it should handle the local network ports on the &lt;code>lxc&lt;/code> for you nicely (if on a fresh &lt;code>linux&lt;/code> install). Also, before I continue, it would be remiss of me to exclude the obligatory ***do this so at your own risk, and please consider the below server hardening methods:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://madelinemiller.dev/blog/root-minecraft-server/">not running the server as root! &lt;em>(not a problem if you followed the guide above)&lt;/em>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://madelinemiller.dev/blog/ultimate-guide-running-minecraft-server/#security">general server tips&lt;/a> &amp;amp; &lt;a href="https://www.spigotmc.org/threads/minecraft-security-part-1-awareness.414081/">links to hardening methodology&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>With that out of the way, now time to &lt;strong>open up a port on your local&lt;/strong> router/modem. For me, I&amp;rsquo;ve opted for a little &amp;ldquo;security through obscurity&amp;rdquo; (a contentious topic, but given my threat model) by mapping my &lt;strong>router&amp;rsquo;s external port&lt;/strong>, &lt;code>43456&lt;/code> to the default minecraft listening port (&lt;code>25565&lt;/code> - specified in &lt;code>server.properties&lt;/code>) on my &lt;code>lxc&lt;/code> machine:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/14/Screenshot%202025-04-13%20at%209.15.24%20pm.png" alt="">
+Additionally, I&amp;rsquo;ve set up a &lt;code>DNS A record&lt;/code> for the domain I own to point at my router&amp;rsquo;s &lt;code>public IP&lt;/code>, so I can access my server (and share it) with &lt;code>my-domain:43456&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;em>&lt;strong>Now, you should be all up and running! :3&lt;/strong>&lt;/em>&lt;/p>
+&lt;div style="text-align: center">
+&lt;img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTY3OTM0YTI1dzBtb2htNHRzbzdtaTA1Yzh4ZHQ2aXdmZmZqb2xscCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/a6pzK009rlCak/giphy.gif" style="max-width: 400px; max-height: 300px">&lt;/img>
+&lt;/div>
+&lt;h2 id="--for-any-further-troubleshooting">- For any further troubleshooting&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://docker-minecraft-server.readthedocs.io/en/latest/#using-docker-compose">itzg Docker Minecraft Server Documentation&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://setupmc.com/java-server/">&lt;code>docker-compose.yaml&lt;/code> configuration generator (SetupMC)&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Authentication Methods - A Deep(ish) Dive</title><link>https://blog.juni-mp4.com/posts/13/authentication-methods-deep-dive/</link><pubDate>Thu, 27 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/13/authentication-methods-deep-dive/</guid><description>&lt;blockquote>
+&lt;p>Here lies the ramblings of a madwoman; bumbling her way around in the darkness in an attempt to understand the wide world of websec&amp;hellip;&lt;/p>&lt;/blockquote>
+&lt;h1 id="-in-the-absolute-broadest-of-strokes">&amp;hellip; in the absolute broadest of strokes:&lt;/h1>
+&lt;ul>
+&lt;li>&lt;strong>Token-based (&lt;code>JWT&lt;/code>):&lt;/strong>
+&lt;ul>
+&lt;li>Authentication state is stored &lt;strong>on the client&lt;/strong> (local/session storage) in the form of a &lt;strong>token&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>Session-based:&lt;/strong>
+&lt;ul>
+&lt;li>Authentication state is &lt;strong>stored on the server&amp;rsquo;s database&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Now, let&amp;rsquo;s go a little deeper, shall we?&lt;/p>
+&lt;h2 id="--json-web-tokens-jwt">- JSON Web Tokens (JWT)&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.23.47%20pm.png" alt="">&lt;/p>
+&lt;h3 id="--how-it-works">- How it works:&lt;/h3>
+&lt;ol>
+&lt;li>Client sends credentials to sever&lt;/li>
+&lt;li>Sever generates a &lt;code>JWT&lt;/code> based on credentials, and provides it to user (following below structure).
+&lt;ul>
+&lt;li>For example, using the &lt;code>RS256&lt;/code> algorithm, the generated &lt;code>JWT&lt;/code> is signed with the &lt;strong>server&amp;rsquo;s private key&lt;/strong>, and verified by the client with the &lt;strong>server&amp;rsquo;s public key&lt;/strong>.
+&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.24.40%20pm.png" alt="">(&lt;code>JWT&lt;/code> structure - &lt;a href="https://jwt.io/">https://jwt.io/&lt;/a>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>The client receives the&lt;code>JWT&lt;/code>, which is &lt;strong>stored&lt;/strong> in the &lt;strong>client&amp;rsquo;s local storage/session storage/as a cookie.&lt;/strong> AKA, the &lt;em>&lt;strong>state lives as a token on the client&lt;/strong>&lt;/em>, instead of &lt;strong>on the&lt;/strong> &lt;strong>server&lt;/strong> (as is with typical session-based authentication).
+&lt;ul>
+&lt;li>&lt;em>Note:&lt;/em> &lt;em>the client also verifies the &lt;code>JWT&lt;/code> with the server&amp;rsquo;s public key, if using the &lt;code>RS256&lt;/code> algorithm.&lt;/em>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="--jwt-based-authentication-drawbacks">- JWT-based Authentication Drawbacks&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>State is stored client side&lt;/strong> &amp;amp; can thus be dissected &amp;amp; manipulated&lt;/li>
+&lt;li>&lt;strong>Vulnerable to being accessed/stolen via XSS attacks&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>&lt;em>Can&lt;/em> be vulnerable to CSRF&lt;/strong> based on how the &lt;code>JWT&lt;/code> is stored &amp;amp; sent.
+&lt;ul>
+&lt;li>&lt;strong>Vulnerable to CSRF&lt;/strong>: if the &lt;code>JWT&lt;/code> is stored as an &lt;strong>&lt;code>HTTP&lt;/code>-only cookie&lt;/strong> that is passed to the server with &lt;strong>every request&lt;/strong>.
+&lt;ul>
+&lt;li>to mitigate this, use &lt;code>SameSite=Strict&lt;/code> &amp;amp; additional &lt;code>CSRF&lt;/code> tokens with each request.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>NOT (as) vulnerable to CSRF&lt;/strong>: if the &lt;code>JWT&lt;/code> is stored in the &lt;code>local/session storage&lt;/code>, meaning it&amp;rsquo;s &lt;strong>not sent with every request&lt;/strong>. Instead, it must be manually passed into the request header (e.g. &lt;code>Authorization: Bearer &amp;lt;token&amp;gt;&lt;/code>) when authorising.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>No server-side revocation&lt;/strong> - token is valid until it expires.&lt;/li>
+&lt;li>&lt;strong>Token expiration management&lt;/strong> can be complex&lt;/li>
+&lt;li>&lt;strong>Data is &lt;code>base64&lt;/code> encoded, not encrypted&lt;/strong> - so sensitive data should never be stored in JWTs, as anyone with the token can decode and read its contents.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="--session-based-cookie-authentication">- Session-based (cookie) authentication:&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.26.19%20pm.png" alt="">&lt;/p>
+&lt;h3 id="--how-it-works-1">- How it works:&lt;/h3>
+&lt;ol>
+&lt;li>Client provides credentials to the server&lt;/li>
+&lt;li>Server generates a &lt;strong>unique session ID&lt;/strong> for the client and &lt;strong>stores the session details &amp;amp; state in its local database.&lt;/strong>&lt;/li>
+&lt;li>Server sends the &lt;strong>session ID&lt;/strong> back within an &lt;code>HTTP-only&lt;/code> cookie, which is &lt;strong>stored in the client browser&amp;rsquo;s cookie jar&lt;/strong> (a storage for key-value pairs - &lt;em>how cool is this name though-&lt;/em>)&lt;/li>
+&lt;li>The client sends this cookie back with subsequent requests, &amp;amp; each time, the server has to &lt;strong>check the session&lt;/strong> against the value in the server&amp;rsquo;s database.&lt;/li>
+&lt;li>Upon logout, session ID is cleared from both the &lt;strong>client side&lt;/strong> and &lt;strong>server database&lt;/strong>.
+&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.46.32%20pm.png" alt="">&lt;/li>
+&lt;/ol>
+&lt;h3 id="--session-based-authentication-drawbacks">- Session-based Authentication Drawbacks:*&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Vulnerable to CSRF&lt;/strong> (attackers using session IDs to perform actions on behalf of the user) as cookies are sent automatically with every request.&lt;/li>
+&lt;li>&lt;strong>Processing power &amp;amp; complexity that increases with scale:&lt;/strong> as sessions have to be generated, stored &amp;amp; managed on the server&amp;rsquo;s database.&lt;/li>
+&lt;li>&lt;strong>Domain Restriction:&lt;/strong> Cookies are domain-specific, making cross-domain authentication difficult without additional configurations like &lt;code>CORS&lt;/code> (Cross Origin Resource Sharing) or third-party cookies.
+&lt;ul>
+&lt;li>&lt;code>CORS&lt;/code>: when a web app makes a cross-origin request (e.g. &lt;code>example.com&lt;/code> to &lt;code>api.example.com&lt;/code>), the browser sends an additional &lt;code>CORS&lt;/code> &lt;strong>preflight request&lt;/strong> to check if the server (&lt;code>api.example.com&lt;/code>) allows the cross-origin request. If it does, it needs to respond with the appropriate &lt;code>CORS&lt;/code> headers.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="a-brief-comparison">A brief comparison&amp;hellip;&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%2010.43.47%20pm.png" alt="">&lt;/p>
+&lt;blockquote>
+&lt;p>credit where credit is due, this &lt;em>is&lt;/em> from ChatGPT, but it was used as a sanity check after I did the bulk of the manual research to build a basis of understanding.
+so, what am i saying by this? take&amp;hellip; &lt;em>&lt;strong>all of it with a grain of salt lol-&lt;/strong>&lt;/em>&lt;/p>&lt;/blockquote>
+&lt;p>&lt;strong>Helpful Resources:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://portswigger.net/web-security/jwt#how-do-vulnerabilities-to-jwt-attacks-arise">JWT attacks - Portswigger&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=UBUNrFtufWo&amp;amp;list=TLPQMjcwMjIwMjXKogKOoZBbBQ&amp;amp;index=4&amp;amp;t=65s">Session vs Token Authentication in 100 Seconds&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=LB_lBMWH4-s&amp;amp;list=TLPQMjcwMjIwMjXKogKOoZBbBQ&amp;amp;index=4">Web Authentication Methods Explained&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.geeksforgeeks.org/session-based-authentication-vs-json-web-tokens-jwts-in-system-design/">Session-Based Authentication vs. JSON Web Tokens (JWTs) in System Design&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://aegizz.github.io/ctfs/duckCTF2024">Exploiting it in practice, within a CTF&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Branching out with a previous commit in a GitHub project</title><link>https://blog.juni-mp4.com/posts/12/reverting-to-an-older-version-of-a-github-project/</link><pubDate>Sun, 12 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/12/reverting-to-an-older-version-of-a-github-project/</guid><description>&lt;p>&lt;em>just a lil guide for my future self when i inevitably forget this again (and it&amp;rsquo;s probably still wrong oops-)&lt;/em>&lt;/p>
+&lt;h2 id="--steps">- Steps:&lt;/h2>
+&lt;h3 id="--find-the-commit-you-want-to-revert-to--copy-its-hash">- Find the commit you want to revert to &amp;amp; copy its hash:&lt;/h3>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/12/Screenshot%202025-01-12%20at%2011.23.40%20am.png" alt="">&lt;/p>
+&lt;h3 id="--return-to-your-open-project">- Return to your open project:&lt;/h3>
+&lt;p>for me, i was working with a locally-cloned copy in VScode, connected to the remote repo&amp;rsquo;s &lt;code>main&lt;/code> branch, and was up to date with all of the changes made.&lt;/p>
+&lt;h3 id="--create-new-remote-branch">- Create new remote branch:&lt;/h3>
+&lt;p>open the terminal and run &lt;code>git checkout -b &amp;lt;new-remote-branch&amp;gt; &amp;lt;old-commit-hash&amp;gt;&lt;/code>. This will create a new remote branch &lt;strong>populated with the project at the time of the commit hash you specified&lt;/strong>, and switch you to it.&lt;/p>
+&lt;p>&lt;em>E.g., &lt;code>git checkout -b names-update 4853ecf5765b7174465e604e8fd8bdd5430ea84f&lt;/code>.&lt;/em>&lt;/p>
+&lt;h3 id="--push-this-new-remote-branch">- Push this new remote branch:&lt;/h3>
+&lt;p>then, simply push this new remote branch with &lt;code>git push origin &amp;lt;new-remote-branch&amp;gt;&lt;/code>, and check that it appears on github!&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/12/Screenshot%202025-01-12%20at%2011.28.11%20am.png" alt="">&lt;/p>
+&lt;p>Now you can operate off this new branch, containing the project in a previous commit&amp;rsquo;s state.&lt;/p>
+&lt;hr>
+&lt;p>&lt;em>&lt;strong>yes&amp;hellip; i know this is a very simple thing to do that i only just kinda grasped &amp;gt;.&amp;lt;&lt;/strong>&lt;/em>&lt;/p></description></item><item><title>building &amp; deploying this blog with hugo!</title><link>https://blog.juni-mp4.com/posts/10/building-hugo-blog/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/10/building-hugo-blog/</guid><description>&lt;h1 id="and-now---to-the-story-of-how-this-blog-was-born">&lt;em>and now - to the story of how this blog was born!&lt;/em>&lt;/h1>
+&lt;blockquote>
+&lt;p>&lt;em>(it&amp;rsquo;s nothing special, but I thought I&amp;rsquo;d document it for myself when i inevitably forget how i did it in the future, as well as any other wandering lost souls out there!)&lt;/em>&lt;/p>&lt;/blockquote>
+&lt;p>i&amp;rsquo;ve been meaning to re-jig my tech blog for a while now. for the last year and a bit, I experimented with the static site generator (SSG) &lt;a href="https://jekyllrb.com/">jekyll&lt;/a>. jekyll is essentially a tool built in &lt;a href="https://jekyllrb.com/docs/ruby-101/">ruby&lt;/a> that combines &lt;strong>blog posts&lt;/strong> (typically written in markdown, &lt;code>.md&lt;/code> files) with &lt;strong>themes/config files&lt;/strong> to generate browser-renderable code (&lt;code>HTML&lt;/code>, &lt;code>CSS&lt;/code> and &lt;code>JS&lt;/code>).&lt;/p>
+&lt;p>this way, you can streamline your workflow, embed all sorts of cool features (comments, reactions, reading times, table of contents, automatic &lt;a href="https://en.wikipedia.org/wiki/RSS">rss feeds&lt;/a>, post dating etc.), and most importantly &lt;strong>avoid the horror of writing blog posts in raw HTML&lt;/strong>&amp;hellip; but still being able to dabble in it when you please (providing your markdown-to-html renderer permits that).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Pasted%20image%2020250104220631.png" alt="markdown vs html">&lt;/p>
+&lt;p>&amp;hellip;and all of this within a &lt;a href="https://www.geeksforgeeks.org/static-vs-dynamic-website/">static site&lt;/a> (all files pre-built on web-server, no databases) that is lightweight, responsive, maintainable and (relatively) quick to spin up.&lt;/p>
+&lt;hr>
+&lt;h2 id="--why-did-i-move-away-from-jekyll">- why did i move away from jekyll?&lt;/h2>
+&lt;p>for three simple reasons:&lt;/p>
+&lt;ol>
+&lt;li>i&amp;rsquo;d been meaning to try the SSG &lt;a href="https://gohugo.io/">hugo&lt;/a>.&lt;/li>
+&lt;li>hugo is built in &lt;a href="https://go.dev/">golang&lt;/a>, and i&amp;rsquo;d been wanting to poke around with go for a while now.&lt;/li>
+&lt;li>i found (and confirmed, after trying hugo) ruby &amp;amp; jekyll to be a bit more onerous to work with &amp;amp; overly-verbose in both site layout &amp;amp; base code. also - i noticed that jekyll had &lt;a href="https://css-tricks.com/comparing-static-site-generator-build-times/">much slower build times&lt;/a>.&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="--getting-up-and-running-with-hugo">- getting up and running with hugo:&lt;/h2>
+&lt;p>there are endless tutorials for this, and my pipeline is probably most similar to that of NetworkChuck in the &lt;a href="https://www.youtube.com/watch?v=dnE7c0ELEH8&amp;amp;t=907s">recent video&lt;/a> he released (not even a week before I went in on my own build, after sitting on the idea for ages haha - twas kinda spoopy :3).&lt;/p>
+&lt;h3 id="--setting-up-the-hugo-site">- setting up the hugo site:&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Hugo has two simple dependencies: &lt;code>git&lt;/code> (for code version control), and the &lt;code>go&lt;/code> compiler toolchain. (here are where you can install &lt;a href="https://git-scm.com/">&lt;code>git&lt;/code>&lt;/a> and &lt;a href="https://go.dev/">&lt;code>go&lt;/code>&lt;/a>, if needed)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>after installing these, using the package manager of your choice (for me, &lt;code>homebrew&lt;/code>), &lt;a href="https://gohugo.io/installation/">install hugo&lt;/a> with &lt;code>brew install hugo&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>choose a directory for your site, and open it in your code editor. ensure hugo is in your system PATH so you can access it via the command line, and run &lt;code>hugo -v&lt;/code> to ensure you&amp;rsquo;re on the latest.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then simply run &lt;code>hugo new site [SITENAME]&lt;/code>, replacing &lt;code>[SITENAME]&lt;/code> with whatever you&amp;rsquo;d like to call the site (&amp;amp; folder it lives in). hugo will then spinup the basic bones of your site, and navigate into the folder it creates with &lt;code>cd&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>initialise an empty git repository in this new folder with &lt;code>git init&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>to install a theme, browse them &lt;a href="https://themes.gohugo.io/">here&lt;/a>, and follow the instructions in the theme&amp;rsquo;s description (as some methods vary).
+however, the most common is installation is via a &lt;strong>git submodule&lt;/strong> - which essentially will just pull down an existing git repo containing a pre-built hugo theme, and populate your site&amp;rsquo;s &lt;code>themes&lt;/code> folder with it. this way, when building your site, hugo will use it as a base layout, and add any changes made to your site on top of it.
+for me, i ran: &lt;code>git submodule add https://github.com/michaelneuper/hugo-texify3.git themes/hugo-texify3&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>now, your site&amp;rsquo;s directory tree should look something like the following:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.35.22%20pm.png" alt="">&lt;/p>
+&lt;p>Folders &amp;amp; files are fairly self-explanatory, with the main ones being:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>&lt;code>hugo.toml&lt;/code>&lt;/strong> - your site&amp;rsquo;s configuration variables.&lt;/li>
+&lt;li>&lt;strong>&lt;code>/content&lt;/code>&lt;/strong> - where you create folders to store blog posts (&lt;code>.md&lt;/code>) &amp;amp; site pages&lt;/li>
+&lt;li>&lt;strong>&lt;code>/assets&lt;/code>&lt;/strong> - ideally where media is stored &amp;amp; linked (although you can place them anywhere, theoretically, providing you link back to it correctly)&lt;/li>
+&lt;li>&lt;strong>&lt;code>/public&lt;/code> (only created when website is built, see step 8.)&lt;/strong> - where your &lt;strong>raw website&lt;/strong> (raw HTML, CSS, JS) will be built to and live. &lt;strong>you shouldn&amp;rsquo;t need to touch this folder.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>&lt;code>/themes&lt;/code>&lt;/strong> - where all of your sites themes are installed (and specified/switched between in &lt;code>hugo.toml&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>sometimes, themes require installing &lt;strong>other tools&lt;/strong> as part of their custom build process. this &lt;em>should&lt;/em> be specified in the theme&amp;rsquo;s documentation.
+for me, that required needing to install the following with &lt;code>npm&lt;/code>:
+&lt;code>npm install postcss-cli autoprefixer postcss-import&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>to build your site locally, ensure you&amp;rsquo;re in your site&amp;rsquo;s base directory and run &lt;code>hugo server -t [THEME-NAME]&lt;/code> (if using a theme).
+for me: &lt;code>hugo server -t hugo-texify3&lt;/code>&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.33.44%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>now, navigate to the local address to see your site in action! it should live-reload as you make changes in your code editor.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>[EXTRA]&lt;/strong> after analysing my specific theme&amp;rsquo;s layout &amp;amp; directory structure, I mirrored elements of it (thus overwriting what was contained in the &lt;code>/themes&lt;/code> folder) to create the below folder structure, allowing me to:
+- add dedicated website pages in &lt;code>/pages&lt;/code>
+- use &lt;code>/posts&lt;/code> to hold my site post, with each in its own &lt;strong>folder&lt;/strong> alongside any assets (images, media, etc.). this was done due to my particular workflow (writing in obsidian, see below).
+- split site configuration into two files for readability in &lt;code>/config&lt;/code>: one for parameters (enabling/disabling certain features like social links, metadata etc.), and one for overall config &amp;amp; layout.
+&lt;img src="https://blog.juni-mp4.com/posts/10/heya.png" alt="">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="--pushing-to-remote-git-repository--deploying-via-cloudflare-pages">- pushing to remote git repository &amp;amp; deploying via cloudflare pages&lt;/h3>
+&lt;p>&lt;em>(aka my weird custom workflow):&lt;/em>&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>after running &lt;code>git init&lt;/code>, ensure you are authenticated locally with &lt;code>gh auth login&lt;/code> (requires use of Github CLI, install with &lt;code>brew install gh&lt;/code> or similar)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>create a new repository on GitHub with:
+&lt;code>gh repo create juni-blog --public --source=. --remote=origin&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--public&lt;/code>: sets repo as public, as cloudflare will need to monitor it for changes&lt;/li>
+&lt;li>&lt;code>--source=.&lt;/code>: initialises the remote repository with your current local directory&amp;rsquo;s contents&lt;/li>
+&lt;li>&lt;code>--remote=origin&lt;/code>: sets up the remote URL for the repository&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>now, just push the local branch to the remote with &lt;code>git push -u origin main&lt;/code>.&lt;/p>
+&lt;blockquote>
+&lt;p>The &lt;code>-u&lt;/code> (or &lt;code>--set-upstream&lt;/code>) option in &lt;code>git push&lt;/code> links your &lt;strong>local branch&lt;/strong> (&lt;code>main&lt;/code>) to the &lt;strong>remote branch&lt;/strong> (&lt;code>origin&lt;/code>) by default, allowing you to run &lt;code>git push&lt;/code> and &lt;code>git pull&lt;/code> commands in the future without adding &lt;code>origin main&lt;/code> at the end (AKA specifying which remote branch to interact with by default).&lt;/p>&lt;/blockquote>
+&lt;/li>
+&lt;li>
+&lt;p>navigate to your remote repository on github to check whether the changes have been propagated!&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>setup, login to and open &lt;a href="https://dash.cloudflare.com/">cloudflare pages&lt;/a> and navigate to your &lt;strong>&lt;code>Workers &amp;amp; Pages&lt;/code>&lt;/strong> section, then &lt;strong>&lt;code>Create&lt;/code>&lt;/strong> to deploy a new &amp;ldquo;site&amp;rdquo;. The click &lt;strong>&lt;code>Connect to Git&lt;/code>&lt;/strong> and follow the prompts to authenticate, and link to the repository that you just pushed to.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.56.36%20pm.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.58.49%20pm.png" alt="">&lt;/p>
+&lt;p>After that, you can specify which branch Cloudflare should look for changes on, as any frameworks that you&amp;rsquo;re using to build &amp;amp; deploy the site, and where the built assets &amp;amp; HTML files are stored. I selected &lt;code>Hugo&lt;/code> (for obvious reasons), and it populated the build command with a simple &lt;code>hugo&lt;/code>.&lt;/p>
+&lt;p>&lt;em>&lt;strong>However&lt;/strong>&lt;/em>, if your site requires other tools as part of the build process like mine (specified in step 8 in the previous section), be sure to &lt;strong>install them on the remote server this site is running off&lt;/strong> with the relevant commands. for me, these are:
+&lt;code>npm install postcss-cli autoprefixer postcss-import &amp;amp;&amp;amp; hugo&lt;/code>
+Cloudflare should provide logs from the remote server should your build fail, making troubleshooting fairly simple.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.01.36%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then you&amp;rsquo;re all set! cloudflare will now watch for any changes made to the specified branch of this repo (for me, &lt;code>main&lt;/code>), and if detected, it will automatically run &lt;code>npm install postcss-cli autoprefixer postcss-import &amp;amp;&amp;amp; hugo&lt;/code> on its remote server(s) to build the updated version of my site, and then serve &lt;strong>only&lt;/strong> the created HTML, CSS &amp;amp; JS files in the specified output directory (for me, &lt;code>public&lt;/code>).
+you should be able to access your site from the default URL created and provided to you, like &lt;a href="https://b3ce9f44.juni-blog.pages.dev/">https://b3ce9f44.juni-blog.pages.dev/&lt;/a>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>[extra]&lt;/strong> to change this URL to a custom domain that you own, go to the &lt;strong>&lt;code>Custom Domain&lt;/code>&lt;/strong> section of the page you just created, click &lt;strong>Set up a custom domain&lt;/strong>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.16.58%20pm.png" alt="">&lt;/p>
+&lt;p>Then, follow the prompts. In my case, I associated the &lt;code>myblog&lt;/code> CNAME with this &amp;ldquo;Page&amp;rdquo; (&lt;code>juni-blog.pages.dev&lt;/code>).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.13.22%20pm.png" alt="">&lt;/p>
+&lt;p>Then, simply navigate to your domain&amp;rsquo;s (&lt;code>juni-mp4.com&lt;/code>) DNS records (for me, also managed via Cloudflare) and add a record for the CNAME you just specified.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.16.02%20pm.png" alt="">&lt;/p>
+&lt;p>This means that when someone visits &lt;code>myblog.juni-mp4.com&lt;/code>, they will functionally be visiting &lt;code>juni-blog.pages.dev&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>this combination of github &amp;amp; cloudflare pages allows me to easily host &amp;amp; deploy sites from &lt;strong>different github repos&lt;/strong>, each built with &lt;strong>all kinds of different build methods&lt;/strong> (from hand-coding raw HTML/CSS/JS to using various SSGs like &lt;code>jekyll&lt;/code>, &lt;code>hugo&lt;/code> etc.), as subdomains of my primary domain &lt;code>juni-mp4.com&lt;/code> and all served securely &amp;amp; quickly from Cloudflare&amp;rsquo;s worldwide array of web servers. &lt;em>(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)&lt;/em>&lt;/p>
+&lt;p>&lt;em>&lt;strong>Side note:&lt;/strong>&lt;/em> &lt;em>yes, whilst you could argue that you &amp;ldquo;pay&amp;rdquo; in the form of you &amp;amp; your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security &amp;amp; responsiveness that Cloudflare&amp;rsquo;s network of servers provides, at least imho and for my use case.&lt;/em>&lt;/p>
+&lt;p>this very particular workflow &amp;amp; need for flexibility is why i chose to use cloudflare instead of just deploying straight from &lt;a href="https://pages.github.com/">Github Pages&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;h2 id="--my-final-note-taking-process-an-overview">- my final note-taking process: an overview&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>open my Obsidian &amp;ldquo;blog&amp;rdquo; vault, and create a new note within a folder in &lt;code>posts&lt;/code>:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.27.21%20pm.png" alt="">&lt;/p>
+&lt;p>the &lt;a href="https://silentvoid13.github.io/Templater/introduction.html">Templater&lt;/a> plugin auto-generates the hugo-formatted frontmatter you see above in every new note, using the code block below inside the &lt;code>template&lt;/code> file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">title&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">date&lt;/span>: &lt;span style="color:#ae81ff">&amp;lt;% tp.file.creation_date(&amp;#34;YYYY-MM-DD&amp;#34;) %&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">description&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">toc&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">math&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">draft&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">categories&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">tags&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>write the post :3. drag &amp;amp; drop / copy-paste images as needed, after making sure the &lt;code>Absolute path in vault&lt;/code> option is selected in your vault&amp;rsquo;s &lt;strong>Files and links&lt;/strong> settings. This may need to be tweaked depending on your site&amp;rsquo;s layout later, but it worked for me, and is easily changed in bulk in VSCode or a similar editor via &lt;strong>find &amp;amp; replace&lt;/strong>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.28.55%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>once I&amp;rsquo;m finished writing, I switch to my full website directory tree in VSCode (my Obsidian &amp;ldquo;blog&amp;rdquo; vault is just the website&amp;rsquo;s &lt;code>content&lt;/code> folder, hence the &lt;code>.obsidian&lt;/code> folder inside it).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.33.17%20pm.png" alt="">&lt;/p>
+&lt;p>i run the build command &lt;code>hugo server -t [theme-name-here]&lt;/code> in the VScode terminal to start a live server, and visit &lt;code>http://localhost:1313/&lt;/code> to double check that the changes have been formatted properly.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.41.47%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then a simple &lt;code>git commit -m &amp;quot;new blog post: hugo site build&amp;quot; -a &amp;amp;&amp;amp; git push origin main&lt;/code> pushes the changes to my site where it&amp;rsquo;s rebuilt &amp;amp; served as new HTML pages!&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr></description></item><item><title>'securely' setting up web server with nginx @ home &amp; self hosting</title><link>https://blog.juni-mp4.com/posts/9/securely-self-hosting-site-npm/</link><pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/9/securely-self-hosting-site-npm/</guid><description>&lt;ol>
+&lt;li>debian 12 container install inside proxmox&lt;/li>
+&lt;li>`sudo apt update &amp;amp;&amp;amp; sudo apt upgrade -y&lt;/li>
+&lt;li>network settings: If your router supports subnets/VLANs, connect this to the isolated VLAN. within proxmox, assign static IP not in use and point to your router&amp;rsquo;s gateway.![[Screenshot 2024-07-08 at 8.40.32 PM.png]]&lt;/li>
+&lt;li>install nginx on debian - &lt;code>sudo apt install nginx -y&lt;/code>&lt;/li>
+&lt;li>create a file for website settings: `nano /etc/nginx/sites-available/mywebsite&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#ae81ff">80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#e6db74">[::]:80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server_name&lt;/span> &lt;span style="color:#e6db74">juni-mp4.org&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">root&lt;/span> &lt;span style="color:#e6db74">/var/www/juni-web&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">index.html&lt;/span> &lt;span style="color:#e6db74">index.htm&lt;/span> &lt;span style="color:#e6db74">index.nginx-debian.html&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">location&lt;/span> &lt;span style="color:#e6db74">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">try_files&lt;/span> $uri $uri/ =&lt;span style="color:#ae81ff">404&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The &lt;code>listen&lt;/code> lines tell &lt;code>nginx&lt;/code> to listen for connections on both IPv4 and IPv6.
+The &lt;code>server_name&lt;/code> is the website that we are looking for. By putting &lt;code>landchad.net&lt;/code> here, that means whenever someone connects to this server and is looking for that address, they will be directed to the content in this block. &lt;code>root&lt;/code> specifies the directory we&amp;rsquo;re going to put our website files in.&lt;/p>
+&lt;p>This can theoretically be wherever, but it is conventional to have them in &lt;code>/var/www/&lt;/code>. Name the directory in that whatever you want. &lt;code>index&lt;/code> determine what the &amp;ldquo;default&amp;rdquo; file is; normally when you go to a website, say &lt;code>landchad.net&lt;/code>, you are actually going to a file at &lt;code>landchad.net/index.html&lt;/code>. That&amp;rsquo;s all that is. Note that that this in concert with the line above mean that &lt;code>/var/www/landchad/index.html&lt;/code>, a file on our computer that we&amp;rsquo;ll create, will be the main page of our website.&lt;/p>
+&lt;p>Lastly, the &lt;code>location&lt;/code> block is really just telling the server how to look up files, otherwise throw a 404 error. Location settings are very powerful, but this is all we need them for now.
+7. create directory for your website&amp;rsquo;s contents/files using: &lt;code>mkdir /var/www/juni-web&lt;/code> (can be located wherever but standard to store in &lt;code>/var/www/[X]&lt;/code> ) where you can place website files like &lt;code>index.html&lt;/code> etc.)
+8. enable the site by making a link between the config file in you just created in &lt;code>sites-available&lt;/code> and the &lt;code>sites-enabled&lt;/code> directory:
+&lt;code>ln -s /etc/nginx/sites-available/juni-web /etc/nginx/sites-enabled/ 9. restart nginx &lt;/code>systemctl restart nginx`&lt;/p>
+&lt;p>&lt;em>&lt;strong>make sure the &amp;ldquo;default&amp;rdquo; file doesn&amp;rsquo;t remain in &lt;code>/etc/nginx/sites-enabled/&lt;/code> otherwise will serve the default config page for nginx!!&lt;/strong>&lt;/em>&lt;/p>
+&lt;h2 id="main-nginx-files--explanation">Main Nginx Files &amp;amp; Explanation:&lt;/h2>
+&lt;p>&lt;em>The idea is that you can make a site configuration file in &lt;code>sites-available&lt;/code> (that links to where your website is stored locally, e.g. &lt;code>/var/www/sitestorage&lt;/code>), then make a link to this configuration file in &lt;code>sites-enabled&lt;/code>, which will activate it.&lt;/em>&lt;/p>
+&lt;h3 id="config-files">Config Files:&lt;/h3>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>/etc/nginx/sites-available/&lt;/code> - directory containing any site configuration files. Points to directory containing main website content, e.g. &lt;code>/var/www/juni-web&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-nginx" data-lang="nginx">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">server&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#ae81ff">80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">listen&lt;/span> &lt;span style="color:#e6db74">[::]:80&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server_name&lt;/span> &lt;span style="color:#e6db74">juni-mp4.org&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">root&lt;/span> &lt;span style="color:#e6db74">/var/www/juni-web&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">index.html&lt;/span> &lt;span style="color:#e6db74">index.htm&lt;/span> &lt;span style="color:#e6db74">index.nginx-debian.html&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">location&lt;/span> &lt;span style="color:#e6db74">/&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">try_files&lt;/span> $uri $uri/ =&lt;span style="color:#ae81ff">404&lt;/span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>&lt;code>/etc/nginx/sites-enabled/&lt;/code> - directory containing &lt;strong>links&lt;/strong> to site configuration files
+make links via: `ln -s [link-source-path] [link-destination-path]&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="main-website-location">Main website location:&lt;/h3>
+&lt;ul>
+&lt;li>&lt;code>/var/www/[site-name]&lt;/code>'
+e.g. &lt;code>/var/www/juni-web&lt;/code>
+contains files like index.html, etc.&lt;/li>
+&lt;/ul>
+&lt;h1 id="securing-it">Securing it:&lt;/h1>
+&lt;h3 id="ufw">UFW:&lt;/h3>
+&lt;p>sudo apt install ufw&lt;/p>
+&lt;pre tabindex="0">&lt;code># Limit SSH access to port 22
+sudo ufw limit 22/tcp
+# Allow HTT![[Screenshot 2024-07-19 at 9.04.25 PM.png]]P traffic on port 80
+sudo ufw allow 80
+# Allow HTTPS traffic on port 443
+sudo ufw allow 443
+# Limit SSH access to port 22 for IPv6
+sudo ufw limit 22/tcp6
+# Allow HTTP traffic on port 80 for IPv6
+sudo ufw allow 80/tcp6
+# Allow HTTPS traffic on port 443 for IPv6
+sudo ufw allow 443/tcp6
+ufw enable
+ufw logging on
+ufw status
+&lt;/code>&lt;/pre>&lt;p>![[Screenshot 2024-07-09 at 11.51.31 PM.png]]
+&lt;a href="https://www.linode.com/docs/guides/configure-firewall-with-ufw/">https://www.linode.com/docs/guides/configure-firewall-with-ufw/&lt;/a>&lt;/p>
+&lt;h1 id="docker-install-debian">docker install (&lt;a href="https://docs.docker.com/engine/install/debian/">debian&lt;/a>):&lt;/h1>
+&lt;p>Run the following command to uninstall all conflicting packages:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> pkg in docker.io docker-doc docker-compose podman-docker containerd runc; &lt;span style="color:#66d9ef">do&lt;/span> sudo apt-get remove $pkg; &lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>install dependencies:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Set up Docker&amp;rsquo;s &lt;code>apt&lt;/code> repository.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Add Docker&amp;#39;s official GPG key:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get install ca-certificates curl
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo install -m &lt;span style="color:#ae81ff">0755&lt;/span> -d /etc/apt/keyrings
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo chmod a+r /etc/apt/keyrings/docker.asc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># Add the repository to Apt sources:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> &lt;span style="color:#e6db74">&amp;#34;deb [arch=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>dpkg --print-architecture&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>. /etc/os-release &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$VERSION_CODENAME&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> stable&amp;#34;&lt;/span> | &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> sudo tee /etc/apt/sources.list.d/docker.list &amp;gt; /dev/null
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>install latest docker version&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Verify that the installation is successful by running the &lt;code>hello-world&lt;/code> image:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span> sudo docker run hello-world
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="docker-compose-install">docker compose install&lt;/h2>
+&lt;p>why install it? manage all containers &amp;amp; deployments from a &lt;a href="https://docs.docker.com/compose/">single yaml file&lt;/a>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>sudo apt-get update
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo apt-get install docker-compose-plugin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker compose version
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>![[Screenshot 2024-07-10 at 12.12.09 AM.png]]&lt;/p>
+&lt;p>create compose file near website data for ease of management&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## if website located in mkdir /var/www/juni-web&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>mkdir /var/www/docker-compose
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano docker-compose.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>we can use this to install&amp;hellip;&lt;/p>
+&lt;h3 id="nginx-proxy-manager-npm-install">nginx proxy manager (NPM) install&lt;/h3>
+&lt;p>&lt;em>(not to be confused with node package manager npm lol)&lt;/em>&lt;/p>
+&lt;p>&lt;em>note: make sure to set ports for managing nginx proxy manager (NPM) to 8080 &amp;amp; 4443 (or whatever custom ones you&amp;rsquo;d like) and NOT 80 &amp;amp; 443, as the latter will likely be in use by nginx to serve &amp;amp; access your website at.&lt;/em>&lt;/p>
+&lt;p>in the docker-compose.yml&amp;hellip;&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cd /var/www/docker-compose
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>nano docker-compose.yml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## then add into file:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>services:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> app:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> image: &lt;span style="color:#e6db74">&amp;#39;jc21/nginx-proxy-manager:latest&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> restart: unless-stopped
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ports:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># These ports are in format &amp;lt;host-port&amp;gt;:&amp;lt;container-port&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;8080:80&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Port for HTTP access to NPM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;4443:443&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Port for HTTS access to NPM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;81:81&amp;#39;&lt;/span> &lt;span style="color:#75715e"># Admin Web Port&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Add any other Stream port you want to expose&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># - &amp;#39;21:21&amp;#39; # FTP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment the next line if you uncomment anything in the section&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># environment:&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment this if you want to change the location of&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># the SQLite DB file within the container&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># DB_SQLITE_FILE: &amp;#34;/data/database.sqlite&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Uncomment this if IPv6 is not enabled on your host&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># DISABLE_IPV6: &amp;#39;true&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> volumes:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - ./data:/data
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - ./letsencrypt:/etc/letsencrypt
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">## then run&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker compose up -d
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>access nginx via &lt;code>http://[server-ip]:81&lt;/code> &amp;amp; login with &lt;code>admin@example.com&lt;/code> and &lt;code>changeme&lt;/code> (changed upon entry)&lt;/p>
+&lt;h2 id="cloudflare-setup">cloudflare setup&lt;/h2>
+&lt;p>sign up for free cloudflare account
+follow signup steps to point existing domain at cloudflare&lt;/p>
+&lt;p>autoscan for any DNS records you changed with your registrar (* domains, subdomains etc.) so cloudflare is aware of them&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 9.05.00 PM.png]]
+![[Screenshot 2024-07-19 at 9.09.40 PM.png]]&lt;/p>
+&lt;p>navigate to your domain registrar and set the custom DNS servers to the ones provided to you by cloudflare.&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 9.08.37 PM.png]]&lt;/p>
+&lt;p>cloudflare setup guide here - &lt;a href="https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/">https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/&lt;/a>
+![[Screenshot 2024-07-19 at 9.17.23 PM.png]]
+![[Screenshot 2024-07-19 at 9.17.34 PM.png]]
+![[Screenshot 2024-07-19 at 9.18.03 PM.png]]&lt;/p>
+&lt;p>API token: HRWvk067sLPv_RMGDPhS1y0lj5XDcLErat5nY18m
+verify with cul command:
+&lt;code> curl -X GET &amp;quot;https://api.cloudflare.com/client/v4/user/tokens/verify&amp;quot; \      -H &amp;quot;Authorization: Bearer [YOUR TOKEN]&amp;quot; \ -H &amp;quot;Content-Type:application/json&amp;quot;&lt;/code>&lt;/p>
+&lt;h3 id="cloudflare--ssl-issues-certbot">Cloudflare &amp;amp; SSL issues (certbot)&lt;/h3>
+&lt;p>if you&amp;rsquo;ve setup certbot or something similar to manage ssl certificates on your nginx server, MAKE SURE to go to cloudflare and select Full (strict) SSL/TLS encryption mode so it doesn&amp;rsquo;t have an SSL mismatch and make your site inaccessible via the browser - ![[Screenshot 2024-07-19 at 10.00.00 PM.png]]&lt;/p>
+&lt;p>&lt;strong>The Why:&lt;/strong> as with &lt;strong>&amp;lsquo;flexible&amp;rsquo;&lt;/strong> ticked, cloudflare will (by default) try and make requests to your server via HTTP and the server will throw an error if it&amp;rsquo;s using SSL due to a cipher mismatch, then browsers interpret this as a potential MiTM attack. see below: ![[Screenshot 2024-07-19 at 10.03.20 PM.png]]
+![[Screenshot 2024-07-19 at 10.03.46 PM.png]]&lt;/p>
+&lt;p>you can also check your site&amp;rsquo;s nginx config file to see that certs are set up properly:&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.07.33 PM.png]]&lt;/p>
+&lt;h2 id="opening-the-ports">OPENING the ports&lt;/h2>
+&lt;p>&lt;strong>External port&lt;/strong>: what port is used by external users to access, like:
+&lt;code>pu.bl.ic.ip:[external-port]&lt;/code>
+e.g. &lt;code>182.46.382.83:443&lt;/code>&lt;/p>
+&lt;p>&lt;strong>Internal port&lt;/strong>: what port on the specified &lt;strong>Device&lt;/strong> (the one identified by the &lt;code>Device IP Address&lt;/code> field) that the traffic will be forwarded to.&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.24.08 PM.png]]&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.23.53 PM.png]]&lt;/p>
+&lt;h2 id="set-up-static-ip-for-container-in-proxmox-on-router">set up static IP for container in proxmox on router&lt;/h2>
+&lt;p>OR just change the DHCP pool to not include the IP address you want statically added on the proxmox&lt;/p>
+&lt;p>(e.g. setting DNS pool to &lt;code>192.168.0.20&lt;/code> -&amp;gt; &lt;code>192.168.0.200&lt;/code> and then assigning static IP for your container in proxmox outside of the pool range but on the same subnet, e.g. &lt;code>192.168.0.5&lt;/code> )
+![[Screenshot 2024-07-19 at 10.19.57 PM.png]]&lt;/p>
+&lt;p>![[Screenshot 2024-07-19 at 10.19.45 PM.png]]&lt;/p>
+&lt;h2 id="adding-ssl-cert-to-nginx-proxy-manager">adding SSL cert to nginx proxy manager&lt;/h2>
+&lt;p>![[Screenshot 2024-07-19 at 10.40.02 PM.png]]&lt;/p>
+&lt;p>certs on web server:
+![[Screenshot 2024-07-19 at 10.43.38 PM.png]]&lt;/p>
+&lt;h2 id="setup-proxy-host-on-npm">setup proxy host on NPM&lt;/h2>
+&lt;p>![[Screenshot 2024-07-19 at 11.37.22 PM.png]]
+![[Screenshot 2024-07-19 at 11.38.09 PM.png]]&lt;/p>
+&lt;h2 id="setup-npm--dynamic-dns">setup NPM &amp;amp; dynamic DNS&lt;/h2>
+&lt;p>to do:&lt;/p>
+&lt;ul>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/">https://anebula.io/how-to-set-up-nginx-proxy-manager-using-docker-compose/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://www.youtube.com/watch?v=GarMdDTAZJo">https://www.youtube.com/watch?v=GarMdDTAZJo&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> &lt;a href="https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/">https://notthebe.ee/blog/easy-ssl-in-homelab-dns01/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> set up nginx reverse proxy, cloudflare etc. &lt;a href="https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/">https://blog.prutser.net/2021/01/20/how-to-securely-self-host-a-website-or-web-app/&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> install certbot &amp;amp; auto renewal &amp;amp; setup https&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> setup firewall around docker - &lt;a href="https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw">https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw&lt;/a>&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> ssh harden copy config files &amp;amp; replace keys&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> install auto updates for all respective software (docker, docker compose, nginx, nginx proxy manager, ufw, anything else used)&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> port forward website to internet to make accessible&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> update domain registrar to point to local public IP&lt;/li>
+&lt;li>&lt;input disabled="" type="checkbox"> write scp command that writes locally-edited files to website remotely
+&lt;code>scp -r user@[remoteTargetComputerIP]: [RemoteFilesPath] [localDestinationPath] e.g. &lt;/code>scp -r &lt;a href="mailto:root@45.77.26.67">root@45.77.26.67&lt;/a>:/var/www/mysite ~&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item><item><title>Backing up linux .config &amp; apps to move to a new device/distro</title><link>https://blog.juni-mp4.com/posts/8/backup-linux-config-and-apps/</link><pubDate>Wed, 25 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/8/backup-linux-config-and-apps/</guid><description>&lt;h1 id="burn-it-all-down-or">burn it all down&amp;hellip; or?&lt;/h1>
+&lt;p>Ahh, a tale born from the first time that I dipped my toes into the weird, wide and wonderful world of distro-hopping. Because sometimes, instead of building it all from scratch again (like so many of us are fond of doing), bringing your old config, notes of a previous home, with you is desirable. Because don&amp;rsquo;t lie - we won&amp;rsquo;t get those hours spent tweaking shell configs to look &lt;em>just&lt;/em> how we like it back.&lt;/p>
+&lt;p>In any case - the following (somewhat high-level) overview should get you up and running on a new system/distro fairly quickly, in an environment&lt;/p>
+&lt;p>Basically, most user settings (from my research - some may be hidden in other corners, but this got me back to a similar place) are stored in `/home/[user-name]/.config/.&lt;/p>
+&lt;p>So, for me, this was at &lt;code>/home/juni/.config/&lt;/code>. So, simply copy that folder to an external drive or over the network, and paste it in the corresponding place on your new system.&lt;/p>
+&lt;h2 id="--copying-over-config">- Copying over .config&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;code>cd /home/[user]/&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>navigate to the user&amp;rsquo;s directory where the &lt;code>.config&lt;/code> folder is stored.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo tar cvzf configs-backup.tgz .config/&lt;/p>
+&lt;ul>
+&lt;li>creates a compressed archive (&lt;code>configs-backup.tgz&lt;/code>) of the &lt;code>.config&lt;/code> folder with &lt;code>tar&lt;/code>, and passing &lt;code>cvzf&lt;/code> as parameters:
+&lt;ul>
+&lt;li>&lt;code>c&lt;/code> - &lt;code>c&lt;/code>reate a new archive&lt;/li>
+&lt;li>&lt;code>v&lt;/code> - enable &lt;code>v&lt;/code>erbose output, to monitor the progress&lt;/li>
+&lt;li>&lt;code>z&lt;/code> - compress with the g&lt;code>z&lt;/code>ip algorithm&lt;/li>
+&lt;li>&lt;code>f&lt;/code> - specifies the name of the created archive &lt;code>f&lt;/code>ile (in this case, &lt;code>configs-backup.tgz&lt;/code>)
+Alternatively, you could use a tool like &lt;code>rsync&lt;/code> to copy the &lt;strong>entire&lt;/strong> &lt;code>/home/&lt;/code> folder to an external ssd, although this can take a &lt;strong>long time&lt;/strong> depending on its size. I&amp;rsquo;d recommend &lt;code>rsync&lt;/code> over just copying with &lt;code>cp&lt;/code>, as &lt;code>rsync&lt;/code> copies all files &lt;strong>whilst&lt;/strong> retaining &lt;code>owner/group/other&lt;/code> file permissions.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>If connecting an external SSD to copy to:
+`sudo fdisk -l&lt;/p>
+&lt;ul>
+&lt;li>lists the connected disk drives and their corresponding filesystem location - like `/dev/sda1)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo mkdir -p /mnt/externalssd&lt;/p>
+&lt;ul>
+&lt;li>creates a folder on your computer&amp;rsquo;s filesystem to act as a &lt;strong>mount point:&lt;/strong> i.e. a place where you can access files stored on a mounted external SSD.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>`sudo mount -t exfat /dev/sda1 /mnt/externalssd&lt;/p>
+&lt;ul>
+&lt;li>Mounting the SSD (the device we found at &lt;code>/dev/sda1&lt;/code>) &amp;lsquo;in&amp;rsquo; this new folder created in the previous step, allowing all the files on it to appear in &lt;code>/mnt/externalssd&lt;/code>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>You should now be able to navigate there with &lt;code>cd /mnt/externalssd&lt;/code> and run a &lt;code>ls&lt;/code> to show the SSD&amp;rsquo;s existing contents. Then, copy the compressed .config file with &lt;code>cp /home/[user]/configs-backup.tgz /mnt/externalssd&lt;/code> (may require prepending &lt;code>sudo&lt;/code> depending on user permissions) - and you&amp;rsquo;re done!.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>If you opted for &lt;code>rsync&lt;/code> instead above:&lt;/p>
+&lt;p>&lt;code>sudo rsync -avh --progress /home/[user]/ /mnt/externalssd/home-backup&lt;/code>
+- &lt;code>a&lt;/code> - preserves file &lt;code>a&lt;/code>ttributes &amp;amp; ensures a &lt;strong>mirror copy&lt;/strong> is created, including permissions, symlinks, etc.
+- &lt;code>v&lt;/code> - enable &lt;code>v&lt;/code>erbose output, to monitor the progress
+- &lt;code>h&lt;/code> - ensures output is &lt;code>h&lt;/code>uman-readable
+- &lt;code>--progress&lt;/code> - displays real-time progress for troubleshooting purposes.&lt;/p>
+&lt;ol start="7">
+&lt;li>
+&lt;p>Now just unmount the drive with &lt;code>sudo umount /mnt/externalssd&lt;/code> (or don&amp;rsquo;t - live on the edge ;), plug it into new machine/distro, and copy the file you created over into &lt;code>/home/[new-user]/&lt;/code> with &lt;code>cp&lt;/code>.&lt;/p>
+&lt;p>Make sure to de-compress the file (if you used &lt;code>tar&lt;/code>) with &lt;code>tar xvzf configs-backup.tgz&lt;/code>, so it can be read by the system!&lt;/p>
+&lt;p>Then reboot, and your settings should be re-applied! :3&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="--bonus-grabbing-a-list-of-installed-packages-to-re-install">- BONUS: Grabbing a list of installed packages to re-install&lt;/h2>
+&lt;p>Optionally, if you want to grab a list of all packages/apps installed on your current distro to bring over and auto-install on your new one, run the following:&lt;/p>
+&lt;p>&lt;strong>Debian-based distros (e.g. Ubuntu, Kali, etc.):&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>dpkg --get-selections &amp;gt; installed-packages.txt&lt;/code>
+&lt;ul>
+&lt;li>saves a list of all packages to &lt;code>installed-packages.txt&lt;/code>. Save this on an external SSD or transfer to the new machine via the network.
+&lt;strong>On the New Machine/Distro:&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;code>sudo apt update&lt;/code>&lt;/li>
+&lt;li>Navigate to where &lt;code>installed-packages.txt&lt;/code> is stored (on the local machine), and run &lt;code>sudo dpkg --set-selections &amp;lt; installed-packages.txt&lt;/code>&lt;/li>
+&lt;li>Run &lt;code>sudo apt-get dselect-upgrade&lt;/code>&lt;/li>
+&lt;/ol>
+&lt;p>The process is similar for distributions using different package managers like &lt;code>yum&lt;/code>, &lt;code>pacman&lt;/code>, or &lt;code>rpm&lt;/code>, the concept is the same but the commands will differ slightly. A little net/manual searching will fix you up :P.&lt;/p>
+&lt;h2 id="--related-helpful-articles">- Related helpful articles:&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://help.ubuntu.com/community/BackupYourSystem/TAR">https://help.ubuntu.com/community/BackupYourSystem/TAR&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system">https://askubuntu.com/questions/7809/how-to-back-up-my-entire-system&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item><item><title>second post wahoo</title><link>https://blog.juni-mp4.com/posts/7/hello-world/</link><pubDate>Tue, 24 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/7/hello-world/</guid><description>&lt;h3 id="a-single-breath-echoes-into-the-abyss">a single breath echoes into the abyss&lt;/h3>
+&lt;p>hello, world. it&amp;rsquo;s been a while.&lt;/p></description></item><item><title>PACK files in .git - a rabbit hole</title><link>https://blog.juni-mp4.com/posts/6/pack-files-git/</link><pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/6/pack-files-git/</guid><description>&lt;h2 id="--so-how-did-we-get-here-see_no_evil">- so, how did we get here? &amp;#x1f648;&lt;/h2>
+&lt;hr>
+&lt;p>git stores all historical changes to a repo in a PACK file inside the hidden .git folder. This allows restoration of previous repo states in the future.&lt;/p>
+&lt;p>However, if you upload files like binaries, photos or videos, this file gets VERY large, even if you delete them in a future commit.&lt;/p>
+&lt;h3 id="--enter-git-filter-repo">- enter: &lt;code>git-filter-repo&lt;/code>&lt;/h3>
+&lt;p>Luckily a tool exists called git-filter-repo that you can download and use (python script) to analyse your PACK file, and filter out any unwanted bits (e.g. file extensions, paths, etc.). This can dramatically reduce the size of the PACK file.&lt;/p>
+&lt;p>It works in a single command (with the option to point the command to a file defining what to keep/exclude, if preferred). Just download the python script, move it to your working directory (MUST have .git folder, as it will analyze this), and run:&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --analyze&lt;/code>&lt;/p>
+&lt;p>(the use of &amp;ldquo;python&amp;rdquo; or similar, and giving the script a .py extension, is necessary sometimes on windows, depending on what shell you&amp;rsquo;re running the above command in, your PATH configuration etc. - but just think of it as running a script file and passing the &amp;ldquo;analyze&amp;rdquo; argument to it)&lt;/p>
+&lt;p>It then produces a folder with text files showing files/repo paths (historical) and their relative sizes. From here, you can search through and figure out how to filter what you&amp;rsquo;d like to remove.&lt;/p>
+&lt;p>When you&amp;rsquo;ve decided what you&amp;rsquo;re going to remove and how (path/extension/date etc.), I recommend doing a &amp;ndash;dry-run, which will produce two files (the original version and the modified version) and comparing what elements were removed with your filter. For me, using the following command, I went from 6473 lines of committed files to 1428.&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --path 'old-site/audio/' --path 'old-site/photos/' --invert-paths --dry-run --force&lt;/code>&lt;/p>
+&lt;p>&lt;em>(I used &amp;ndash;force as I had one untracked change - being moving the git-filter-repo script file itself into the directory - that I didn&amp;rsquo;t want to push to git)&lt;/em>&lt;/p>
+&lt;p>And to make &lt;em>&amp;ldquo;the changes&amp;rdquo;&lt;/em> &lt;em>&lt;strong>[PERMANENTLY!! CAUTION!!!]&lt;/strong>&lt;/em> remove the &lt;code>--dry-run&lt;/code> component of the above command, resulting the following:&lt;/p>
+&lt;p>&lt;code>python git-filter-repo.py --path 'old-site/audio/' --path 'old-site/photos/' --invert-paths&lt;/code>&lt;/p>
+&lt;p>Run that, and then there you go - it should make the changes to the .git folder in your repo, stripping out the components of the file you filtered and producing a new, (hopefully) smaller &lt;code>PACK&lt;/code> file.&lt;/p>
+&lt;p>Now, it just needs to be pushed to the remote repository with:&lt;/p>
+&lt;p>&lt;code>git push --all [remote-repo-URL]&lt;/code>&lt;/p>
+&lt;h3 id="--and-then">- and then&amp;hellip;&lt;/h3>
+&lt;p>well, if all things went well, you should have shaved a few KBs/MBs/GBs off your &lt;code>PACK&lt;/code> file - well done! grab yourself a cookie, you&amp;rsquo;ve well and truly earnt it :3&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/6/saya-banner.jpeg" alt="saya-congrats">&lt;/p>
+&lt;hr>
+&lt;h3 id="--other-helpful-links">- other helpful links:&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=eoF2p3ZDiAc">https://www.youtube.com/watch?v=eoF2p3ZDiAc&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES">https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

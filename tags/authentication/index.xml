@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Authentication on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/authentication/</link><description>Recent content in Authentication on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 27 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/authentication/index.xml" rel="self" type="application/rss+xml"/><item><title>Authentication Methods - A Deep(ish) Dive</title><link>https://blog.juni-mp4.com/posts/13/authentication-methods-deep-dive/</link><pubDate>Thu, 27 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/13/authentication-methods-deep-dive/</guid><description>&lt;blockquote>
+&lt;p>Here lies the ramblings of a madwoman; bumbling her way around in the darkness in an attempt to understand the wide world of websec&amp;hellip;&lt;/p>&lt;/blockquote>
+&lt;h1 id="-in-the-absolute-broadest-of-strokes">&amp;hellip; in the absolute broadest of strokes:&lt;/h1>
+&lt;ul>
+&lt;li>&lt;strong>Token-based (&lt;code>JWT&lt;/code>):&lt;/strong>
+&lt;ul>
+&lt;li>Authentication state is stored &lt;strong>on the client&lt;/strong> (local/session storage) in the form of a &lt;strong>token&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>Session-based:&lt;/strong>
+&lt;ul>
+&lt;li>Authentication state is &lt;strong>stored on the server&amp;rsquo;s database&lt;/strong>.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>Now, let&amp;rsquo;s go a little deeper, shall we?&lt;/p>
+&lt;h2 id="--json-web-tokens-jwt">- JSON Web Tokens (JWT)&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.23.47%20pm.png" alt="">&lt;/p>
+&lt;h3 id="--how-it-works">- How it works:&lt;/h3>
+&lt;ol>
+&lt;li>Client sends credentials to sever&lt;/li>
+&lt;li>Sever generates a &lt;code>JWT&lt;/code> based on credentials, and provides it to user (following below structure).
+&lt;ul>
+&lt;li>For example, using the &lt;code>RS256&lt;/code> algorithm, the generated &lt;code>JWT&lt;/code> is signed with the &lt;strong>server&amp;rsquo;s private key&lt;/strong>, and verified by the client with the &lt;strong>server&amp;rsquo;s public key&lt;/strong>.
+&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.24.40%20pm.png" alt="">(&lt;code>JWT&lt;/code> structure - &lt;a href="https://jwt.io/">https://jwt.io/&lt;/a>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>The client receives the&lt;code>JWT&lt;/code>, which is &lt;strong>stored&lt;/strong> in the &lt;strong>client&amp;rsquo;s local storage/session storage/as a cookie.&lt;/strong> AKA, the &lt;em>&lt;strong>state lives as a token on the client&lt;/strong>&lt;/em>, instead of &lt;strong>on the&lt;/strong> &lt;strong>server&lt;/strong> (as is with typical session-based authentication).
+&lt;ul>
+&lt;li>&lt;em>Note:&lt;/em> &lt;em>the client also verifies the &lt;code>JWT&lt;/code> with the server&amp;rsquo;s public key, if using the &lt;code>RS256&lt;/code> algorithm.&lt;/em>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="--jwt-based-authentication-drawbacks">- JWT-based Authentication Drawbacks&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>State is stored client side&lt;/strong> &amp;amp; can thus be dissected &amp;amp; manipulated&lt;/li>
+&lt;li>&lt;strong>Vulnerable to being accessed/stolen via XSS attacks&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>&lt;em>Can&lt;/em> be vulnerable to CSRF&lt;/strong> based on how the &lt;code>JWT&lt;/code> is stored &amp;amp; sent.
+&lt;ul>
+&lt;li>&lt;strong>Vulnerable to CSRF&lt;/strong>: if the &lt;code>JWT&lt;/code> is stored as an &lt;strong>&lt;code>HTTP&lt;/code>-only cookie&lt;/strong> that is passed to the server with &lt;strong>every request&lt;/strong>.
+&lt;ul>
+&lt;li>to mitigate this, use &lt;code>SameSite=Strict&lt;/code> &amp;amp; additional &lt;code>CSRF&lt;/code> tokens with each request.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>NOT (as) vulnerable to CSRF&lt;/strong>: if the &lt;code>JWT&lt;/code> is stored in the &lt;code>local/session storage&lt;/code>, meaning it&amp;rsquo;s &lt;strong>not sent with every request&lt;/strong>. Instead, it must be manually passed into the request header (e.g. &lt;code>Authorization: Bearer &amp;lt;token&amp;gt;&lt;/code>) when authorising.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;strong>No server-side revocation&lt;/strong> - token is valid until it expires.&lt;/li>
+&lt;li>&lt;strong>Token expiration management&lt;/strong> can be complex&lt;/li>
+&lt;li>&lt;strong>Data is &lt;code>base64&lt;/code> encoded, not encrypted&lt;/strong> - so sensitive data should never be stored in JWTs, as anyone with the token can decode and read its contents.&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="--session-based-cookie-authentication">- Session-based (cookie) authentication:&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.26.19%20pm.png" alt="">&lt;/p>
+&lt;h3 id="--how-it-works-1">- How it works:&lt;/h3>
+&lt;ol>
+&lt;li>Client provides credentials to the server&lt;/li>
+&lt;li>Server generates a &lt;strong>unique session ID&lt;/strong> for the client and &lt;strong>stores the session details &amp;amp; state in its local database.&lt;/strong>&lt;/li>
+&lt;li>Server sends the &lt;strong>session ID&lt;/strong> back within an &lt;code>HTTP-only&lt;/code> cookie, which is &lt;strong>stored in the client browser&amp;rsquo;s cookie jar&lt;/strong> (a storage for key-value pairs - &lt;em>how cool is this name though-&lt;/em>)&lt;/li>
+&lt;li>The client sends this cookie back with subsequent requests, &amp;amp; each time, the server has to &lt;strong>check the session&lt;/strong> against the value in the server&amp;rsquo;s database.&lt;/li>
+&lt;li>Upon logout, session ID is cleared from both the &lt;strong>client side&lt;/strong> and &lt;strong>server database&lt;/strong>.
+&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%209.46.32%20pm.png" alt="">&lt;/li>
+&lt;/ol>
+&lt;h3 id="--session-based-authentication-drawbacks">- Session-based Authentication Drawbacks:*&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Vulnerable to CSRF&lt;/strong> (attackers using session IDs to perform actions on behalf of the user) as cookies are sent automatically with every request.&lt;/li>
+&lt;li>&lt;strong>Processing power &amp;amp; complexity that increases with scale:&lt;/strong> as sessions have to be generated, stored &amp;amp; managed on the server&amp;rsquo;s database.&lt;/li>
+&lt;li>&lt;strong>Domain Restriction:&lt;/strong> Cookies are domain-specific, making cross-domain authentication difficult without additional configurations like &lt;code>CORS&lt;/code> (Cross Origin Resource Sharing) or third-party cookies.
+&lt;ul>
+&lt;li>&lt;code>CORS&lt;/code>: when a web app makes a cross-origin request (e.g. &lt;code>example.com&lt;/code> to &lt;code>api.example.com&lt;/code>), the browser sends an additional &lt;code>CORS&lt;/code> &lt;strong>preflight request&lt;/strong> to check if the server (&lt;code>api.example.com&lt;/code>) allows the cross-origin request. If it does, it needs to respond with the appropriate &lt;code>CORS&lt;/code> headers.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="a-brief-comparison">A brief comparison&amp;hellip;&lt;/h2>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/13/Screenshot%202025-02-27%20at%2010.43.47%20pm.png" alt="">&lt;/p>
+&lt;blockquote>
+&lt;p>credit where credit is due, this &lt;em>is&lt;/em> from ChatGPT, but it was used as a sanity check after I did the bulk of the manual research to build a basis of understanding.
+so, what am i saying by this? take&amp;hellip; &lt;em>&lt;strong>all of it with a grain of salt lol-&lt;/strong>&lt;/em>&lt;/p>&lt;/blockquote>
+&lt;p>&lt;strong>Helpful Resources:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://portswigger.net/web-security/jwt#how-do-vulnerabilities-to-jwt-attacks-arise">JWT attacks - Portswigger&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=UBUNrFtufWo&amp;amp;list=TLPQMjcwMjIwMjXKogKOoZBbBQ&amp;amp;index=4&amp;amp;t=65s">Session vs Token Authentication in 100 Seconds&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/watch?v=LB_lBMWH4-s&amp;amp;list=TLPQMjcwMjIwMjXKogKOoZBbBQ&amp;amp;index=4">Web Authentication Methods Explained&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.geeksforgeeks.org/session-based-authentication-vs-json-web-tokens-jwts-in-system-design/">Session-Based Authentication vs. JSON Web Tokens (JWTs) in System Design&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://aegizz.github.io/ctfs/duckCTF2024">Exploiting it in practice, within a CTF&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

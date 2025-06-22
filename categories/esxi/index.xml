@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Esxi on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/categories/esxi/</link><description>Recent content in Esxi on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 15 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/categories/esxi/index.xml" rel="self" type="application/rss+xml"/><item><title>ESXi, TPMs, fTPMs, &amp; Intel PTT: A love story</title><link>https://blog.juni-mp4.com/posts/1/esxi-upgrade-and-tpm/</link><pubDate>Wed, 15 Feb 2023 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/1/esxi-upgrade-and-tpm/</guid><description>&lt;blockquote>
+&lt;p>Here&amp;rsquo;s a quick little rabbit-hole of upgrading ESXi clients, and a crash course on TPMs and their equivalents! 💛&lt;/p>&lt;/blockquote>
+&lt;h2 id="--tpmftpmintel-ptt-rundown">- TPM/fTPM/Intel PTT Rundown&lt;/h2>
+&lt;ul>
+&lt;li>&lt;strong>Trusted Platform Module&lt;/strong> - &lt;em>a secure crypto-processor that generates, stores, and limits the use of cryptographic keys required to access system files!!!!!&lt;/em> &lt;a href="https://www.onlogic.com/company/io-hub/tpm-for-windows-11-what-is-it-and-what-about-intel-ptt-and-amd-ftpm/">(reference)&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;p>The traditional &lt;strong>TPM&lt;/strong> is a physical security &amp;amp; encryption-focused chip on the motherboard, but can also be built into the firmware of the computer&amp;rsquo;s CPU, which are notably &lt;strong>AMD Firmware TPM (fTPM) and Intel Platform Trust Technology (PTT).&lt;/strong>&lt;/p>
+&lt;p>Both of these have been built to &lt;strong>include TPM 2.0 functionality&lt;/strong>, but may not be enabled by default in the machine&amp;rsquo;s BIOS, so be sure to check. It&amp;rsquo;s typically found under the &lt;code>Security&lt;/code> tab/option in BIOS, which are all different in design, so Google is your bestie when discovering how to access a feature on your specific model 🤪.&lt;/p>
+&lt;h2 id="--upgrading-esxi-client">- Upgrading ESXi client:&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>Enable TSM-SSH via ESXi GUI to enable SSH into your machine&lt;/strong>&lt;/p>
+&lt;p>Via &lt;code>Manage&lt;/code> &amp;ndash;&amp;gt; &lt;code>Services&lt;/code> &amp;ndash;&amp;gt; &lt;code>TSM-SSH&lt;/code>, then right click and &lt;code>Run&lt;/code>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/1/img1.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://www.tomshardware.com/how-to/use-ssh-connect-to-remote-computer">SSH&lt;/a> into your ESXi box, then check &lt;a href="https://esxi-patches.v-front.de/">https://esxi-patches.v-front.de/&lt;/a> for the latest ESXi patches. Patches are cumulative, so download the latest one (at the top, highlighted).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/1/img3.png" alt="Alt text">&lt;/p>
+&lt;p>Copy the text from the pop-up generated after clicking the link, and paste it into the shell of the system via SSH. The code is provided below for convenience (lines separated), but DO NOT just copy the second code block, as it will download the version for &lt;code>build 8.0b-21203435&lt;/code>, which will change over time.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>esxcli network firewall ruleset set -e true -r httpClient&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>esxcli software profile update -p [YOUR-VER-HERE] \ -d https://hostupdate.vmware.com/software/VUM/PRODUCTION/main/vmw-depot-index.xml&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Systems with an Intel PTT may throw an error of not having a supported TPM 2.0, and if so, check that Intel PTT is enabled in BIOS before attaching &lt;code>--no-hardware-warning&lt;/code> to the second code block:&lt;/p>
+&lt;p>&lt;em>Revised Code for Intel PTT (and potentially AMD fTPMs):&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>esxcli software profile update -p [YOUR-VER-HERE] \ -d https://hostupdate.vmware.com/software/VUM/PRODUCTION/main/vmw-depot-index.xml --no-hardware-warning&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>When running the second code block, the update is downloaded, which can take 5-10minutes depending on your internet connection. Cross your fingers, pray to the networking gods, and just wait 🙏.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/1/img2.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Finally, run the final code block to adjust the firewall rules now you&amp;rsquo;re done:&lt;/p>
+&lt;p>&lt;code>esxcli network firewall ruleset set -e false -r httpClient&lt;/code>&lt;/p>
+&lt;p>Then reboot to apply changes.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Once rebooted, SSH into the box and run &lt;code>vmware -v&lt;/code> to check the version of ESXi and that the update has been successful.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>&lt;em>&lt;strong>💛 Hope this was of some help &amp;amp; best of luck! 💛&lt;/strong>&lt;/em>&lt;/p>
+&lt;hr>
+&lt;p>&lt;strong>DISCLAIMER:&lt;/strong> &lt;em>I would consider this a LEGACY POST of mine, written a long time ago. Please excuse any typos, errors or lapses in memory/judgement - as it was added to the site from the archives, just to put everything in one place. Thankq for your understanding 🙇‍♀️&lt;/em>&lt;/p>
+&lt;hr></description></item></channel></rss>

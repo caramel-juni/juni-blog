@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Github on juni's blog ٩(◕‿◕｡)۶</title><link>https://blog.juni-mp4.com/tags/github/</link><description>Recent content in Github on juni's blog ٩(◕‿◕｡)۶</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 08 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.juni-mp4.com/tags/github/index.xml" rel="self" type="application/rss+xml"/><item><title>building &amp; deploying this blog with hugo!</title><link>https://blog.juni-mp4.com/posts/10/building-hugo-blog/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.juni-mp4.com/posts/10/building-hugo-blog/</guid><description>&lt;h1 id="and-now---to-the-story-of-how-this-blog-was-born">&lt;em>and now - to the story of how this blog was born!&lt;/em>&lt;/h1>
+&lt;blockquote>
+&lt;p>&lt;em>(it&amp;rsquo;s nothing special, but I thought I&amp;rsquo;d document it for myself when i inevitably forget how i did it in the future, as well as any other wandering lost souls out there!)&lt;/em>&lt;/p>&lt;/blockquote>
+&lt;p>i&amp;rsquo;ve been meaning to re-jig my tech blog for a while now. for the last year and a bit, I experimented with the static site generator (SSG) &lt;a href="https://jekyllrb.com/">jekyll&lt;/a>. jekyll is essentially a tool built in &lt;a href="https://jekyllrb.com/docs/ruby-101/">ruby&lt;/a> that combines &lt;strong>blog posts&lt;/strong> (typically written in markdown, &lt;code>.md&lt;/code> files) with &lt;strong>themes/config files&lt;/strong> to generate browser-renderable code (&lt;code>HTML&lt;/code>, &lt;code>CSS&lt;/code> and &lt;code>JS&lt;/code>).&lt;/p>
+&lt;p>this way, you can streamline your workflow, embed all sorts of cool features (comments, reactions, reading times, table of contents, automatic &lt;a href="https://en.wikipedia.org/wiki/RSS">rss feeds&lt;/a>, post dating etc.), and most importantly &lt;strong>avoid the horror of writing blog posts in raw HTML&lt;/strong>&amp;hellip; but still being able to dabble in it when you please (providing your markdown-to-html renderer permits that).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Pasted%20image%2020250104220631.png" alt="markdown vs html">&lt;/p>
+&lt;p>&amp;hellip;and all of this within a &lt;a href="https://www.geeksforgeeks.org/static-vs-dynamic-website/">static site&lt;/a> (all files pre-built on web-server, no databases) that is lightweight, responsive, maintainable and (relatively) quick to spin up.&lt;/p>
+&lt;hr>
+&lt;h2 id="--why-did-i-move-away-from-jekyll">- why did i move away from jekyll?&lt;/h2>
+&lt;p>for three simple reasons:&lt;/p>
+&lt;ol>
+&lt;li>i&amp;rsquo;d been meaning to try the SSG &lt;a href="https://gohugo.io/">hugo&lt;/a>.&lt;/li>
+&lt;li>hugo is built in &lt;a href="https://go.dev/">golang&lt;/a>, and i&amp;rsquo;d been wanting to poke around with go for a while now.&lt;/li>
+&lt;li>i found (and confirmed, after trying hugo) ruby &amp;amp; jekyll to be a bit more onerous to work with &amp;amp; overly-verbose in both site layout &amp;amp; base code. also - i noticed that jekyll had &lt;a href="https://css-tricks.com/comparing-static-site-generator-build-times/">much slower build times&lt;/a>.&lt;/li>
+&lt;/ol>
+&lt;hr>
+&lt;h2 id="--getting-up-and-running-with-hugo">- getting up and running with hugo:&lt;/h2>
+&lt;p>there are endless tutorials for this, and my pipeline is probably most similar to that of NetworkChuck in the &lt;a href="https://www.youtube.com/watch?v=dnE7c0ELEH8&amp;amp;t=907s">recent video&lt;/a> he released (not even a week before I went in on my own build, after sitting on the idea for ages haha - twas kinda spoopy :3).&lt;/p>
+&lt;h3 id="--setting-up-the-hugo-site">- setting up the hugo site:&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>Hugo has two simple dependencies: &lt;code>git&lt;/code> (for code version control), and the &lt;code>go&lt;/code> compiler toolchain. (here are where you can install &lt;a href="https://git-scm.com/">&lt;code>git&lt;/code>&lt;/a> and &lt;a href="https://go.dev/">&lt;code>go&lt;/code>&lt;/a>, if needed)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>after installing these, using the package manager of your choice (for me, &lt;code>homebrew&lt;/code>), &lt;a href="https://gohugo.io/installation/">install hugo&lt;/a> with &lt;code>brew install hugo&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>choose a directory for your site, and open it in your code editor. ensure hugo is in your system PATH so you can access it via the command line, and run &lt;code>hugo -v&lt;/code> to ensure you&amp;rsquo;re on the latest.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then simply run &lt;code>hugo new site [SITENAME]&lt;/code>, replacing &lt;code>[SITENAME]&lt;/code> with whatever you&amp;rsquo;d like to call the site (&amp;amp; folder it lives in). hugo will then spinup the basic bones of your site, and navigate into the folder it creates with &lt;code>cd&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>initialise an empty git repository in this new folder with &lt;code>git init&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>to install a theme, browse them &lt;a href="https://themes.gohugo.io/">here&lt;/a>, and follow the instructions in the theme&amp;rsquo;s description (as some methods vary).
+however, the most common is installation is via a &lt;strong>git submodule&lt;/strong> - which essentially will just pull down an existing git repo containing a pre-built hugo theme, and populate your site&amp;rsquo;s &lt;code>themes&lt;/code> folder with it. this way, when building your site, hugo will use it as a base layout, and add any changes made to your site on top of it.
+for me, i ran: &lt;code>git submodule add https://github.com/michaelneuper/hugo-texify3.git themes/hugo-texify3&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>now, your site&amp;rsquo;s directory tree should look something like the following:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.35.22%20pm.png" alt="">&lt;/p>
+&lt;p>Folders &amp;amp; files are fairly self-explanatory, with the main ones being:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>&lt;code>hugo.toml&lt;/code>&lt;/strong> - your site&amp;rsquo;s configuration variables.&lt;/li>
+&lt;li>&lt;strong>&lt;code>/content&lt;/code>&lt;/strong> - where you create folders to store blog posts (&lt;code>.md&lt;/code>) &amp;amp; site pages&lt;/li>
+&lt;li>&lt;strong>&lt;code>/assets&lt;/code>&lt;/strong> - ideally where media is stored &amp;amp; linked (although you can place them anywhere, theoretically, providing you link back to it correctly)&lt;/li>
+&lt;li>&lt;strong>&lt;code>/public&lt;/code> (only created when website is built, see step 8.)&lt;/strong> - where your &lt;strong>raw website&lt;/strong> (raw HTML, CSS, JS) will be built to and live. &lt;strong>you shouldn&amp;rsquo;t need to touch this folder.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>&lt;code>/themes&lt;/code>&lt;/strong> - where all of your sites themes are installed (and specified/switched between in &lt;code>hugo.toml&lt;/code>)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>sometimes, themes require installing &lt;strong>other tools&lt;/strong> as part of their custom build process. this &lt;em>should&lt;/em> be specified in the theme&amp;rsquo;s documentation.
+for me, that required needing to install the following with &lt;code>npm&lt;/code>:
+&lt;code>npm install postcss-cli autoprefixer postcss-import&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>to build your site locally, ensure you&amp;rsquo;re in your site&amp;rsquo;s base directory and run &lt;code>hugo server -t [THEME-NAME]&lt;/code> (if using a theme).
+for me: &lt;code>hugo server -t hugo-texify3&lt;/code>&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.33.44%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>now, navigate to the local address to see your site in action! it should live-reload as you make changes in your code editor.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>[EXTRA]&lt;/strong> after analysing my specific theme&amp;rsquo;s layout &amp;amp; directory structure, I mirrored elements of it (thus overwriting what was contained in the &lt;code>/themes&lt;/code> folder) to create the below folder structure, allowing me to:
+- add dedicated website pages in &lt;code>/pages&lt;/code>
+- use &lt;code>/posts&lt;/code> to hold my site post, with each in its own &lt;strong>folder&lt;/strong> alongside any assets (images, media, etc.). this was done due to my particular workflow (writing in obsidian, see below).
+- split site configuration into two files for readability in &lt;code>/config&lt;/code>: one for parameters (enabling/disabling certain features like social links, metadata etc.), and one for overall config &amp;amp; layout.
+&lt;img src="https://blog.juni-mp4.com/posts/10/heya.png" alt="">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="--pushing-to-remote-git-repository--deploying-via-cloudflare-pages">- pushing to remote git repository &amp;amp; deploying via cloudflare pages&lt;/h3>
+&lt;p>&lt;em>(aka my weird custom workflow):&lt;/em>&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>after running &lt;code>git init&lt;/code>, ensure you are authenticated locally with &lt;code>gh auth login&lt;/code> (requires use of Github CLI, install with &lt;code>brew install gh&lt;/code> or similar)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>create a new repository on GitHub with:
+&lt;code>gh repo create juni-blog --public --source=. --remote=origin&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>--public&lt;/code>: sets repo as public, as cloudflare will need to monitor it for changes&lt;/li>
+&lt;li>&lt;code>--source=.&lt;/code>: initialises the remote repository with your current local directory&amp;rsquo;s contents&lt;/li>
+&lt;li>&lt;code>--remote=origin&lt;/code>: sets up the remote URL for the repository&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>now, just push the local branch to the remote with &lt;code>git push -u origin main&lt;/code>.&lt;/p>
+&lt;blockquote>
+&lt;p>The &lt;code>-u&lt;/code> (or &lt;code>--set-upstream&lt;/code>) option in &lt;code>git push&lt;/code> links your &lt;strong>local branch&lt;/strong> (&lt;code>main&lt;/code>) to the &lt;strong>remote branch&lt;/strong> (&lt;code>origin&lt;/code>) by default, allowing you to run &lt;code>git push&lt;/code> and &lt;code>git pull&lt;/code> commands in the future without adding &lt;code>origin main&lt;/code> at the end (AKA specifying which remote branch to interact with by default).&lt;/p>&lt;/blockquote>
+&lt;/li>
+&lt;li>
+&lt;p>navigate to your remote repository on github to check whether the changes have been propagated!&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>setup, login to and open &lt;a href="https://dash.cloudflare.com/">cloudflare pages&lt;/a> and navigate to your &lt;strong>&lt;code>Workers &amp;amp; Pages&lt;/code>&lt;/strong> section, then &lt;strong>&lt;code>Create&lt;/code>&lt;/strong> to deploy a new &amp;ldquo;site&amp;rdquo;. The click &lt;strong>&lt;code>Connect to Git&lt;/code>&lt;/strong> and follow the prompts to authenticate, and link to the repository that you just pushed to.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.56.36%20pm.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%206.58.49%20pm.png" alt="">&lt;/p>
+&lt;p>After that, you can specify which branch Cloudflare should look for changes on, as any frameworks that you&amp;rsquo;re using to build &amp;amp; deploy the site, and where the built assets &amp;amp; HTML files are stored. I selected &lt;code>Hugo&lt;/code> (for obvious reasons), and it populated the build command with a simple &lt;code>hugo&lt;/code>.&lt;/p>
+&lt;p>&lt;em>&lt;strong>However&lt;/strong>&lt;/em>, if your site requires other tools as part of the build process like mine (specified in step 8 in the previous section), be sure to &lt;strong>install them on the remote server this site is running off&lt;/strong> with the relevant commands. for me, these are:
+&lt;code>npm install postcss-cli autoprefixer postcss-import &amp;amp;&amp;amp; hugo&lt;/code>
+Cloudflare should provide logs from the remote server should your build fail, making troubleshooting fairly simple.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.01.36%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then you&amp;rsquo;re all set! cloudflare will now watch for any changes made to the specified branch of this repo (for me, &lt;code>main&lt;/code>), and if detected, it will automatically run &lt;code>npm install postcss-cli autoprefixer postcss-import &amp;amp;&amp;amp; hugo&lt;/code> on its remote server(s) to build the updated version of my site, and then serve &lt;strong>only&lt;/strong> the created HTML, CSS &amp;amp; JS files in the specified output directory (for me, &lt;code>public&lt;/code>).
+you should be able to access your site from the default URL created and provided to you, like &lt;a href="https://b3ce9f44.juni-blog.pages.dev/">https://b3ce9f44.juni-blog.pages.dev/&lt;/a>.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>[extra]&lt;/strong> to change this URL to a custom domain that you own, go to the &lt;strong>&lt;code>Custom Domain&lt;/code>&lt;/strong> section of the page you just created, click &lt;strong>Set up a custom domain&lt;/strong>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.16.58%20pm.png" alt="">&lt;/p>
+&lt;p>Then, follow the prompts. In my case, I associated the &lt;code>myblog&lt;/code> CNAME with this &amp;ldquo;Page&amp;rdquo; (&lt;code>juni-blog.pages.dev&lt;/code>).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.13.22%20pm.png" alt="">&lt;/p>
+&lt;p>Then, simply navigate to your domain&amp;rsquo;s (&lt;code>juni-mp4.com&lt;/code>) DNS records (for me, also managed via Cloudflare) and add a record for the CNAME you just specified.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-08%20at%207.16.02%20pm.png" alt="">&lt;/p>
+&lt;p>This means that when someone visits &lt;code>myblog.juni-mp4.com&lt;/code>, they will functionally be visiting &lt;code>juni-blog.pages.dev&lt;/code>.&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>this combination of github &amp;amp; cloudflare pages allows me to easily host &amp;amp; deploy sites from &lt;strong>different github repos&lt;/strong>, each built with &lt;strong>all kinds of different build methods&lt;/strong> (from hand-coding raw HTML/CSS/JS to using various SSGs like &lt;code>jekyll&lt;/code>, &lt;code>hugo&lt;/code> etc.), as subdomains of my primary domain &lt;code>juni-mp4.com&lt;/code> and all served securely &amp;amp; quickly from Cloudflare&amp;rsquo;s worldwide array of web servers. &lt;em>(not sponsored haha - the only thing you monetarily pay for is your domain registration fee, and even that is optional.)&lt;/em>&lt;/p>
+&lt;p>&lt;em>&lt;strong>Side note:&lt;/strong>&lt;/em> &lt;em>yes, whilst you could argue that you &amp;ldquo;pay&amp;rdquo; in the form of you &amp;amp; your content being technically in the hands of cloudflare, outside of hosting file files yourself on a VPS or a home server - which comes with a slew of additional overhead, maintenance and security configuration concerns - this is a fairly reasonable compensation to make for the uptime, security &amp;amp; responsiveness that Cloudflare&amp;rsquo;s network of servers provides, at least imho and for my use case.&lt;/em>&lt;/p>
+&lt;p>this very particular workflow &amp;amp; need for flexibility is why i chose to use cloudflare instead of just deploying straight from &lt;a href="https://pages.github.com/">Github Pages&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;h2 id="--my-final-note-taking-process-an-overview">- my final note-taking process: an overview&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>open my Obsidian &amp;ldquo;blog&amp;rdquo; vault, and create a new note within a folder in &lt;code>posts&lt;/code>:&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.27.21%20pm.png" alt="">&lt;/p>
+&lt;p>the &lt;a href="https://silentvoid13.github.io/Templater/introduction.html">Templater&lt;/a> plugin auto-generates the hugo-formatted frontmatter you see above in every new note, using the code block below inside the &lt;code>template&lt;/code> file.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">title&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">date&lt;/span>: &lt;span style="color:#ae81ff">&amp;lt;% tp.file.creation_date(&amp;#34;YYYY-MM-DD&amp;#34;) %&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">description&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">toc&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">math&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">draft&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">categories&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">tags&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>write the post :3. drag &amp;amp; drop / copy-paste images as needed, after making sure the &lt;code>Absolute path in vault&lt;/code> option is selected in your vault&amp;rsquo;s &lt;strong>Files and links&lt;/strong> settings. This may need to be tweaked depending on your site&amp;rsquo;s layout later, but it worked for me, and is easily changed in bulk in VSCode or a similar editor via &lt;strong>find &amp;amp; replace&lt;/strong>.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.28.55%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>once I&amp;rsquo;m finished writing, I switch to my full website directory tree in VSCode (my Obsidian &amp;ldquo;blog&amp;rdquo; vault is just the website&amp;rsquo;s &lt;code>content&lt;/code> folder, hence the &lt;code>.obsidian&lt;/code> folder inside it).&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.33.17%20pm.png" alt="">&lt;/p>
+&lt;p>i run the build command &lt;code>hugo server -t [theme-name-here]&lt;/code> in the VScode terminal to start a live server, and visit &lt;code>http://localhost:1313/&lt;/code> to double check that the changes have been formatted properly.&lt;/p>
+&lt;p>&lt;img src="https://blog.juni-mp4.com/posts/10/Screenshot%202025-01-04%20at%2010.41.47%20pm.png" alt="">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>then a simple &lt;code>git commit -m &amp;quot;new blog post: hugo site build&amp;quot; -a &amp;amp;&amp;amp; git push origin main&lt;/code> pushes the changes to my site where it&amp;rsquo;s rebuilt &amp;amp; served as new HTML pages!&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;hr></description></item></channel></rss>

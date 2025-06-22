@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>PACK on TeXify3</title>
+    <link>http://localhost:1313/tags/pack/</link>
+    <description>Recent content in PACK on TeXify3</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 23 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/pack/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PACK files in .git - a rabbit hole</title>
+      <link>http://localhost:1313/posts/hya/</link>
+      <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/hya/</guid>
+      <description>&lt;p&gt;git stores all historical changes to a repo in a PACK file inside the hidden .git folder. This allows restoration of previous repo states in the future.&lt;/p&gt;
+&lt;p&gt;However, if you upload files like binaries, photos or videos, this file gets VERY large, even if you delete them in a future commit.&lt;/p&gt;
+&lt;p&gt;Luckily a tool exists called git-filter-repo that you can download and use (python script) to analyse your PACK file, and filter out any unwanted bits (e.g. file extensions, paths, etc.). This can dramatically reduce the size of the PACK file.&lt;/p&gt;
+&lt;p&gt;It works in a single command (with the option to point the command to a file defining what to keep/exclude, if preferred). Just download the python script, move it to your working directory (MUST have .git folder, as it will analyze this), and run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --analyze&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;(the use of &amp;ldquo;python&amp;rdquo; or similar, and giving the script a .py extension, is necessary sometimes on windows, depending on what shell you&amp;rsquo;re running the above command in, your PATH configuration etc. - but just think of it as running a script file and passing the &amp;ldquo;analyze&amp;rdquo; argument to it)&lt;/p&gt;
+&lt;p&gt;It then produces a folder with text files showing files/repo paths (historical) and their relative sizes. From here, you can search through and figure out how to filter what you&amp;rsquo;d like to remove.&lt;/p&gt;
+&lt;p&gt;When you&amp;rsquo;ve decided what you&amp;rsquo;re going to remove and how (path/extension/date etc.), I recommend doing a &amp;ndash;dry-run, which will produce two files (the original version and the modified version) and comparing what elements were removed with your filter. For me, using the following command, I went from 6473 lines of committed files to 1428.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --path &#39;old-site/audio/&#39; --path &#39;old-site/photos/&#39; --invert-paths --dry-run --force&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(I used &amp;ndash;force as I had one untracked change - being moving the git-filter-repo script file itself into the directory - that I didn&amp;rsquo;t want to push to git)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;And to make the changes [PERMANENTLY!! CAUTION!!!] modify the above to the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python git-filter-repo.py --path &#39;old-site/audio/&#39; --path &#39;old-site/photos/&#39; --invert-paths&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;There you go - the changes should&amp;rsquo;ve been made to the .git folder in your repo, producing a new PACK file that now just needs to be pushed to the remote repository with:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;git push --all [remote-repo-URL]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;other helpful links:
+&lt;a href=&#34;https://www.youtube.com/watch?v=eoF2p3ZDiAc&#34;&gt;https://www.youtube.com/watch?v=eoF2p3ZDiAc&lt;/a&gt;
+&lt;a href=&#34;https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&#34;&gt;https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html#EXAMPLES&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

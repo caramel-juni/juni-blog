@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Update on juni&#39;s blog ٩(◕‿◕｡)۶</title>
+    <link>http://localhost:1313/tags/update/</link>
+    <description>Recent content in Update on juni&#39;s blog ٩(◕‿◕｡)۶</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 08 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/update/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>pfSense Updating Woes: Crisis Aversion</title>
+      <link>http://localhost:1313/posts/2/2023-06-08-pfsense-troubleshooting-update-2301/</link>
+      <pubDate>Thu, 08 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/2/2023-06-08-pfsense-troubleshooting-update-2301/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/image.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Here is a little guide from a nightmare I encountered whilst trying to perform a maintenance update on a pfSense router&amp;hellip; I hope my pain and suffering can help someone else :&amp;rsquo;).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;DO NOT MAKE MY MISTAKE - &lt;strong&gt;CREATE A BACKUP FOR YOUR PFSENSE SETTINGS AND STORE IT LOCALLY BEFORE UPDATING!!!!&lt;/strong&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;pfSense DOES create a backup of settings before updating, but accessing it can be problematic to say the least&amp;hellip; (see below)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;context&#34;&gt;Context:&lt;/h2&gt;
+&lt;p&gt;I initiated system reboot and upgrade via the pfSense web UI at 1pm on May 15th. Everything seemed to go well in the web UI, until it restarted and then got stuck reassigning the network interfaces.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/54985275-a984-494f-923a-e9a771db2005.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Looked like the update was successful but got confused when it got to reassigning the interfaces (aka which network interfaces were associated with which network config files previously created) resulting in the boot process being interrupted and not completed, meaning no wifi.&lt;/p&gt;
+&lt;p&gt;To fix, connected to the pfSense box directly via serial (details at end) &amp;amp; navigated to &lt;code&gt;/cf/conf/backup/&lt;/code&gt; and did a &lt;code&gt;ls -lah&lt;/code&gt; to find the last auto-backup xml file and see which network settings were assigned to each interface.&lt;/p&gt;
+&lt;p&gt;By cross-referencing with the previous backup’s XML data of &lt;code&gt;&amp;lt;interfaces&amp;gt;&lt;/code&gt;, it was determined that these were the previous assignments:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/21412848-0228-41eb-b793-7045eea4ee70.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;note: for opt3&amp;amp;4, it is ixl0 &amp;amp; ixl1, NOT ix10/ix11 (is an l and NOT a 1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/4e5fde35-f32e-4abd-912b-a8c8234755e7.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;extract from “config-XXXXXXXXXX.xml”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;After reassigning the network interfaces, all seemed to be well and the box booted without any noticeable issues into the new OS.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/16014c4f-ddbf-480a-8731-980e55020531.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;From here, I reconnected in powershell by IP via SSH to check it was working, and then accessed the webUI. 🥳&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;…I can finally breathe again.&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;connecting-via-serial-cable-older-tutorial-herehttpswwwyoutubecomwatchvm0yyyzojg3m&#34;&gt;Connecting Via Serial Cable (&lt;a href=&#34;https://www.youtube.com/watch?v=M0yyyZojg3M&#34;&gt;older tutorial here&lt;/a&gt;)&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Get micro-usb to usb cable.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Plug micro-usb end into pfsense port labelled &lt;code&gt;“CONSOLE”&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Plug usb end into laptop usb port. may need to try a few different ones if the steps below don’t work.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate &lt;a href=&#34;https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads&#34;&gt;here&lt;/a&gt; &amp;amp; download the CP210x Universal Windows Driver (&lt;a href=&#34;https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads&#34;&gt;direct download link&lt;/a&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Unzip it, right click on &lt;code&gt;silabser.inf&lt;/code&gt; and click &lt;code&gt;Install&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once installed, open device manager (on Windows). There should be a new option called &lt;code&gt;Silicon Labs CP210x USB to UART Bridge&lt;/code&gt; or similar. The &lt;strong&gt;COM[&lt;code&gt;X&lt;/code&gt;]&lt;/strong&gt; at the end will vary depending on which of your device’s serial ports are already in use.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/dc5ecce7-bbd4-41a1-ba7c-d7a766ddb608.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&#34;&gt;Download&lt;/a&gt; &amp;amp; open puTTY, and create a session with the following settings, replacing COM6 with whatever &lt;strong&gt;COM[&lt;code&gt;X&lt;/code&gt;]&lt;/strong&gt; your device listed as being open to communicate with &lt;code&gt;CP210x&lt;/code&gt; in device manager.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/d47049f6-8c1b-45f7-b74e-5aaa7a3c0bcb.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;code&gt;Session&lt;/code&gt; → &lt;code&gt;Logging&lt;/code&gt; and track all output to a log file saved locally on your machine.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/c526fa04-bf4d-4af5-bf35-3814c46ea260.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Click &lt;code&gt;Open&lt;/code&gt; and session should begin.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/posts/2/43a6dee8-d8a4-42fa-be42-2ffdf14fdac3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;alternative-solutions&#34;&gt;Alternative solutions:&lt;/h2&gt;
+&lt;p&gt;Thankfully a restore point was (and should, by default on pfSense installations) automatically made right before the update, meaning if worst comes to worst, we could:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;copy the last restore point (config file, found at &lt;code&gt;/cf/conf/backup/&lt;/code&gt;) to local machine by: turning on the putty output logger, then opening a session &amp;amp; navigating to the config file &amp;amp; &lt;code&gt;cat&lt;/code&gt;-ting it, saving the output to the local machine. Then:&lt;/p&gt;
+&lt;p&gt;a. EITHER completely re-install the 22.05 version of pfSense via USB flash, get network settings reset, then SCP the restore point config file to it and assign it as settings OR used webUI backup option to reload the settings.&lt;/p&gt;
+&lt;p&gt;b. OR try and roll back to the previous version (22.05) by assigning the network interfaces randomly and getting to the pfsense options screen, selecting option &lt;code&gt;15) Restore recent configuration&lt;/code&gt;, and then using the backup config file as the desired settings.&lt;/p&gt;
+&lt;p&gt;in case of further panic&amp;hellip; here is a link to further &lt;a href=&#34;https://agix.com.au/restore-pfsense-from-backup-using-the-cli-command-line/&#34;&gt;troubleshooting&lt;/a&gt;. I wish you well on your journey, and hope it is substantially shorter than mine was 🙃😭.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!-- raw HTML omitted --&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
