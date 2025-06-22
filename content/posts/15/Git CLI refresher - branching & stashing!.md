@@ -8,7 +8,7 @@ draft: false
 categories: 
 tags:
 ---
-**Smol Objective:** ***Exploring `branch`ing, `checkout`'s, and `stash`ing!***
+**Smol Objective:** ***Revisiting `branch`ing, `checkout`'s, and `stash`ing!***
 
 **Via:** creating a new local branch to save recent experimental changes on, publishing the branch to a remote Github repository, and then switching back to the functional, remote main branch locally. Oh, and stashing changes as I switch between the two to compare.
 
