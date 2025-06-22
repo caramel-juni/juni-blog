@@ -33,7 +33,7 @@ dotfiles config status.showUntrackedFiles no
 Setup & communicate with this repo via `ssh`, [authenticating with a local private key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?platform=linux).
 
 ``` bash
-# 4. Generate SSH key for GitHub auth (if you haven't got one already)
+# 4. Generate SSH key for GitHub auth (if you haven't got one already).
 ssh-keygen -t ed25519 -C "you@example.com"
 ssh-add ~/.ssh/id_ed25519
 
