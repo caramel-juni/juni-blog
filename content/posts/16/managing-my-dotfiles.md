@@ -39,7 +39,7 @@ ssh-add ~/.ssh/id_ed25519
 
 # Add the value of ~/.ssh/id_ed25519.pub as an entry in your Github --> Settings --> SSH & GPG Keys, via cat + copy-pasting, or however you'd like.
 
-# 5. Force git on your machine to always push to github with SSH instead of HTTPS
+# 5. Force git on your machine to always push to github with SSH instead of HTTPS.
 git config --global url."git@github.com:".insteadOf "https://github.com/"
 
 # 6. Set upstream branch as origin main & push via ssh!
