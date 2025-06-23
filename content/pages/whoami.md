@@ -2,4 +2,7 @@
 title: "whoami?"
 ---
 
-that's for me to know, and for you to find out (once i update this).
+> much like Atlas; struggling under the weight of an imposter syndrome that will (allegedly) never cease.
+
+#### current status: 
+***drowning in a lake of existentialism and .`exe`'s***
