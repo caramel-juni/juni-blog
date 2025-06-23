@@ -1,6 +1,13 @@
 # Ignore everything
-*
+/archetypes/*
+/config/*
+/juniblog/*
+/node_modules/*
+/resources/*
+/themes/*
 /content/tempate.md
+*/.obsidian/*
 
 # But not this folder (keep public and its contents)
 !/public/*
+!/content/posts/future-posts/*
